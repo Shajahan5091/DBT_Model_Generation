@@ -162,6 +162,7 @@ if st.button("Generate dbt Models"):
 
             # --- Clean unwanted prose (heuristic cleanup) ---
             sql_part = re.sub(r"(?i)^sure,.*|^here.*|^based on.*", "", sql_part).strip()
+            sql_part = re.sub(r"(?i)```SQL*|```sql*|```*", "", sql_part).strip()
 
             # --- Write model SQL ---
             model_path = f"models/{t_table}.sql"
