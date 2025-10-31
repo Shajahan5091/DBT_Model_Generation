@@ -121,11 +121,13 @@ if st.button("Generate dbt Models"):
                - Use `{{{{ source('{source_schema}', '{source_table}') }}}}` for source reference.
                - Apply transformation logic when provided.
                - Rename columns as per target mapping.
+               - Use proper intendation
 
             2 **DBT Model YAML block** (after a line "---yaml---")
                - Describe the model `{t_table}` with columns, descriptions, and dbt tests.
                - Follow dbt YAML structure starting with `version: 2` and `models:`.
                - Use only valid YAML (no markdown formatting).
+               - Use proper intendation
 
             Schema Mapping:
             {mapping_str}
