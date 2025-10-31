@@ -7,4 +7,7 @@ WITH cte AS (
                     END AS stock_status
                 FROM {{ source('raw', 'raw_inventory') }}
             )
-            SELECT * FROM cte
+            SELECT
+                product_id,
+                stock_status
+            FROM cte

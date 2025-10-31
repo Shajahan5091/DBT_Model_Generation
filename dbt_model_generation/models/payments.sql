@@ -11,4 +11,4 @@ WITH payment_categories AS (
             SELECT
                 payment_id,
                 payment_category
-            FROM payment_categories
+            FROM payment_categories;

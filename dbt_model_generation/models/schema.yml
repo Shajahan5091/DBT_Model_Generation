@@ -2,7 +2,7 @@ version: 2
 
 models:
 - name: customers
-                  description: The staging customers model
+                  description: No description provided
                   columns:
                       - name: customer_id
                         description: No description provided
@@ -27,22 +27,14 @@ models:
                   description: No description provided
                   columns:
                       - name: employee_id
+                        description: No description provided
                         tests:
                             - not_null
                             - unique
                       - name: annual_bonus
+                        description: No description provided
                         tests:
                             - not_null
-                  tests:
-                      - dbt_utils.recency:
-                          field: employee_id
-                          interval: '1 day'
-                          unique: true
-                      - dbt_utils.surrogate_key:
-                          field: employee_id
-                          unique: true
-                          target: stg_employees
-                          updated_at: updated_at
 
 - name: inventory_summary
                   description: No description provided
@@ -81,98 +73,103 @@ models:
                         description: No description provided
                         tests:
                             - not_null
-                  config:
-                      materialized: table
+                  tests:
+                      - not_null: [order_id, customer_id, order_week, total_amount_usd]
 
 - name: payments
-                  description: No description provided
+                  description: ''
                   columns:
                       - name: payment_id
-                        description: No description provided
+                        description: ''
                         tests:
                             - not_null
                             - unique
                       - name: payment_category
-                        description: No description provided
+                        description: ''
                         tests:
                             - accepted_values:
                                 values: [Card, Wallet, Cash]
 
 - name: products
-                description: No description provided
-                columns:
-                  - name: product_id
-                    tests:
-                      - not_null
-                      - unique
-                  - name: discounted_price
-                    tests:
-                      - not_null
-                tests:
-                  - dbt_utils.unique:
-                      column: product_id
-
-- name: reviews
                   description: No description provided
                   columns:
+                      - name: product_id
+                        tests:
+                            - not_null
+                            - unique
+                      - name: discounted_price
+                        tests:
+                            - not_null
+                  tests:
+                      - not_null:
+                          columns:
+                              - product_id
+                              - discounted_price
+                      - unique:
+                          columns:
+                              - product_id
+
+- name: reviews
+                  columns:
                       - name: review_id
-                        description: No description provided
                         tests:
                             - not_null
                             - unique
                       - name: sentiment_category
-                        description: No description provided
                         tests:
                             - accepted_values:
                                 values: [Positive, Neutral, Negative]
 
 - name: shipments
-                description: The staging shipments model
-                columns:
-                  - name: shipment_id
-                    description: No description provided
-                    tests:
-                      - not_null
-                      - unique
-                  - name: delivery_delay_days
-                    description: No description provided
-                    tests:
-                      - not_null
-                tests:
-                  - dbt_utils.recency:
-                      field: delivery_delay_days
-                      days: 7
+                  description: No description provided
+                  columns:
+                      - name: shipment_id
+                        description: No description provided
+                        tests:
+                            - not_null
+                            - unique
+                      - name: delivery_delay_days
+                        description: No description provided
+                        tests:
+                            - not_null
+            ```
 
 - name: transactions
                   description: No description provided
                   columns:
                       - name: transaction_id
-                        description: No description provided
                         tests:
                             - not_null
                             - unique
                       - name: amount_with_tax
-                        description: No description provided
                         tests:
                             - not_null
                   tests:
                       - dbt_utils.recency:
-                          days: 1
+                          field: transaction_id
+                          interval: '7 days'
+                          unique: true
+                      - dbt_utils.surrogate_key:
+                          field: transaction_id
 
-- name: web_sessions
-                  description: No description provided
-                  columns:
-                      - name: session_id
-                        description: No description provided
-                        tests:
-                            - not_null
-                            - unique
-                      - name: session_hour
-                        description: No description provided
-                        tests:
-                            - not_null
-                      - name: domain_name
-                        description: No description provided
-                        tests:
-                            - not_null
+```yaml
+        version: 2
+        models:
+            - name: web_sessions
+              description: No description provided
+              columns:
+                  - name: session_id
+                    description: No description provided
+                    tests:
+                        - not_null
+                        - unique
+                  - name: session_hour
+                    description: No description provided
+                    tests:
+                        - not_null
+                  - name: domain_name
+                    description: No description provided
+                    tests:
+                        - not_null
+        ```
 

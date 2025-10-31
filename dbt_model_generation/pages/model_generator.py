@@ -122,11 +122,13 @@ if st.button("Generate dbt Models"):
                - Apply transformation logic when provided.
                - Rename columns as per target mapping.
                - Use proper intendation
+               - Give only sql text no extra text like "```sql" or any other markigs
 
             2 **DBT Model YAML block** (after a line "---yaml---")
                - Describe the model `{t_table}` with columns, descriptions, and dbt tests.
                - Follow dbt YAML structure starting with `version: 2` and `models:`.
                - Use only valid YAML (no markdown formatting).
+               - Don't repeat the words like `version` or `models`.
                - Use proper intendation
 
             Schema Mapping:

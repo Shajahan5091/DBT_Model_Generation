@@ -54,7 +54,7 @@ sources:
               - not_null
 
       - name: raw_reviews
-        description: Raw data table for review information
+        description: Raw data table for product reviews
         columns:
           - name: id
             tests:
