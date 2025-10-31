@@ -145,7 +145,7 @@ if st.button("Generate dbt Models"):
             <model YAML>
 
             Important:
-            - SQL must start directly with SELECT or WITH.
+            - SQL must start directly with WITH.
             - YAML must be valid and indented correctly.
             - Give only sql text no extra text like ```sql or ```yaml. only necessary codes
             """
