@@ -55,8 +55,8 @@ options = CompleteOptions(
 session = Session.builder.configs(connection_parameters).create() 
 
 # --- 3. Create folder structure ---
-os.makedirs("generated_dbt/models", exist_ok=True)
-os.makedirs("generated_dbt/sources", exist_ok=True)
+# os.makedirs("generated_dbt/models", exist_ok=True)
+# os.makedirs("generated_dbt/sources", exist_ok=True)
 
 # --- Execute creation of Models and dbt Artifacts ---
 if st.button("Generate dbt Models"):
@@ -129,7 +129,7 @@ if st.button("Generate dbt Models"):
             result_text = result.get("response") if isinstance(result, dict) else str(result)
             sql_part = re.sub(r"(?i)^sure.*|^here.*|```.*", "", result_text).strip()
 
-            model_path = f"generated_dbt/models/{t_table}.sql"
+            model_path = f"models/{t_table}.sql"
             with open(model_path, "w", encoding="utf-8") as f:
                 f.write(sql_part)
 
@@ -174,7 +174,7 @@ if st.button("Generate dbt Models"):
         schema_text = schema_result.get("response") if isinstance(schema_result, dict) else str(schema_result)
         schema_text = re.sub(r"(?i)^sure.*|^here.*|```.*", "", schema_text).strip()
 
-        schema_yml_path = "generated_dbt/models/schema.yml"
+        schema_yml_path = "models/schema.yml"
         with open(schema_yml_path, "w", encoding="utf-8") as f:
             f.write(schema_text)
 
@@ -213,7 +213,7 @@ if st.button("Generate dbt Models"):
         sources_text = sources_result.get("response") if isinstance(sources_result, dict) else str(sources_result)
         sources_text = re.sub(r"(?i)^sure.*|^here.*|```.*", "", sources_text).strip()
 
-        sources_yml_path = "generated_dbt/sources/sources.yml"
+        sources_yml_path = "sources/sources.yml"
         with open(sources_yml_path, "w", encoding="utf-8") as f:
             f.write(sources_text)
 
