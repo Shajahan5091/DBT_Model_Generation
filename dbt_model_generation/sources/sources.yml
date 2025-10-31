@@ -1,67 +1,142 @@
 version: 2
 
 sources:
-  - name: raw
+  - name: raw_customers
     database: demo_db
     schema: raw
     tables:
       - name: raw_customers
-        description: Raw data table for customer information
         columns:
-          - name: id
+          - name: cust_id
             tests:
+              - not_null
               - unique
+          - name: first_name
+            tests:
+              - not_null
+          - name: signup_date
+            tests:
+              - not_null
+          - name: is_vip_flag
+            tests:
+              - not_null
+
+  - name: raw_employees
+    database: demo_db
+    schema: raw
+    tables:
       - name: raw_employees
-        description: Raw data table for employee information
         columns:
-          - name: id
+          - name: emp_id
             tests:
+              - not_null
               - unique
+          - name: salary
+            tests:
+              - not_null
+
+  - name: raw_inventory
+    database: demo_db
+    schema: raw
+    tables:
       - name: raw_inventory
-        description: Raw data table for inventory information
         columns:
-          - name: id
+          - name: product_id
             tests:
+              - not_null
               - unique
+          - name: quantity
+            tests:
+              - not_null
+
+  - name: raw_orders
+    database: demo_db
+    schema: raw
+    tables:
       - name: raw_orders
-        description: Raw data table for order information
         columns:
-          - name: id
+          - name: order_id
             tests:
+              - not_null
               - unique
+          - name: customer_id
+            tests:
+              - not_null
+          - name: order_date
+            tests:
+              - not_null
+          - name: total_amount
+            tests:
+              - not_null
+
+  - name: raw_payments
+    database: demo_db
+    schema: raw
+    tables:
       - name: raw_payments
-        description: Raw data table for payment information
         columns:
-          - name: id
+          - name: payment_id
             tests:
+              - not_null
               - unique
+          - name: payment_mode
+            tests:
+              - not_null
+
+  - name: raw_products
+    database: demo_db
+    schema: raw
+    tables:
       - name: raw_products
-        description: Raw data table for product information
         columns:
-          - name: id
+          - name: product_id
             tests:
+              - not_null
               - unique
+          - name: price
+            tests:
+              - not_null
+
+  - name: raw_reviews
+    database: demo_db
+    schema: raw
+    tables:
       - name: raw_reviews
-        description: Raw data table for product reviews
         columns:
-          - name: id
+          - name: review_id
             tests:
+              - not_null
               - unique
+          - name: rating
+            tests:
+              - not_null
+
+  - name: raw_shipments
+    database: demo_db
+    schema: raw
+    tables:
       - name: raw_shipments
-        description: Raw data table for shipment information
         columns:
-          - name: id
+          - name: shipment_id
             tests:
+              - not_null
               - unique
+          - name: delivery_date
+            tests:
+              - not_null
+
+  - name: raw_transactions
+    database: demo_db
+    schema: raw
+    tables:
       - name: raw_transactions
-        description: Raw data table for transaction information
         columns:
-          - name: id
+          - name: transaction_id
             tests:
+              - not_null
               - unique
-      - name: raw_web_logs
-        description: Raw data table for web logs
-        columns:
-          - name: id
+          - name: amount
             tests:
-              - unique
+              - not_null
+
+  - name: raw_web_logs

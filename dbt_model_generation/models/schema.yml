@@ -1,179 +1,124 @@
 version: 2
-
 models:
-- name: customers
-          columns:
-              - name: customer_id
-                tests:
-                    - not_null
-                    - unique
-              - name: full_name
-                tests:
-                    - not_null
-              - name: signup_month
-                tests:
-                    - not_null
-              - name: is_vip
-                tests:
-                    - accepted_values:
-                        values: [true, false]
-
-- name: employees
-      description: No description provided
-      columns:
-        - name: employee_id
-          description: No description provided
-          tests:
-            - not_null
-            - unique
-        - name: annual_bonus
-          description: No description provided
-          tests:
-            - not_null
-      tests:
-        - dbt_utils.recency:
-            field: employee_id
-            interval: '7 days'
-            create_expectation: true
-
-inventory_summary:
-            description: "Staging model for inventory summary data"
-            columns:
-                - name: product_id
-                  description: "No description provided"
-                  tests:
-                      - relationships:
-                          to: ref('products')
-                          field: product_id
-                - name: stock_status
-                  description: "No description provided"
-                  tests:
-                      - accepted_values:
-                          values: [IN_STOCK, OUT_OF_STOCK]
-
-- name: orders
-          description: The staging orders model
-          columns:
-              - name: order_id
-                description: No description provided
-                tests:
-                    - not_null
-                    - unique
-              - name: customer_id
-                description: No description provided
-                tests:
-                    - relationships:
-                        to: ref('customers')
-                        field: customer_id
-              - name: order_week
-                description: No description provided
-                tests:
-                    - not_null
-              - name: total_amount_usd
-                description: No description provided
-                tests:
-                    - not_null
-          configuration:
-              materialized: table
-
-payments:
-                    description: The staging model for payments data
-                    columns:
-                        - name: payment_id
-                          description: No description provided
-                          tests:
-                              - not_null
-                              - unique
-                        - name: payment_category
-                          description: No description provided
-                          tests:
-                              - accepted_values:
-                                  values: [Card, Wallet, Cash]
-
-- name: products
-                  description: No description provided
-                  columns:
-                      - name: product_id
-                        description: No description provided
-                        tests:
-                            - not_null
-                            - unique
-                      - name: discounted_price
-                        description: No description provided
-                        tests:
-                            - not_null
-
-reviews:
-                    description: No description provided
-                    columns:
-                        - name: review_id
-                          tests:
-                              - not_null
-                              - unique
-                        - name: sentiment_category
-                          tests:
-                              - accepted_values:
-                                  values: [Positive, Neutral, Negative]
-
-shipment_id:
-        tests:
-            - not_null
-            - unique
-    delivery_delay_days:
-        tests:
-            - not_null
-    version: 2
-    models:
-        - name: shipments
-          columns:
-              - name: shipment_id
-                tests:
-                    - not_null
-                    - unique
-              - name: delivery_delay_days
-                tests:
-                    - not_null
-          description: No description provided
-
-transactions:
-                    description: "No description provided"
-                    columns:
-                        - name: transaction_id
-                          tests:
-                              - not_null
-                              - unique
-                        - name: amount_with_tax
-                          tests:
-                              - not_null
-                    tests:
-                        - not_null:
-                            columns:
-                                - transaction_id
-                                - amount_with_tax
-                        - unique:
-                            columns:
-                                - transaction_id
-
-- name: web_sessions
-    description: No description provided
+  - name: customers
+    schema: staging
     columns:
-      - name: session_id
+      - name: customer_id
+        type: string
+        description: Direct mapping from cust_id
         tests:
           - not_null
           - unique
-      - name: session_hour
+      - name: full_name
+        type: string
+        description: Concatenate first_name and last_name
         tests:
           - not_null
-      - name: domain_name
+      - name: signup_month
+        type: string
+        description: Extract month name from signup_date
         tests:
           - not_null
-    tests:
-      - not_null:
-          columns:
-            - session_id
-            - session_hour
-            - domain_name
-      - unique:
-          columns:
-            - session_id
+      - name: is_vip
+        type: boolean
+        description: Convert Y/N to TRUE/FALSE
+        tests:
+          - not_null
 
+  - name: employees
+    schema: staging
+    columns:
+      - name: employee_id
+        type: string
+        description: Direct mapping from emp_id
+        tests:
+          - not_null
+          - unique
+      - name: annual_bonus
+        type: float
+        description: Calculate 15% of salary as annual bonus
+        tests:
+          - not_null
+
+  - name: inventory_summary
+    schema: staging
+    columns:
+      - name: product_id
+        type: string
+        description: Direct mapping from product_id
+        tests:
+          - not_null
+          - unique
+      - name: stock_status
+        type: string
+        description: If quantity > 0 then 'IN_STOCK' else 'OUT_OF_STOCK'
+        tests:
+          - not_null
+
+  - name: orders
+    schema: staging
+    columns:
+      - name: order_id
+        type: string
+        description: Direct mapping from order_id
+        tests:
+          - not_null
+          - unique
+      - name: customer_id
+        type: string
+        description: Direct mapping from customer_id
+        tests:
+          - not_null
+      - name: order_week
+        type: string
+        description: Derive ISO week from order_date
+        tests:
+          - not_null
+      - name: total_amount_usd
+        type: float
+        description: Convert from local_currency using exchange_rate table
+        tests:
+          - not_null
+
+  - name: payments
+    schema: staging
+    columns:
+      - name: payment_id
+        type: string
+        description: Direct mapping from payment_id
+        tests:
+          - not_null
+          - unique
+      - name: payment_category
+        type: string
+        description: Categorize as 'Card','Wallet','Cash' based on payment_mode value
+        tests:
+          - not_null
+
+  - name: products
+    schema: staging
+    columns:
+      - name: product_id
+        type: string
+        description: Direct mapping from product_id
+        tests:
+          - not_null
+          - unique
+      - name: discounted_price
+        type: float
+        description: Apply 10% discount if category = 'Seasonal'
+        tests:
+          - not_null
+
+  - name: reviews
+    schema: staging
+    columns:
+      - name: review_id
+        type: string
+        description: Direct mapping from review_id
+        tests:
+          - not_null
+          - unique
+      - name: sentiment_category
+        type: string
+        description: If rating
