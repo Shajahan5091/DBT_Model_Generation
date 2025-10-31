@@ -112,7 +112,9 @@ if st.button("Generate dbt Models"):
             - Use `{{{{ source('{source_schema}', '{source_table}') }}}}` for source references.
             - Apply transformation logic when provided.
             - Rename columns as per target mapping.
-            - SQL must start directly with SELECT or WITH.
+            - SQL must start directly with WITH.
+            - Give only sql text no extra text like "```sql" or any other markigs
+            - Use proper intendation
 
             Mapping:
             {mapping_str}
@@ -156,11 +158,11 @@ if st.button("Generate dbt Models"):
         You are a Snowflake + dbt expert.
 
         Generate one valid dbt **schema.yml** file for the following models.
-        Each model should include:
-        - version: 2
-        - model name
-        - columns with dbt tests (like not_null, unique)
-        - proper indentation and structure
+            - Describe the model `{t_table}` with columns, descriptions, and dbt tests.
+            - Follow dbt YAML structure starting with `version: 2` and `models:`.
+            - Use only valid YAML (no markdown formatting).
+            - Don't repeat the words like `version` or `models`.
+            - Use proper intendation
 
         Models:
         {chr(10).join(model_summary)}
