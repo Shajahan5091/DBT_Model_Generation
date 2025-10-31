@@ -1,9 +1,9 @@
-WITH payment_categories AS (
+WITH categorized_payments AS (
                 SELECT
                     payment_id,
                     CASE
-                        WHEN payment_mode IN ('VISA', 'MASTERCARD', 'AMEX') THEN 'Card'
-                        WHEN payment_mode IN ('PAYPAL', 'SKRILL') THEN 'Wallet'
+                        WHEN payment_mode IN ('Credit Card', 'Debit Card') THEN 'Card'
+                        WHEN payment_mode = 'E-Wallet' THEN 'Wallet'
                         ELSE 'Cash'
                     END AS payment_category
                 FROM {{ source('raw', 'raw_payments') }}
@@ -11,4 +11,4 @@ WITH payment_categories AS (
             SELECT
                 payment_id,
                 payment_category
-            FROM payment_categories;
+            FROM categorized_payments
