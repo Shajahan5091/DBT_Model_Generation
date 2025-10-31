@@ -1,0 +1,11 @@
+version: 2
+models:
+  - name: {{ model_name }}
+    description: "Auto-generated model for {{ model_name }}"
+    columns:
+    {% for col in columns %}
+      - name: {{ col.target_column }}
+        description: "{{ col.description or '' }}"
+        tests:
+          - not_null
+    {% endfor %}

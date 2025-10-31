@@ -1,0 +1,19 @@
+version: 2
+sources:
+  - name: {{ source_schema }}
+    description: "Auto-generated source for {{ source_schema }}"
+    database: {{ database_name }}
+    schema: {{ source_schema }}
+    tables:
+    {% for table in tables %}
+      - name: {{ table.name }}
+        description: "Source table for {{ table.name }}"
+        columns:
+        {% for col in table.columns %}
+          - name: {{ col.name }}
+            description: "{{ col.description or '' }}"
+            data_tests:
+              - unique:
+                    column_name: {{ col.name }}
+        {% endfor %}
+    {% endfor %}

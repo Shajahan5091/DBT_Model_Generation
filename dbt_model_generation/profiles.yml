@@ -1,0 +1,13 @@
+dbt_model_generation:
+  outputs:
+    dev:
+      account: DTJCYHT-WGB03396
+      database: DBT_MODEL_GENERATION
+      password: Shajahan@snowflake_2002
+      role: ACCOUNTADMIN
+      schema: DBT
+      threads: 1
+      type: snowflake
+      user: SHAJAHAN
+      warehouse: COMPUTE_WH
+  target: dev

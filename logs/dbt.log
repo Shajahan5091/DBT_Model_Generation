@@ -1,0 +1,126 @@
+[0m11:51:31.219023 [debug] [MainThread]: Got an exception trying to initialize tracking
+
+
+============================== 11:51:31.321493 | ecf894a8-cffa-4200-a996-141ac708eb06 ==============================
+[0m11:51:31.321493 [info ] [MainThread]: Running with dbt=1.10.13
+[0m11:51:31.321493 [debug] [MainThread]: running dbt with arguments {'printer_width': '80', 'write_json': 'True', 'cache_selected_only': 'False', 'warn_error': 'None', 'empty': 'None', 'debug': 'False', 'static_parser': 'True', 'log_cache_events': 'False', 'profiles_dir': 'C:\\Users\\shaja\\.dbt', 'log_format': 'default', 'quiet': 'False', 'use_colors': 'True', 'partial_parse': 'True', 'version_check': 'True', 'log_path': 'logs', 'introspect': 'True', 'warn_error_options': 'WarnErrorOptionsV2(error=[], warn=[], silence=[])', 'fail_fast': 'False', 'invocation_command': 'dbt init', 'no_print': 'None', 'send_anonymous_usage_stats': 'True', 'indirect_selection': 'eager', 'target_path': 'None', 'use_experimental_parser': 'False'}
+[0m11:51:38.927239 [debug] [MainThread]: Starter project path: C:\Users\shaja\AppData\Local\Programs\Python\Python312\Lib\site-packages\dbt\include\starter_project
+[0m11:51:38.960597 [info ] [MainThread]: 
+Your new dbt project "dbt_model_generation" was created!
+
+For more information on how to configure the profiles.yml file,
+please consult the dbt documentation here:
+
+  https://docs.getdbt.com/docs/configure-your-profile
+
+One more thing:
+
+Need help? Don't hesitate to reach out to us via GitHub issues or on Slack:
+
+  https://community.getdbt.com/
+
+Happy modeling!
+
+[0m11:51:38.960597 [info ] [MainThread]: Setting up your profile.
+[0m11:53:29.735016 [info ] [MainThread]: Profile dbt_model_generation written to C:\Users\shaja\.dbt\profiles.yml using target's profile_template.yml and your supplied values. Run 'dbt debug' to validate the connection.
+[0m11:53:29.738910 [debug] [MainThread]: Command `dbt init` succeeded at 11:53:29.738910 after 118.58 seconds
+[0m11:53:29.738910 [debug] [MainThread]: Flushing usage events
+[0m11:53:41.998740 [debug] [MainThread]: Got an exception trying to initialize tracking
+
+
+============================== 11:53:42.127646 | 2d631613-f1a0-4d8b-9d90-515eebd8fccc ==============================
+[0m11:53:42.127646 [info ] [MainThread]: Running with dbt=1.10.13
+[0m11:53:42.127646 [debug] [MainThread]: running dbt with arguments {'printer_width': '80', 'write_json': 'True', 'cache_selected_only': 'False', 'warn_error': 'None', 'profiles_dir': 'C:\\Users\\shaja\\.dbt', 'debug': 'False', 'static_parser': 'True', 'log_cache_events': 'False', 'empty': 'None', 'quiet': 'False', 'log_format': 'default', 'use_colors': 'True', 'partial_parse': 'True', 'version_check': 'True', 'log_path': 'logs', 'introspect': 'True', 'warn_error_options': 'WarnErrorOptionsV2(error=[], warn=[], silence=[])', 'fail_fast': 'False', 'invocation_command': 'dbt debug', 'no_print': 'None', 'send_anonymous_usage_stats': 'True', 'indirect_selection': 'eager', 'use_experimental_parser': 'False', 'target_path': 'None'}
+[0m11:53:42.163806 [info ] [MainThread]: dbt version: 1.10.13
+[0m11:53:42.163806 [info ] [MainThread]: python version: 3.12.7
+[0m11:53:42.163806 [info ] [MainThread]: python path: C:\Users\shaja\AppData\Local\Programs\Python\Python312\python.exe
+[0m11:53:42.163806 [info ] [MainThread]: os info: Windows-11-10.0.26200-SP0
+[0m11:53:43.416033 [info ] [MainThread]: Using profiles dir at C:\Users\shaja\.dbt
+[0m11:53:43.416033 [info ] [MainThread]: Using profiles.yml file at C:\Users\shaja\.dbt\profiles.yml
+[0m11:53:43.416033 [info ] [MainThread]: Using dbt_project.yml file at D:\Automated_dbt_model_generation\dbt_project.yml
+[0m11:53:43.416033 [error] [MainThread]: Encountered an error:
+Internal Error
+  Profile should not be None if loading profile completed
+[0m11:53:43.416033 [debug] [MainThread]: Command `dbt debug` failed at 11:53:43.416033 after 1.49 seconds
+[0m11:53:43.416033 [debug] [MainThread]: Flushing usage events
+[0m11:56:33.217434 [debug] [MainThread]: Got an exception trying to initialize tracking
+
+
+============================== 11:56:33.349624 | 31f53995-e368-4cbc-9d47-e07a61f6fb1a ==============================
+[0m11:56:33.349624 [info ] [MainThread]: Running with dbt=1.10.13
+[0m11:56:33.349624 [debug] [MainThread]: running dbt with arguments {'printer_width': '80', 'write_json': 'True', 'cache_selected_only': 'False', 'warn_error': 'None', 'empty': 'None', 'debug': 'False', 'static_parser': 'True', 'log_cache_events': 'False', 'profiles_dir': 'C:\\Users\\shaja\\.dbt', 'quiet': 'False', 'log_format': 'default', 'use_colors': 'True', 'partial_parse': 'True', 'version_check': 'True', 'log_path': 'logs', 'introspect': 'True', 'no_print': 'None', 'fail_fast': 'False', 'invocation_command': 'dbt debug', 'warn_error_options': 'WarnErrorOptionsV2(error=[], warn=[], silence=[])', 'send_anonymous_usage_stats': 'True', 'indirect_selection': 'eager', 'target_path': 'None', 'use_experimental_parser': 'False'}
+[0m11:56:33.381926 [info ] [MainThread]: dbt version: 1.10.13
+[0m11:56:33.381926 [info ] [MainThread]: python version: 3.12.7
+[0m11:56:33.381926 [info ] [MainThread]: python path: C:\Users\shaja\AppData\Local\Programs\Python\Python312\python.exe
+[0m11:56:33.381926 [info ] [MainThread]: os info: Windows-11-10.0.26200-SP0
+[0m11:56:34.543100 [info ] [MainThread]: Using profiles dir at C:\Users\shaja\.dbt
+[0m11:56:34.543100 [info ] [MainThread]: Using profiles.yml file at C:\Users\shaja\.dbt\profiles.yml
+[0m11:56:34.543100 [info ] [MainThread]: Using dbt_project.yml file at D:\Automated_dbt_model_generation\dbt_project.yml
+[0m11:56:34.543100 [error] [MainThread]: Encountered an error:
+Internal Error
+  Profile should not be None if loading profile completed
+[0m11:56:34.543100 [debug] [MainThread]: Command `dbt debug` failed at 11:56:34.543100 after 1.38 seconds
+[0m11:56:34.543100 [debug] [MainThread]: Flushing usage events
+[0m11:58:01.334903 [debug] [MainThread]: Got an exception trying to initialize tracking
+
+
+============================== 11:58:01.435020 | 6a0d1a3d-9554-41aa-abbf-8d9d96ad22e3 ==============================
+[0m11:58:01.435020 [info ] [MainThread]: Running with dbt=1.10.13
+[0m11:58:01.437031 [debug] [MainThread]: running dbt with arguments {'printer_width': '80', 'write_json': 'True', 'cache_selected_only': 'False', 'warn_error': 'None', 'profiles_dir': 'C:\\Users\\shaja\\.dbt', 'debug': 'False', 'static_parser': 'True', 'log_cache_events': 'False', 'empty': 'None', 'quiet': 'False', 'log_format': 'default', 'use_colors': 'True', 'partial_parse': 'True', 'version_check': 'True', 'log_path': 'logs', 'introspect': 'True', 'no_print': 'None', 'fail_fast': 'False', 'warn_error_options': 'WarnErrorOptionsV2(error=[], warn=[], silence=[])', 'invocation_command': 'dbt debug', 'send_anonymous_usage_stats': 'True', 'indirect_selection': 'eager', 'target_path': 'None', 'use_experimental_parser': 'False'}
+[0m11:58:01.475566 [info ] [MainThread]: dbt version: 1.10.13
+[0m11:58:01.475566 [info ] [MainThread]: python version: 3.12.7
+[0m11:58:01.475566 [info ] [MainThread]: python path: C:\Users\shaja\AppData\Local\Programs\Python\Python312\python.exe
+[0m11:58:01.475566 [info ] [MainThread]: os info: Windows-11-10.0.26200-SP0
+[0m11:58:02.820995 [info ] [MainThread]: Using profiles dir at C:\Users\shaja\.dbt
+[0m11:58:02.820995 [info ] [MainThread]: Using profiles.yml file at C:\Users\shaja\.dbt\profiles.yml
+[0m11:58:02.820995 [info ] [MainThread]: Using dbt_project.yml file at D:\Automated_dbt_model_generation\dbt_project.yml
+[0m11:58:02.820995 [info ] [MainThread]: adapter type: snowflake
+[0m11:58:02.829717 [info ] [MainThread]: adapter version: 1.10.2
+[0m11:58:02.829717 [info ] [MainThread]: Configuration:
+[0m11:58:02.832064 [info ] [MainThread]:   profiles.yml file [[32mOK found and valid[0m]
+[0m11:58:02.832064 [info ] [MainThread]:   dbt_project.yml file [[31mERROR not found[0m]
+[0m11:58:02.832064 [info ] [MainThread]: Required dependencies:
+[0m11:58:02.833877 [debug] [MainThread]: Executing "git --help"
+[0m11:58:02.891161 [debug] [MainThread]: STDOUT: "b"usage: git [-v | --version] [-h | --help] [-C <path>] [-c <name>=<value>]\n           [--exec-path[=<path>]] [--html-path] [--man-path] [--info-path]\n           [-p | --paginate | -P | --no-pager] [--no-replace-objects] [--no-lazy-fetch]\n           [--no-optional-locks] [--no-advice] [--bare] [--git-dir=<path>]\n           [--work-tree=<path>] [--namespace=<name>] [--config-env=<name>=<envvar>]\n           <command> [<args>]\n\nThese are common Git commands used in various situations:\n\nstart a working area (see also: git help tutorial)\n   clone      Clone a repository into a new directory\n   init       Create an empty Git repository or reinitialize an existing one\n\nwork on the current change (see also: git help everyday)\n   add        Add file contents to the index\n   mv         Move or rename a file, a directory, or a symlink\n   restore    Restore working tree files\n   rm         Remove files from the working tree and from the index\n\nexamine the history and state (see also: git help revisions)\n   bisect     Use binary search to find the commit that introduced a bug\n   diff       Show changes between commits, commit and working tree, etc\n   grep       Print lines matching a pattern\n   log        Show commit logs\n   show       Show various types of objects\n   status     Show the working tree status\n\ngrow, mark and tweak your common history\n   backfill   Download missing objects in a partial clone\n   branch     List, create, or delete branches\n   commit     Record changes to the repository\n   merge      Join two or more development histories together\n   rebase     Reapply commits on top of another base tip\n   reset      Reset current HEAD to the specified state\n   switch     Switch branches\n   tag        Create, list, delete or verify a tag object signed with GPG\n\ncollaborate (see also: git help workflows)\n   fetch      Download objects and refs from another repository\n   pull       Fetch from and integrate with another repository or a local branch\n   push       Update remote refs along with associated objects\n\n'git help -a' and 'git help -g' list available subcommands and some\nconcept guides. See 'git help <command>' or 'git help <concept>'\nto read about a specific subcommand or concept.\nSee 'git help git' for an overview of the system.\n""
+[0m11:58:02.891161 [debug] [MainThread]: STDERR: "b''"
+[0m11:58:02.891161 [info ] [MainThread]:  - git [[32mOK found[0m]
+
+[0m11:58:02.891161 [info ] [MainThread]: Connection:
+[0m11:58:02.891161 [info ] [MainThread]:   account: DTJCYHT-WGB03396
+[0m11:58:02.891161 [info ] [MainThread]:   user: SHAJAHAN
+[0m11:58:02.891161 [info ] [MainThread]:   database: DBT_MODEL_GENERATION
+[0m11:58:02.895301 [info ] [MainThread]:   warehouse: COMPUTE_WH
+[0m11:58:02.895301 [info ] [MainThread]:   role: ACCOUNTADMIN
+[0m11:58:02.895301 [info ] [MainThread]:   schema: DBT
+[0m11:58:02.897047 [info ] [MainThread]:   authenticator: None
+[0m11:58:02.897047 [info ] [MainThread]:   oauth_client_id: None
+[0m11:58:02.898329 [info ] [MainThread]:   query_tag: None
+[0m11:58:02.898329 [info ] [MainThread]:   client_session_keep_alive: False
+[0m11:58:02.899470 [info ] [MainThread]:   host: None
+[0m11:58:02.899470 [info ] [MainThread]:   port: None
+[0m11:58:02.900485 [info ] [MainThread]:   proxy_host: None
+[0m11:58:02.901535 [info ] [MainThread]:   proxy_port: None
+[0m11:58:02.902558 [info ] [MainThread]:   protocol: None
+[0m11:58:02.902959 [info ] [MainThread]:   connect_retries: 1
+[0m11:58:02.904837 [info ] [MainThread]:   connect_timeout: None
+[0m11:58:02.904837 [info ] [MainThread]:   retry_on_database_errors: False
+[0m11:58:02.904837 [info ] [MainThread]:   retry_all: False
+[0m11:58:02.906416 [info ] [MainThread]:   insecure_mode: False
+[0m11:58:02.906416 [info ] [MainThread]:   reuse_connections: True
+[0m11:58:02.907928 [info ] [MainThread]:   s3_stage_vpce_dns_name: None
+[0m11:58:02.909113 [info ] [MainThread]: Registered adapter: snowflake=1.10.2
+[0m11:58:03.369569 [debug] [MainThread]: Acquiring new snowflake connection 'debug'
+[0m11:58:08.244067 [debug] [MainThread]: Using snowflake connection "debug"
+[0m11:58:08.244067 [debug] [MainThread]: On debug: select 1 as id
+[0m11:58:08.244067 [debug] [MainThread]: Opening a new connection, currently in state init
+[0m11:58:10.761635 [debug] [MainThread]: SQL status: SUCCESS 1 in 2.517 seconds
+[0m11:58:10.761635 [info ] [MainThread]:   Connection test: [[32mOK connection ok[0m]
+
+[0m11:58:10.761635 [info ] [MainThread]: [31m1 check failed:[0m
+[0m11:58:10.761635 [info ] [MainThread]: Project loading failed for the following reason:
+ project path <D:\Automated_dbt_model_generation\dbt_project.yml> not found
+
+[0m11:58:10.761635 [debug] [MainThread]: Command `dbt debug` failed at 11:58:10.761635 after 9.52 seconds
+[0m11:58:10.761635 [debug] [MainThread]: Connection 'debug' was left open.
+[0m11:58:10.761635 [debug] [MainThread]: On debug: Close
+[0m11:58:11.266419 [debug] [MainThread]: Flushing usage events

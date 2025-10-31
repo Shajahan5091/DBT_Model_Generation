@@ -1,0 +1,178 @@
+version: 2
+
+models:
+- name: customers
+                  description: The staging customers model
+                  columns:
+                      - name: customer_id
+                        description: No description provided
+                        tests:
+                            - not_null
+                            - unique
+                      - name: full_name
+                        description: No description provided
+                        tests:
+                            - not_null
+                      - name: signup_month
+                        description: No description provided
+                        tests:
+                            - not_null
+                      - name: is_vip
+                        description: No description provided
+                        tests:
+                            - accepted_values:
+                                values: [true, false]
+
+- name: employees
+                  description: No description provided
+                  columns:
+                      - name: employee_id
+                        tests:
+                            - not_null
+                            - unique
+                      - name: annual_bonus
+                        tests:
+                            - not_null
+                  tests:
+                      - dbt_utils.recency:
+                          field: employee_id
+                          interval: '1 day'
+                          unique: true
+                      - dbt_utils.surrogate_key:
+                          field: employee_id
+                          unique: true
+                          target: stg_employees
+                          updated_at: updated_at
+
+- name: inventory_summary
+                  description: No description provided
+                  columns:
+                      - name: product_id
+                        description: No description provided
+                        tests:
+                            - relationships:
+                                to: ref('products')
+                                field: product_id
+                      - name: stock_status
+                        description: No description provided
+                        tests:
+                            - accepted_values:
+                                values: [IN_STOCK, OUT_OF_STOCK]
+
+- name: orders
+                  description: The staging orders model
+                  columns:
+                      - name: order_id
+                        description: No description provided
+                        tests:
+                            - not_null
+                            - unique
+                      - name: customer_id
+                        description: No description provided
+                        tests:
+                            - relationships:
+                                to: ref('customers')
+                                field: customer_id
+                      - name: order_week
+                        description: No description provided
+                        tests:
+                            - not_null
+                      - name: total_amount_usd
+                        description: No description provided
+                        tests:
+                            - not_null
+                  config:
+                      materialized: table
+
+- name: payments
+                  description: No description provided
+                  columns:
+                      - name: payment_id
+                        description: No description provided
+                        tests:
+                            - not_null
+                            - unique
+                      - name: payment_category
+                        description: No description provided
+                        tests:
+                            - accepted_values:
+                                values: [Card, Wallet, Cash]
+
+- name: products
+                description: No description provided
+                columns:
+                  - name: product_id
+                    tests:
+                      - not_null
+                      - unique
+                  - name: discounted_price
+                    tests:
+                      - not_null
+                tests:
+                  - dbt_utils.unique:
+                      column: product_id
+
+- name: reviews
+                  description: No description provided
+                  columns:
+                      - name: review_id
+                        description: No description provided
+                        tests:
+                            - not_null
+                            - unique
+                      - name: sentiment_category
+                        description: No description provided
+                        tests:
+                            - accepted_values:
+                                values: [Positive, Neutral, Negative]
+
+- name: shipments
+                description: The staging shipments model
+                columns:
+                  - name: shipment_id
+                    description: No description provided
+                    tests:
+                      - not_null
+                      - unique
+                  - name: delivery_delay_days
+                    description: No description provided
+                    tests:
+                      - not_null
+                tests:
+                  - dbt_utils.recency:
+                      field: delivery_delay_days
+                      days: 7
+
+- name: transactions
+                  description: No description provided
+                  columns:
+                      - name: transaction_id
+                        description: No description provided
+                        tests:
+                            - not_null
+                            - unique
+                      - name: amount_with_tax
+                        description: No description provided
+                        tests:
+                            - not_null
+                  tests:
+                      - dbt_utils.recency:
+                          days: 1
+
+- name: web_sessions
+                  description: No description provided
+                  columns:
+                      - name: session_id
+                        description: No description provided
+                        tests:
+                            - not_null
+                            - unique
+                      - name: session_hour
+                        description: No description provided
+                        tests:
+                            - not_null
+                      - name: domain_name
+                        description: No description provided
+                        tests:
+                            - not_null
+
