@@ -43,8 +43,8 @@ connection_parameters = {
     "account": "DTJCYHT-WGB03396",
     "role": "ACCOUNTADMIN",
     "warehouse": "COMPUTE_WH",
-    "database": "DBT_MODEL_GENERATION",
-    "schema": "DBT",
+    "database": "DATASET",
+    "schema": "PUBLIC",
 }
 
 options = CompleteOptions(
@@ -55,35 +55,28 @@ options = CompleteOptions(
 session = Session.builder.configs(connection_parameters).create() 
 
 # --- 3. Create folder structure ---
-os.makedirs("models", exist_ok=True)
-os.makedirs("sources", exist_ok=True)
+os.makedirs("generated_dbt/models", exist_ok=True)
+os.makedirs("generated_dbt/sources", exist_ok=True)
 
-# Execute creation of Models and dbt Artifacts with Button action
+# --- Execute creation of Models and dbt Artifacts ---
 if st.button("Generate dbt Models"):
 
-    # --- Validation before button action ---
     if mapping_file is None:
         st.error("⚠️ Please upload a Mapping File before generating dbt models.")
     else:
         st.write("🚀 Generating dbt models... please wait.")
-        print("🚀 Starting dbt model generation...")
+        print("\n🚀 Starting dbt model generation...")
 
-        # --- Initialize containers ---
         all_model_yamls = []
         source_tables = set()
 
-        # --- 5. Group by Target Table ---
         grouped = df.groupby(['target_schema', 'target_table'])
 
-        # --- 5. Process each model ---
         for (t_schema, t_table), subdf in grouped:
             source_schema = subdf['source_schema'].iloc[0]
             source_table = subdf['source_table'].iloc[0]
-            database_name = subdf['database'].iloc[0]
+            source_tables.add((source_schema, source_table))
 
-            source_tables.add((database_name, source_schema, source_table))
-
-            # --- Build mapping details ---
             mapping_details = []
             for _, row in subdf.iterrows():
                 source_expr = (
@@ -91,11 +84,13 @@ if st.button("Generate dbt Models"):
                     if pd.notna(row['transformation_logic']) and row['transformation_logic'].strip()
                     else row['source_column']
                 )
+
                 description = (
                     row['description']
                     if 'description' in row and pd.notna(row['description'])
                     else "No description provided"
                 )
+
                 test_info = (
                     row['test']
                     if 'test' in row and pd.notna(row['test'])
@@ -104,139 +99,124 @@ if st.button("Generate dbt Models"):
 
                 mapping_details.append(
                     f"{row['source_column']} → {row['target_column']} ({row['data_type']}) "
-                    f"| logic: {source_expr} "
-                    f"| description: {description} "
-                    f"| test: {test_info}"
+                    f"| logic: {source_expr} | description: {description} | test: {test_info}"
                 )
 
             mapping_str = "\n".join(mapping_details)
 
-            # --- Prompt for Cortex ---
+            # --- AI Prompt for SQL only ---
             prompt_text = f"""
             You are a Snowflake + dbt expert.
 
-            Generate exactly two outputs (no explanations, no markdown, no code fences):
+            Generate only one output: **DBT Model SQL**
+            - Use `{{{{ source('{source_schema}', '{source_table}') }}}}` for source references.
+            - Apply transformation logic when provided.
+            - Rename columns as per target mapping.
+            - SQL must start directly with SELECT or WITH.
 
-            1 **DBT Model SQL**
-               - Use `{{{{ source('{source_schema}', '{source_table}') }}}}` for source reference.
-               - Apply transformation logic when provided.
-               - Rename columns as per target mapping.
-               - Use proper intendation
-               - Give only sql text no extra text like "```sql" or any other markigs
-
-            2 **DBT Model YAML block** (after a line "---yaml---")
-               - Describe the model `{t_table}` with columns, descriptions, and dbt tests.
-               - Follow dbt YAML structure starting with `version: 2` and `models:`.
-               - Use only valid YAML (no markdown formatting).
-               - Don't repeat the words like `version` or `models`.
-               - Use proper intendation
-
-            Schema Mapping:
+            Mapping:
             {mapping_str}
 
-            Source Schema: {source_schema}
-            Source Table: {source_table}
             Target Schema: {t_schema}
-            Target Table (DBT Model Name): {t_table}
+            Target Table: {t_table}
 
-            Output format:
-            <SQL>
-            ---yaml---
-            <model YAML>
-
-            Important:
-            - SQL must start directly with WITH.
-            - YAML must be valid and indented correctly.
-            - Give only sql text no extra text like ```sql or ```yaml. only necessary codes
+            Output: SQL only, no markdown or YAML.
             """
 
-            # --- 6. Cortex AI call ---
-            print(f"\n🧠 Generating model for: {t_table}")
             result = Complete(model="mistral-large", prompt=prompt_text, session=session, options=options)
-
             result_text = result.get("response") if isinstance(result, dict) else str(result)
+            sql_part = re.sub(r"(?i)^sure.*|^here.*|```.*", "", result_text).strip()
 
-            parts = result_text.split("---yaml---", 1)
-            sql_part = parts[0].strip()
-            yaml_part = parts[1].strip() if len(parts) > 1 else ""
-
-            # --- Clean unwanted prose (heuristic cleanup) ---
-            sql_part = re.sub(r"(?i)^sure,.*|^here.*|^based on.*", "", sql_part).strip()
-            sql_part = re.sub(r"(?i)```SQL*|```sql*|```*", "", sql_part).strip()
-
-            # --- Write model SQL ---
-            model_path = f"models/{t_table}.sql"
+            model_path = f"generated_dbt/models/{t_table}.sql"
             with open(model_path, "w", encoding="utf-8") as f:
                 f.write(sql_part)
-            print(f"✅ Created model SQL: {model_path}")
 
-            # --- Collect model YAML ---
-            all_model_yamls.append(yaml_part)
-            print(f"✅ Collected YAML for model: {t_table}")
+            print(f"✅ Model created: {model_path}")
+            st.write(f"✅ Model created: `{t_table}.sql`")
 
-        # --- End of model loop ---
-        st.write("✅ All models and schema.yml blocks generated. Now generating consolidated sources.yml...")
-        print("\n🧩 All models generated. Starting final Cortex call for sources.yml...")
+        # --- Consolidated schema.yml generation via Cortex ---
+        st.write("🧠 Generating consolidated schema.yml with Cortex...")
+        print("\n🧠 Starting final Cortex call for schema.yml...")
 
-        # --- 7. Prepare summary for source.yml ---
-        unique_sources = (
-            df[['database', 'source_schema', 'source_table']]
-            .drop_duplicates()
-            .sort_values(by=['database', 'source_schema', 'source_table'])
-        )
+        model_summary = []
+        for (t_schema, t_table), subdf in df.groupby(['target_schema', 'target_table']):
+            mapping_lines = []
+            for _, row in subdf.iterrows():
+                logic = (
+                    row['transformation_logic']
+                    if pd.notna(row['transformation_logic']) and row['transformation_logic'].strip()
+                    else row['source_column']
+                )
+                mapping_lines.append(
+                    f"{row['source_column']} → {row['target_column']} ({row['data_type']}) | logic: {logic}"
+                )
+            model_summary.append(f"Model: {t_table}\nSchema: {t_schema}\nColumns:\n" + "\n".join(mapping_lines))
 
-        source_summary = "\n".join([
-            f"Database: {row['database']}, Schema: {row['source_schema']}, Table: {row['source_table']}"
-            for _, row in unique_sources.iterrows()
-        ])
-
-        # --- 8. Cortex prompt for sources.yml ---
-        source_prompt = f"""
+        schema_prompt = f"""
         You are a Snowflake + dbt expert.
 
-        Generate a complete dbt **sources.yml** file for the following list of sources.
-        Each source must include:
+        Generate one valid dbt **schema.yml** file for the following models.
+        Each model should include:
         - version: 2
-        - name: schema name
-        - database: database name
-        - schema: schema name
-        - tables: list of all tables under that schema
-        - each table must have `name:` and a `description:`
-        - if possible, add simple column tests (like unique on id)
-        - Combine everything into a single valid YAML (no markdown, no explanations).
+        - model name
+        - columns with dbt tests (like not_null, unique)
+        - proper indentation and structure
 
-        Sources:
-        {source_summary}
+        Models:
+        {chr(10).join(model_summary)}
 
-        Output only valid YAML.
+        Output YAML only — no markdown, no code fences, no prose.
         """
 
-        source_result = Complete(model="mistral-large", prompt=source_prompt, session=session, options=options)
-        source_text = source_result.get("response") if isinstance(source_result, dict) else str(source_result)
-        source_text = re.sub(r"(?i)^sure.*|^here.*|```yaml|```", "", source_text).strip()
+        schema_result = Complete(model="mistral-large", prompt=schema_prompt, session=session, options=options)
+        schema_text = schema_result.get("response") if isinstance(schema_result, dict) else str(schema_result)
+        schema_text = re.sub(r"(?i)^sure.*|^here.*|```.*", "", schema_text).strip()
 
-        sources_yml_path = "sources/sources.yml"
+        schema_yml_path = "generated_dbt/models/schema.yml"
+        with open(schema_yml_path, "w", encoding="utf-8") as f:
+            f.write(schema_text)
+
+        print(f"✅ Final consolidated schema.yml generated: {schema_yml_path}")
+        st.write("✅ Final consolidated `schema.yml` generated by Cortex AI")
+
+        # --- Consolidated sources.yml generation via Cortex ---
+        st.write("🧠 Generating consolidated sources.yml with Cortex...")
+        print("\n🧠 Starting final Cortex call for sources.yml...")
+
+        source_summary = []
+        for (schema, table), subdf in df.groupby(['source_schema', 'source_table']):
+            database = subdf['database'].iloc[0] if 'database' in subdf.columns else "UNKNOWN_DB"
+            cols = subdf['source_column'].unique().tolist()
+            source_summary.append(
+                f"Database: {database}\nSchema: {schema}\nTable: {table}\nColumns: {', '.join(cols)}"
+            )
+
+        sources_prompt = f"""
+        You are a Snowflake + dbt expert.
+
+        Generate a single **sources.yml** file for the following source tables.
+        Each source should include:
+        - version: 2
+        - name, database, schema, tables, and columns
+        - Add minimal tests (e.g., not_null or unique)
+        - Output must be valid YAML
+
+        Sources:
+        {chr(10).join(source_summary)}
+
+        Output YAML only — no markdown or prose.
+        """
+
+        sources_result = Complete(model="mistral-large", prompt=sources_prompt, session=session, options=options)
+        sources_text = sources_result.get("response") if isinstance(sources_result, dict) else str(sources_result)
+        sources_text = re.sub(r"(?i)^sure.*|^here.*|```.*", "", sources_text).strip()
+
+        sources_yml_path = "generated_dbt/sources/sources.yml"
         with open(sources_yml_path, "w", encoding="utf-8") as f:
-            f.write(source_text)
+            f.write(sources_text)
 
-        print(f"✅ Created final consolidated sources.yml: {sources_yml_path}")
+        print(f"✅ Final consolidated sources.yml generated: {sources_yml_path}")
         st.write("✅ Final consolidated `sources.yml` generated by Cortex AI")
 
-        # --- 9. Combine all model YAMLs into schema.yml ---
-        schema_yml_path = "models/schema.yml"
-        merged_yaml = "version: 2\n\nmodels:\n"
-
-        for yml in all_model_yamls:
-            cleaned = re.sub(r"(?im)^version:\s*2\s*", "", yml)
-            cleaned = re.sub(r"(?im)^models:\s*", "", cleaned)
-            cleaned = re.sub(r"(?m)^(?=\S)", "  ", cleaned)
-            merged_yaml += cleaned.strip() + "\n\n"
-
-        with open(schema_yml_path, "w", encoding="utf-8") as f:
-            f.write(merged_yaml)
-
-        print(f"✅ Combined schema.yml created: {schema_yml_path}")
-        st.write("✅ Combined schema.yml generated (with merged models)")
-        st.write("\n🎉 All DBT files successfully created under 'dbt_model_generation/'")
-
-        print("\n🎉 All dbt artifacts successfully generated!\n")
+        st.success("🎉 All DBT files successfully created under `generated_dbt/`")
+        print("\n🎉 All DBT files successfully created under generated_dbt/")
