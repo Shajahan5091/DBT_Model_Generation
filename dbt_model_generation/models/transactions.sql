@@ -1,12 +1,12 @@
 WITH source_data AS (
-    SELECT
+    SELECT 
         transaction_id,
         amount
     FROM {{ source('raw', 'raw_transactions') }}
 ),
 
 transformed AS (
-    SELECT
+    SELECT 
         -- Direct mapping for transaction_id
         CAST(transaction_id AS STRING) AS transaction_id,
         

@@ -16,7 +16,7 @@ transformed AS (
         CAST(customer_id AS STRING) AS customer_id,
         
         -- Derive ISO week from order_date
-        CAST(DATE_PART('week', order_date) AS STRING) AS order_week,
+        CAST(DATE_PART('WEEK', order_date) AS STRING) AS order_week,
         
         -- Convert from INR to USD (assuming conversion rate of 0.012)
         CAST(total_amount * 0.012 AS FLOAT) AS total_amount_usd

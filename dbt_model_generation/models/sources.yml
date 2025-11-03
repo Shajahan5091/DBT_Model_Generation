@@ -4,10 +4,11 @@ sources:
   - name: raw
     database: demo_db
     schema: raw
-    description: "Raw source data from various systems"
+    description: "Raw source data from operational systems"
+    
     tables:
       - name: raw_customers
-        description: "Customer information including VIP status"
+        description: "Customer information and profile data"
         columns:
           - name: cust_id
             description: "Unique customer identifier"
@@ -22,7 +23,7 @@ sources:
             description: "Flag indicating VIP customer status"
 
       - name: raw_employees
-        description: "Employee data including compensation"
+        description: "Employee information and compensation data"
         columns:
           - name: emp_id
             description: "Unique employee identifier"
@@ -36,11 +37,11 @@ sources:
         description: "Product inventory levels"
         columns:
           - name: product_id
-            description: "Product identifier"
+            description: "Unique product identifier"
             tests:
               - not_null
           - name: quantity
-            description: "Available quantity in inventory"
+            description: "Available product quantity"
 
       - name: raw_orders
         description: "Customer order transactions"
@@ -51,7 +52,7 @@ sources:
               - unique
               - not_null
           - name: customer_id
-            description: "Customer who placed the order"
+            description: "Reference to customer who placed order"
             tests:
               - not_null
           - name: order_date
@@ -71,7 +72,7 @@ sources:
             description: "Method of payment used"
 
       - name: raw_products
-        description: "Product catalog with pricing"
+        description: "Product catalog and pricing information"
         columns:
           - name: product_id
             description: "Unique product identifier"
@@ -82,7 +83,7 @@ sources:
             description: "Product price"
 
       - name: raw_reviews
-        description: "Customer product reviews"
+        description: "Customer product reviews and ratings"
         columns:
           - name: review_id
             description: "Unique review identifier"
@@ -90,10 +91,10 @@ sources:
               - unique
               - not_null
           - name: rating
-            description: "Review rating score"
+            description: "Customer rating score"
 
       - name: raw_shipments
-        description: "Order shipment tracking"
+        description: "Order shipment and delivery information"
         columns:
           - name: shipment_id
             description: "Unique shipment identifier"
@@ -101,7 +102,7 @@ sources:
               - unique
               - not_null
           - name: delivery_date
-            description: "Date of delivery"
+            description: "Date when shipment was delivered"
 
       - name: raw_transactions
         description: "Financial transaction records"
@@ -115,10 +116,10 @@ sources:
             description: "Transaction amount"
 
       - name: raw_web_logs
-        description: "Website activity logs"
+        description: "Website activity and user session logs"
         columns:
           - name: session_id
-            description: "User session identifier"
+            description: "Unique session identifier"
             tests:
               - not_null
           - name: timestamp

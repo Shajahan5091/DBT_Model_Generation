@@ -14,7 +14,7 @@ transformed AS (
         -- Extract hour from timestamp
         EXTRACT(HOUR FROM timestamp)::INTEGER AS session_hour,
         
-        -- Extract domain from url using string split
+        -- Extract domain from url using string split on '/'
         SPLIT_PART(url, '/', 3)::STRING AS domain_name
         
     FROM source_data

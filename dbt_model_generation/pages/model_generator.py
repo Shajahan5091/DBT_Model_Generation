@@ -2,9 +2,8 @@ import streamlit as st
 import pandas as pd
 import yaml
 import os
-import zipfile
+import shutil
 from jinja2 import Environment, FileSystemLoader
-import io
 import json
 from snowflake.snowpark import Session
 from snowflake.cortex import Complete, CompleteOptions
@@ -58,9 +57,15 @@ options = CompleteOptions(
 )
 session = Session.builder.configs(connection_parameters).create() 
 
+models_folder_path = "dbt_model_generation\models"
+
 # --- 3. Create folder structure ---
-# os.makedirs("generated_dbt/models", exist_ok=True)
-# os.makedirs("generated_dbt/sources", exist_ok=True)
+if os.path.exists(models_folder_path):
+    shutil.rmtree(models_folder_path)
+    print(f"🗑️ Deleted existing folder: {models_folder_path}")
+
+# Create new folder
+os.makedirs(models_folder_path)
 
 # --- Execute creation of Models and dbt Artifacts ---
 if st.button("Generate dbt Models"):

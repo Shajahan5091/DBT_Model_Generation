@@ -2,7 +2,7 @@ version: 2
 
 sources:
   - name: raw_data
-    database: raw_database
+    database: raw_db
     schema: raw_data
     tables:
       - name: customers
@@ -125,19 +125,19 @@ sources:
 
 models:
   - name: customers
-    description: Staging model for customer data with transformed columns
+    description: Customer data with transformed fields for analytics
     columns:
       - name: customer_id
-        description: Unique identifier for each customer, mapped from cust_id
+        description: Unique identifier for each customer
         tests:
           - not_null
           - unique
       - name: full_name
-        description: Full name created by concatenating first_name and last_name
+        description: Customer full name concatenated from first and last name
         tests:
           - not_null
       - name: signup_month
-        description: Month name extracted from signup_date
+        description: Month name extracted from signup date
         tests:
           - not_null
       - name: is_vip
@@ -146,10 +146,10 @@ models:
           - not_null
 
   - name: employees
-    description: Staging model for employee data with calculated annual bonus
+    description: Employee data with calculated annual bonus
     columns:
       - name: employee_id
-        description: Unique identifier for each employee, mapped from emp_id
+        description: Unique identifier for each employee
         tests:
           - not_null
           - unique
@@ -159,7 +159,7 @@ models:
           - not_null
 
   - name: inventory_summary
-    description: Staging model for inventory with stock status categorization
+    description: Inventory data with stock status categorization
     columns:
       - name: product_id
         description: Unique identifier for each product
@@ -174,7 +174,7 @@ models:
               values: ['IN_STOCK', 'OUT_OF_STOCK']
 
   - name: orders
-    description: Staging model for orders with date transformations and currency conversion
+    description: Order data with time-based transformations and currency conversion
     columns:
       - name: order_id
         description: Unique identifier for each order
@@ -186,7 +186,7 @@ models:
         tests:
           - not_null
       - name: order_week
-        description: ISO week derived from order_date
+        description: ISO week number derived from order date
         tests:
           - not_null
       - name: total_amount_usd
@@ -195,7 +195,7 @@ models:
           - not_null
 
   - name: payments
-    description: Staging model for payments with categorized payment modes
+    description: Payment data with categorized payment methods
     columns:
       - name: payment_id
         description: Unique identifier for each payment
@@ -210,7 +210,7 @@ models:
               values: ['Card', 'Wallet', 'Cash']
 
   - name: products
-    description: Staging model for products with conditional discount pricing
+    description: Product data with conditional discount pricing
     columns:
       - name: product_id
         description: Unique identifier for each product
@@ -218,12 +218,12 @@ models:
           - not_null
           - unique
       - name: discounted_price
-        description: Price with 10% discount applied for Seasonal category items
+        description: Price with 10% discount applied for seasonal products
         tests:
           - not_null
 
   - name: reviews
-    description: Staging model for reviews with sentiment categorization
+    description: Review data with sentiment categorization
     columns:
       - name: review_id
         description: Unique identifier for each review
@@ -231,14 +231,14 @@ models:
           - not_null
           - unique
       - name: sentiment_category
-        description: Sentiment category based on rating value
+        description: Sentiment category based on rating score
         tests:
           - not_null
           - accepted_values:
               values: ['Positive', 'Neutral', 'Negative']
 
   - name: shipments
-    description: Staging model for shipments with delivery delay calculation
+    description: Shipment data with delivery delay calculations
     columns:
       - name: shipment_id
         description: Unique identifier for each shipment
@@ -251,7 +251,7 @@ models:
           - not_null
 
   - name: transactions
-    description: Staging model for transactions with tax calculations
+    description: Transaction data with tax calculations
     columns:
       - name: transaction_id
         description: Unique identifier for each transaction
@@ -264,7 +264,7 @@ models:
           - not_null
 
   - name: web_sessions
-    description: Staging model for web sessions with time and URL parsing
+    description: Web session data with time and domain extractions
     columns:
       - name: session_id
         description: Unique identifier for each web session
