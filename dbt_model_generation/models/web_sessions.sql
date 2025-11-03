@@ -1,20 +1,23 @@
-WITH extracted_hour AS (
-                SELECT
-                    session_id,
-                    EXTRACT(HOUR FROM timestamp) AS session_hour,
-                    url
-                FROM {{ source('raw', 'raw_web_logs') }}
-            ),
-            domain_extraction AS (
-                SELECT
-                    session_id,
-                    session_hour,
-                    SPLIT_PART(url, '/', 1) AS domain_name
-                FROM extracted_hour
-            )
+WITH source_data AS (
+    SELECT 
+        session_id,
+        timestamp,
+        url
+    FROM {{ source('raw', 'raw_web_logs') }}
+),
 
-            SELECT
-                session_id,
-                session_hour,
-                domain_name
-            FROM domain_extraction
+transformed AS (
+    SELECT 
+        -- Direct mapping for session_id
+        session_id::STRING AS session_id,
+        
+        -- Extract hour from timestamp
+        EXTRACT(HOUR FROM timestamp)::INTEGER AS session_hour,
+        
+        -- Extract domain from url using string split
+        SPLIT_PART(url, '/', 3)::STRING AS domain_name
+        
+    FROM source_data
+)
+
+SELECT * FROM transformed

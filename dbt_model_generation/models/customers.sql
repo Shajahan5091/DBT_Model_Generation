@@ -1,44 +1,32 @@
-WITH transformed_data AS (
-    SELECT
-        cust_id AS customer_id,
-        CONCAT(first_name, ' ', last_name) AS full_name,
-        TO_CHAR(signup_date, 'Month') AS signup_month,
-        CASE
-            WHEN is_vip_flag = 'Y' THEN TRUE
-            ELSE FALSE
-        END AS is_vip
+WITH source_data AS (
+    SELECT 
+        cust_id,
+        first_name,
+        last_name,
+        signup_date,
+        is_vip_flag
     FROM {{ source('raw', 'raw_customers') }}
 ),
 
-tests AS (
+transformed AS (
     SELECT
-        customer_id,
-        full_name,
-        signup_month,
-        is_vip,
-        COUNT(*) OVER (PARTITION BY customer_id) AS cnt_customer_id,
-        CASE
-            WHEN full_name IS NULL THEN 'fail'
-            ELSE 'pass'
-        END AS test_full_name,
-        CASE
-            WHEN signup_month IS NULL THEN 'fail'
-            ELSE 'pass'
-        END AS test_signup_month,
-        CASE
-            WHEN is_vip NOT IN ('true', 'false') THEN 'fail'
-            ELSE 'pass'
-        END AS test_is_vip
-    FROM transformed_data
+        -- Direct mapping for customer_id
+        CAST(cust_id AS STRING) AS customer_id,
+        
+        -- Concatenate first_name and last_name for full_name
+        CAST(CONCAT(COALESCE(first_name, ''), ' ', COALESCE(last_name, '')) AS STRING) AS full_name,
+        
+        -- Extract month name from signup_date
+        CAST(MONTHNAME(signup_date) AS STRING) AS signup_month,
+        
+        -- Convert Y/N to TRUE/FALSE for is_vip
+        CASE 
+            WHEN UPPER(is_vip_flag) = 'Y' THEN TRUE
+            WHEN UPPER(is_vip_flag) = 'N' THEN FALSE
+            ELSE NULL
+        END AS is_vip
+        
+    FROM source_data
 )
 
-SELECT
-    customer_id,
-    full_name,
-    signup_month,
-    is_vip
-FROM tests
-WHERE cnt_customer_id = 1
-AND test_full_name = 'pass'
-AND test_signup_month = 'pass'
-AND test_is_vip = 'pass'
+SELECT * FROM transformed

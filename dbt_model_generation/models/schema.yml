@@ -1,124 +1,281 @@
 version: 2
+
+sources:
+  - name: raw_data
+    database: raw_database
+    schema: raw_data
+    tables:
+      - name: customers
+        columns:
+          - name: cust_id
+            tests:
+              - not_null
+              - unique
+          - name: first_name
+            tests:
+              - not_null
+          - name: last_name
+            tests:
+              - not_null
+          - name: signup_date
+            tests:
+              - not_null
+          - name: is_vip_flag
+            tests:
+              - accepted_values:
+                  values: ['Y', 'N']
+      - name: employees
+        columns:
+          - name: emp_id
+            tests:
+              - not_null
+              - unique
+          - name: salary
+            tests:
+              - not_null
+      - name: inventory_summary
+        columns:
+          - name: product_id
+            tests:
+              - not_null
+              - unique
+          - name: quantity
+            tests:
+              - not_null
+      - name: orders
+        columns:
+          - name: order_id
+            tests:
+              - not_null
+              - unique
+          - name: customer_id
+            tests:
+              - not_null
+          - name: order_date
+            tests:
+              - not_null
+          - name: total_amount
+            tests:
+              - not_null
+      - name: payments
+        columns:
+          - name: payment_id
+            tests:
+              - not_null
+              - unique
+          - name: payment_mode
+            tests:
+              - not_null
+      - name: products
+        columns:
+          - name: product_id
+            tests:
+              - not_null
+              - unique
+          - name: price
+            tests:
+              - not_null
+          - name: category
+            tests:
+              - not_null
+      - name: reviews
+        columns:
+          - name: review_id
+            tests:
+              - not_null
+              - unique
+          - name: rating
+            tests:
+              - not_null
+              - accepted_values:
+                  values: [1, 2, 3, 4, 5]
+      - name: shipments
+        columns:
+          - name: shipment_id
+            tests:
+              - not_null
+              - unique
+          - name: delivery_date
+            tests:
+              - not_null
+          - name: order_date
+            tests:
+              - not_null
+      - name: transactions
+        columns:
+          - name: transaction_id
+            tests:
+              - not_null
+              - unique
+          - name: amount
+            tests:
+              - not_null
+      - name: web_sessions
+        columns:
+          - name: session_id
+            tests:
+              - not_null
+              - unique
+          - name: timestamp
+            tests:
+              - not_null
+          - name: url
+            tests:
+              - not_null
+
 models:
   - name: customers
-    schema: staging
+    description: Staging table for customer data with transformed columns
     columns:
       - name: customer_id
-        type: string
-        description: Direct mapping from cust_id
+        description: Unique identifier for each customer, mapped from cust_id
         tests:
           - not_null
           - unique
       - name: full_name
-        type: string
-        description: Concatenate first_name and last_name
+        description: Full name created by concatenating first_name and last_name
         tests:
           - not_null
       - name: signup_month
-        type: string
-        description: Extract month name from signup_date
+        description: Month name extracted from signup_date
         tests:
           - not_null
       - name: is_vip
-        type: boolean
-        description: Convert Y/N to TRUE/FALSE
+        description: VIP status converted from Y/N flag to boolean TRUE/FALSE
         tests:
           - not_null
 
   - name: employees
-    schema: staging
+    description: Staging table for employee data with calculated annual bonus
     columns:
       - name: employee_id
-        type: string
-        description: Direct mapping from emp_id
+        description: Unique identifier for each employee, mapped from emp_id
         tests:
           - not_null
           - unique
       - name: annual_bonus
-        type: float
-        description: Calculate 15% of salary as annual bonus
+        description: Annual bonus calculated as 15% of salary
         tests:
           - not_null
 
   - name: inventory_summary
-    schema: staging
+    description: Staging table for inventory with stock status categorization
     columns:
       - name: product_id
-        type: string
-        description: Direct mapping from product_id
+        description: Unique identifier for each product
         tests:
           - not_null
           - unique
       - name: stock_status
-        type: string
-        description: If quantity > 0 then 'IN_STOCK' else 'OUT_OF_STOCK'
+        description: Stock availability status based on quantity (IN_STOCK/OUT_OF_STOCK)
         tests:
           - not_null
+          - accepted_values:
+              values: ['IN_STOCK', 'OUT_OF_STOCK']
 
   - name: orders
-    schema: staging
+    description: Staging table for orders with date transformations and currency conversion
     columns:
       - name: order_id
-        type: string
-        description: Direct mapping from order_id
+        description: Unique identifier for each order
         tests:
           - not_null
           - unique
       - name: customer_id
-        type: string
-        description: Direct mapping from customer_id
+        description: Customer identifier linked to the order
         tests:
           - not_null
       - name: order_week
-        type: string
-        description: Derive ISO week from order_date
+        description: ISO week number derived from order_date
         tests:
           - not_null
       - name: total_amount_usd
-        type: float
-        description: Convert from local_currency using exchange_rate table
+        description: Order total amount converted from INR to USD
         tests:
           - not_null
 
   - name: payments
-    schema: staging
+    description: Staging table for payments with categorized payment methods
     columns:
       - name: payment_id
-        type: string
-        description: Direct mapping from payment_id
+        description: Unique identifier for each payment
         tests:
           - not_null
           - unique
       - name: payment_category
-        type: string
-        description: Categorize as 'Card','Wallet','Cash' based on payment_mode value
+        description: Payment method categorized as Card, Wallet, or Cash
         tests:
           - not_null
+          - accepted_values:
+              values: ['Card', 'Wallet', 'Cash']
 
   - name: products
-    schema: staging
+    description: Staging table for products with conditional discount pricing
     columns:
       - name: product_id
-        type: string
-        description: Direct mapping from product_id
+        description: Unique identifier for each product
         tests:
           - not_null
           - unique
       - name: discounted_price
-        type: float
-        description: Apply 10% discount if category = 'Seasonal'
+        description: Price with 10% discount applied for Seasonal category products
         tests:
           - not_null
 
   - name: reviews
-    schema: staging
+    description: Staging table for reviews with sentiment categorization
     columns:
       - name: review_id
-        type: string
-        description: Direct mapping from review_id
+        description: Unique identifier for each review
         tests:
           - not_null
           - unique
       - name: sentiment_category
-        type: string
-        description: If rating
+        description: Sentiment category based on rating (Positive/Neutral/Negative)
+        tests:
+          - not_null
+          - accepted_values:
+              values: ['Positive', 'Neutral', 'Negative']
+
+  - name: shipments
+    description: Staging table for shipments with delivery delay calculations
+    columns:
+      - name: shipment_id
+        description: Unique identifier for each shipment
+        tests:
+          - not_null
+          - unique
+      - name: delivery_delay_days
+        description: Number of days between order_date and delivery_date
+        tests:
+          - not_null
+
+  - name: transactions
+    description: Staging table for transactions with tax calculations
+    columns:
+      - name: transaction_id
+        description: Unique identifier for each transaction
+        tests:
+          - not_null
+          - unique
+      - name: amount_with_tax
+        description: Transaction amount with 18% GST added
+        tests:
+          - not_null
+
+  - name: web_sessions
+    description: Staging table for web sessions with time and URL parsing
+    columns:
+      - name: session_id
+        description: Unique identifier for each web session
+        tests:
+          - not_null
+          - unique
+      - name: session_hour
+        description: Hour extracted from session timestamp
+        tests:
+          - not_null
+      - name: domain_name
+        description: Domain name extracted from URL
+        tests:
+          - not_null

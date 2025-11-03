@@ -1,15 +1,16 @@
-WITH delivery_delay AS (
-                SELECT
-                    shipment_id,
-                    DATEDIFF(day, order_date, delivery_date) AS delivery_delay_days
-                FROM {{ source('raw', 'raw_shipments') }}
-            ),
+WITH source_data AS (
+    SELECT 
+        shipment_id,
+        delivery_date,
+        order_date
+    FROM {{ source('raw', 'raw_shipments') }}
+),
 
-            shipments AS (
-                SELECT
-                    shipment_id,
-                    delivery_delay_days
-                FROM delivery_delay
-            )
+transformed AS (
+    SELECT 
+        shipment_id::STRING AS shipment_id,
+        DATEDIFF('day', order_date, delivery_date)::INTEGER AS delivery_delay_days
+    FROM source_data
+)
 
-            SELECT * FROM shipments;
+SELECT * FROM transformed

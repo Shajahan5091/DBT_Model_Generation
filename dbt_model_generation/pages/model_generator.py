@@ -48,8 +48,8 @@ connection_parameters = {
 }
 
 options = CompleteOptions(
-    temperature=0.4,
-    max_tokens=800,
+    temperature=0.2,
+    max_tokens=4096,
     guardrails=False
 )
 session = Session.builder.configs(connection_parameters).create() 
@@ -106,15 +106,27 @@ if st.button("Generate dbt Models"):
 
             # --- AI Prompt for SQL only ---
             prompt_text = f"""
-            You are a Snowflake + dbt expert.
+            You are an expert AI assistant specializing in data modeling, dbt, and analytics engineering for Snowflake.
+            Your task is to automatically generate dbt models based on provided metadata, SQL logic, or schema definitions.
 
-            Generate only one output: **DBT Model SQL**
-            - Use `{{{{ source('{source_schema}', '{source_table}') }}}}` for source references.
-            - Apply transformation logic when provided.
-            - Rename columns as per target mapping.
-            - SQL must start directly with WITH.
-            - Give only sql text no extra text like "```sql" or any other markigs
-            - Use proper intendation
+            You should:
+            Follow dbt best practices for model structure, naming conventions, and documentation.
+            1. Generate Snowflake-optimized SQL (use CTEs, proper casting, and efficient warehouse functions).
+            2. Make sure the snowflake syntax and function usage is as per snowflake's documentation.
+            3. Ensure modularity and lineage — staging models should map cleanly to intermediate and final marts.
+            4. Include Jinja and dbt macros where appropriate (e.g., for reusable logic, timestamps, or source references).
+            5. Clearly separate source, staging, intermediate, and mart layers following dbt folder structure.
+            6. Do not add semicolon at the end of the sql.
+            7. Use `{{{{ source('{source_schema}', '{source_table}') }}}}` for source references.
+            8. Apply transformation logic when provided.
+            9. Rename columns as per target mapping.
+            10. SQL must start directly with WITH.
+            11. Give only sql text no extra text like "```sql" or any other markigs
+            12. Use proper intendation
+
+            Your output should include:
+            1. The dbt model SQL file content (formatted).
+            2. (Optional) Add comments wherever necessary.
 
             Mapping:
             {mapping_str}
@@ -125,7 +137,7 @@ if st.button("Generate dbt Models"):
             Output: SQL only, no markdown or YAML.
             """
 
-            result = Complete(model="mistral-large", prompt=prompt_text, session=session, options=options)
+            result = Complete(model="claude-4-sonnet", prompt=prompt_text, session=session, options=options)
             result_text = result.get("response") if isinstance(result, dict) else str(result)
             sql_part = re.sub(r"(?i)^sure.*|^here.*|```.*", "", result_text).strip()
 
@@ -153,24 +165,43 @@ if st.button("Generate dbt Models"):
                     f"{row['source_column']} → {row['target_column']} ({row['data_type']}) | logic: {logic}"
                 )
             model_summary.append(f"Model: {t_table}\nSchema: {t_schema}\nColumns:\n" + "\n".join(mapping_lines))
+        print("models: ", model_summary)
 
         schema_prompt = f"""
         You are a Snowflake + dbt expert.
 
         Generate one valid dbt **schema.yml** file for the following models.
-            - Describe the model `{t_table}` with columns, descriptions, and dbt tests.
+            - Describe the model `{{t_table}}` with columns, descriptions, and dbt tests.
             - Follow dbt YAML structure starting with `version: 2` and `models:`.
             - Use only valid YAML (no markdown formatting).
             - Don't repeat the words like `version` or `models`.
             - Use proper intendation
+            - Don't skip anything. Give full code.
+            - Don't add schema name and type.
 
+        The generated yaml file should look like this:
+        version: 2
+
+        sources:
+        - name: {{ Source_schema }}
+            database: {{ Source_database}}
+            schema: {{ Source_schema }}
+            tables:
+            - name: {{source_table}}
+                columns:
+                - name: {{column1}}
+                    tests:
+                    - {{ tests }}
+                - name: {{ column2}}
+                    tests:
+                    - {{ tests}}
         Models:
         {chr(10).join(model_summary)}
 
         Output YAML only — no markdown, no code fences, no prose.
         """
 
-        schema_result = Complete(model="mistral-large", prompt=schema_prompt, session=session, options=options)
+        schema_result = Complete(model="claude-4-sonnet", prompt=schema_prompt, session=session, options=options,)
         schema_text = schema_result.get("response") if isinstance(schema_result, dict) else str(schema_result)
         schema_text = re.sub(r"(?i)^sure.*|^here.*|```.*", "", schema_text).strip()
 
@@ -192,16 +223,15 @@ if st.button("Generate dbt Models"):
             source_summary.append(
                 f"Database: {database}\nSchema: {schema}\nTable: {table}\nColumns: {', '.join(cols)}"
             )
-
+        
         sources_prompt = f"""
         You are a Snowflake + dbt expert.
 
         Generate a single **sources.yml** file for the following source tables.
-        Each source should include:
-        - version: 2
-        - name, database, schema, tables, and columns
-        - Add minimal tests (e.g., not_null or unique)
+        - Follow dbt best practices
         - Output must be valid YAML
+
+
 
         Sources:
         {chr(10).join(source_summary)}
@@ -209,11 +239,11 @@ if st.button("Generate dbt Models"):
         Output YAML only — no markdown or prose.
         """
 
-        sources_result = Complete(model="mistral-large", prompt=sources_prompt, session=session, options=options)
+        sources_result = Complete(model="claude-4-sonnet", prompt=sources_prompt, session=session, options=options)
         sources_text = sources_result.get("response") if isinstance(sources_result, dict) else str(sources_result)
         sources_text = re.sub(r"(?i)^sure.*|^here.*|```.*", "", sources_text).strip()
 
-        sources_yml_path = "sources/sources.yml"
+        sources_yml_path = "models/sources.yml"
         with open(sources_yml_path, "w", encoding="utf-8") as f:
             f.write(sources_text)
 
