@@ -125,7 +125,7 @@ sources:
 
 models:
   - name: customers
-    description: Staging table for customer data with transformed columns
+    description: Staging model for customer data with transformed columns
     columns:
       - name: customer_id
         description: Unique identifier for each customer, mapped from cust_id
@@ -141,12 +141,12 @@ models:
         tests:
           - not_null
       - name: is_vip
-        description: VIP status converted from Y/N flag to boolean TRUE/FALSE
+        description: VIP status converted from Y/N flag to boolean
         tests:
           - not_null
 
   - name: employees
-    description: Staging table for employee data with calculated annual bonus
+    description: Staging model for employee data with calculated annual bonus
     columns:
       - name: employee_id
         description: Unique identifier for each employee, mapped from emp_id
@@ -159,7 +159,7 @@ models:
           - not_null
 
   - name: inventory_summary
-    description: Staging table for inventory with stock status categorization
+    description: Staging model for inventory with stock status categorization
     columns:
       - name: product_id
         description: Unique identifier for each product
@@ -167,14 +167,14 @@ models:
           - not_null
           - unique
       - name: stock_status
-        description: Stock availability status based on quantity (IN_STOCK/OUT_OF_STOCK)
+        description: Stock availability status based on quantity
         tests:
           - not_null
           - accepted_values:
               values: ['IN_STOCK', 'OUT_OF_STOCK']
 
   - name: orders
-    description: Staging table for orders with date transformations and currency conversion
+    description: Staging model for orders with date transformations and currency conversion
     columns:
       - name: order_id
         description: Unique identifier for each order
@@ -182,11 +182,11 @@ models:
           - not_null
           - unique
       - name: customer_id
-        description: Customer identifier linked to the order
+        description: Customer identifier for the order
         tests:
           - not_null
       - name: order_week
-        description: ISO week number derived from order_date
+        description: ISO week derived from order_date
         tests:
           - not_null
       - name: total_amount_usd
@@ -195,7 +195,7 @@ models:
           - not_null
 
   - name: payments
-    description: Staging table for payments with categorized payment methods
+    description: Staging model for payments with categorized payment modes
     columns:
       - name: payment_id
         description: Unique identifier for each payment
@@ -203,14 +203,14 @@ models:
           - not_null
           - unique
       - name: payment_category
-        description: Payment method categorized as Card, Wallet, or Cash
+        description: Categorized payment method
         tests:
           - not_null
           - accepted_values:
               values: ['Card', 'Wallet', 'Cash']
 
   - name: products
-    description: Staging table for products with conditional discount pricing
+    description: Staging model for products with conditional discount pricing
     columns:
       - name: product_id
         description: Unique identifier for each product
@@ -218,12 +218,12 @@ models:
           - not_null
           - unique
       - name: discounted_price
-        description: Price with 10% discount applied for Seasonal category products
+        description: Price with 10% discount applied for Seasonal category items
         tests:
           - not_null
 
   - name: reviews
-    description: Staging table for reviews with sentiment categorization
+    description: Staging model for reviews with sentiment categorization
     columns:
       - name: review_id
         description: Unique identifier for each review
@@ -231,14 +231,14 @@ models:
           - not_null
           - unique
       - name: sentiment_category
-        description: Sentiment category based on rating (Positive/Neutral/Negative)
+        description: Sentiment category based on rating value
         tests:
           - not_null
           - accepted_values:
               values: ['Positive', 'Neutral', 'Negative']
 
   - name: shipments
-    description: Staging table for shipments with delivery delay calculations
+    description: Staging model for shipments with delivery delay calculation
     columns:
       - name: shipment_id
         description: Unique identifier for each shipment
@@ -246,12 +246,12 @@ models:
           - not_null
           - unique
       - name: delivery_delay_days
-        description: Number of days between order_date and delivery_date
+        description: Number of days between order date and delivery date
         tests:
           - not_null
 
   - name: transactions
-    description: Staging table for transactions with tax calculations
+    description: Staging model for transactions with tax calculations
     columns:
       - name: transaction_id
         description: Unique identifier for each transaction
@@ -264,7 +264,7 @@ models:
           - not_null
 
   - name: web_sessions
-    description: Staging table for web sessions with time and URL parsing
+    description: Staging model for web sessions with time and URL parsing
     columns:
       - name: session_id
         description: Unique identifier for each web session

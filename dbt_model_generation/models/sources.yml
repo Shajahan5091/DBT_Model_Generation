@@ -7,7 +7,7 @@ sources:
     description: "Raw source data from various systems"
     tables:
       - name: raw_customers
-        description: "Customer information and signup details"
+        description: "Customer information including VIP status"
         columns:
           - name: cust_id
             description: "Unique customer identifier"
@@ -22,7 +22,7 @@ sources:
             description: "Flag indicating VIP customer status"
 
       - name: raw_employees
-        description: "Employee information"
+        description: "Employee data including compensation"
         columns:
           - name: emp_id
             description: "Unique employee identifier"
@@ -30,7 +30,7 @@ sources:
               - unique
               - not_null
           - name: salary
-            description: "Employee salary"
+            description: "Employee salary amount"
 
       - name: raw_inventory
         description: "Product inventory levels"
@@ -43,7 +43,7 @@ sources:
             description: "Available quantity in inventory"
 
       - name: raw_orders
-        description: "Customer order information"
+        description: "Customer order transactions"
         columns:
           - name: order_id
             description: "Unique order identifier"
@@ -52,6 +52,8 @@ sources:
               - not_null
           - name: customer_id
             description: "Customer who placed the order"
+            tests:
+              - not_null
           - name: order_date
             description: "Date when order was placed"
           - name: total_amount
@@ -66,10 +68,10 @@ sources:
               - unique
               - not_null
           - name: payment_mode
-            description: "Method of payment"
+            description: "Method of payment used"
 
       - name: raw_products
-        description: "Product catalog and pricing"
+        description: "Product catalog with pricing"
         columns:
           - name: product_id
             description: "Unique product identifier"
@@ -117,7 +119,9 @@ sources:
         columns:
           - name: session_id
             description: "User session identifier"
+            tests:
+              - not_null
           - name: timestamp
             description: "Timestamp of web activity"
           - name: url
-            description: "URL accessed"
+            description: "URL accessed during session"

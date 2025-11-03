@@ -20,4 +20,8 @@ transformed AS (
     FROM source_data
 )
 
-SELECT * FROM transformed
+SELECT 
+    session_id,
+    session_hour,
+    domain_name
+FROM transformed
