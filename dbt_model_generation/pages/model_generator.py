@@ -10,7 +10,7 @@ from snowflake.snowpark import Session
 from snowflake.cortex import Complete, CompleteOptions
 import re
 import subprocess
-import shutil
+from datetime import datetime
 
 st.title("Snowflake dbt Model Generator")
 
@@ -257,19 +257,14 @@ if st.button("Generate dbt Models"):
         st.success("🎉 All DBT files successfully created under `generated_dbt/`")
         print("\n🎉 All DBT files successfully created under generated_dbt/")
 
-        """ 
-        The folders will then be pushed into the repo and a MR will be created 
-        """
+        # Stage all changes
+        subprocess.run(["git", "add", "."], check=True)
 
-        print("\n--- Git Operations ---")
-        os.chdir(repo_dir)
-        subprocess.run(["git", "checkout", "dev"], check=True)
-        subprocess.run(["git", "pull"], check=True)
-        subprocess.run(["git", "add", "DDLs/"], check=True)
-        status_result = subprocess.run(["git", "status", "--porcelain"], stdout=subprocess.PIPE, universal_newlines=True)
-        if not status_result.stdout.strip():
-            print("No changes to commit.")
-        subprocess.run(["git", "commit", "-m", "Add original Teradata DDLs and converted Snowflake DDLs with CREATE IF NOT EXISTS and schema change prefixes"], check=True)
-        subprocess.run(["git", "push", "origin", "dev"], check=True)
+        # Commit with timestamp
+        commit_msg = f"Auto commit - {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}"
+        subprocess.run(["git", "commit", "-m", commit_msg])
 
-        print("Code has been successfully pushed to the repo")
+        # Push to branch
+        subprocess.run(["git", "push", "origin", "main"])
+
+        print("✅ Changes pushed successfully!")
