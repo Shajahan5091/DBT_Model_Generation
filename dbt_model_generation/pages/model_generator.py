@@ -22,19 +22,21 @@ repo_dir = "dbt_model_generation"
 
 # File uploads
 mapping_file = st.file_uploader("Upload Mapping File", type=["csv", "xlsx"])
-semantic_file = st.file_uploader("Upload Snowflake Semantic File (JSON)", type=["json"])
+
+# TO BE PART OF LATER SCOPE
+#  semantic_file = st.file_uploader("Upload Snowflake Semantic File (JSON)", type=["json"])
 
 # Create environment for templates
 env = Environment(loader=FileSystemLoader("templates"))
 
-if mapping_file and semantic_file:
+if mapping_file:  # and semantic_file:
     # Load mapping file
     if mapping_file.name.endswith(".csv"):
         df = pd.read_csv(mapping_file)
     else:
         df = pd.read_excel(mapping_file)
 
-    semantic = json.load(semantic_file)
+    # semantic = json.load(semantic_file)
 
     st.subheader("📋 Mapping Preview")
     st.dataframe(df.head())
