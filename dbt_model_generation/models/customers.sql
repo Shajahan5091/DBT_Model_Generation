@@ -11,15 +11,15 @@ WITH source_data AS (
 transformed AS (
     SELECT
         -- Direct mapping for customer_id
-        CAST(cust_id AS STRING) AS customer_id,
+        cust_id::STRING AS customer_id,
         
         -- Concatenate first_name and last_name for full_name
-        CAST(CONCAT(COALESCE(first_name, ''), ' ', COALESCE(last_name, '')) AS STRING) AS full_name,
+        CONCAT(COALESCE(first_name, ''), ' ', COALESCE(last_name, ''))::STRING AS full_name,
         
         -- Extract month name from signup_date
-        CAST(MONTHNAME(signup_date) AS STRING) AS signup_month,
+        MONTHNAME(signup_date)::STRING AS signup_month,
         
-        -- Convert Y/N to TRUE/FALSE for is_vip
+        -- Convert Y/N flag to TRUE/FALSE boolean
         CASE 
             WHEN UPPER(is_vip_flag) = 'Y' THEN TRUE
             WHEN UPPER(is_vip_flag) = 'N' THEN FALSE

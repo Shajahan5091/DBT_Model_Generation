@@ -7,7 +7,7 @@ WITH source_data AS (
 
 transformed AS (
     SELECT 
-        -- Direct mapping: emp_id to employee_id
+        -- Direct mapping with type casting
         CAST(emp_id AS STRING) AS employee_id,
         
         -- Calculate 15% of salary as annual bonus
