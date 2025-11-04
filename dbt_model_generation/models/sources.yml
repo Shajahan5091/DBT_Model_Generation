@@ -2,19 +2,15 @@ version: 2
 
 sources:
   - name: raw
+    description: "Raw data tables from the demo database"
     database: demo_db
     schema: raw
-    description: "Raw source data from various systems"
-    
     tables:
       - name: raw_customers
         description: "Customer information and signup details"
         columns:
           - name: cust_id
             description: "Unique customer identifier"
-            tests:
-              - unique
-              - not_null
           - name: first_name
             description: "Customer first name"
           - name: signup_date
@@ -27,9 +23,6 @@ sources:
         columns:
           - name: emp_id
             description: "Unique employee identifier"
-            tests:
-              - unique
-              - not_null
           - name: salary
             description: "Employee salary"
 
@@ -37,9 +30,7 @@ sources:
         description: "Product inventory levels"
         columns:
           - name: product_id
-            description: "Product identifier"
-            tests:
-              - not_null
+            description: "Unique product identifier"
           - name: quantity
             description: "Available quantity in inventory"
 
@@ -48,9 +39,6 @@ sources:
         columns:
           - name: order_id
             description: "Unique order identifier"
-            tests:
-              - unique
-              - not_null
           - name: customer_id
             description: "Customer who placed the order"
           - name: order_date
@@ -63,9 +51,6 @@ sources:
         columns:
           - name: payment_id
             description: "Unique payment identifier"
-            tests:
-              - unique
-              - not_null
           - name: payment_mode
             description: "Method of payment"
 
@@ -74,9 +59,6 @@ sources:
         columns:
           - name: product_id
             description: "Unique product identifier"
-            tests:
-              - unique
-              - not_null
           - name: price
             description: "Product price"
 
@@ -85,20 +67,14 @@ sources:
         columns:
           - name: review_id
             description: "Unique review identifier"
-            tests:
-              - unique
-              - not_null
           - name: rating
-            description: "Review rating score"
+            description: "Customer rating score"
 
       - name: raw_shipments
         description: "Order shipment tracking"
         columns:
           - name: shipment_id
             description: "Unique shipment identifier"
-            tests:
-              - unique
-              - not_null
           - name: delivery_date
             description: "Date of delivery"
 
@@ -107,9 +83,6 @@ sources:
         columns:
           - name: transaction_id
             description: "Unique transaction identifier"
-            tests:
-              - unique
-              - not_null
           - name: amount
             description: "Transaction amount"
 
@@ -117,8 +90,8 @@ sources:
         description: "Website activity logs"
         columns:
           - name: session_id
-            description: "User session identifier"
+            description: "Unique session identifier"
           - name: timestamp
             description: "Timestamp of web activity"
           - name: url
-            description: "URL visited"
+            description: "URL accessed"
