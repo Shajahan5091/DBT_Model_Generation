@@ -1,13 +1,13 @@
 WITH source_data AS (
-    SELECT 
+    SELECT
         emp_id,
         salary
     FROM {{ source('raw', 'raw_employees') }}
 ),
 
 transformed AS (
-    SELECT 
-        -- Direct mapping with type casting
+    SELECT
+        -- Direct mapping of employee ID
         CAST(emp_id AS STRING) AS employee_id,
         
         -- Calculate 15% of salary as annual bonus

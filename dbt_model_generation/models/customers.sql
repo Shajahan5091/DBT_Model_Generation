@@ -9,7 +9,7 @@ WITH source_data AS (
 ),
 
 transformed AS (
-    SELECT
+    SELECT 
         -- Direct mapping for customer_id
         CAST(cust_id AS STRING) AS customer_id,
         

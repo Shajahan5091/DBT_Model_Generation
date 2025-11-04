@@ -17,4 +17,7 @@ transformed AS (
     FROM source_data
 )
 
-SELECT * FROM transformed
+SELECT 
+    payment_id,
+    payment_category
+FROM transformed

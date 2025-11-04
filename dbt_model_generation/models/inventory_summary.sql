@@ -15,7 +15,4 @@ transformed AS (
     FROM source_data
 )
 
-SELECT 
-    product_id,
-    stock_status
-FROM transformed
+SELECT * FROM transformed
