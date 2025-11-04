@@ -14,6 +14,7 @@ transformed AS (
         CAST(salary * 0.15 AS FLOAT) AS annual_bonus
         
     FROM source_data
+    WHERE emp_id IS NOT NULL
 )
 
 SELECT * FROM transformed

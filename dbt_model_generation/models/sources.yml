@@ -2,10 +2,9 @@ version: 2
 
 sources:
   - name: raw
+    description: "Raw data tables from source systems"
     database: demo_db
     schema: raw
-    description: "Raw data tables from various source systems"
-    
     tables:
       - name: raw_customers
         description: "Customer information including VIP status"
@@ -44,7 +43,7 @@ sources:
             description: "Available quantity in inventory"
 
       - name: raw_orders
-        description: "Customer order information"
+        description: "Customer orders"
         columns:
           - name: order_id
             description: "Unique order identifier"
@@ -53,13 +52,15 @@ sources:
               - not_null
           - name: customer_id
             description: "Customer who placed the order"
+            tests:
+              - not_null
           - name: order_date
             description: "Date when order was placed"
           - name: total_amount
             description: "Total order amount"
 
       - name: raw_payments
-        description: "Payment transaction details"
+        description: "Payment information"
         columns:
           - name: payment_id
             description: "Unique payment identifier"
@@ -70,7 +71,7 @@ sources:
             description: "Method of payment"
 
       - name: raw_products
-        description: "Product catalog information"
+        description: "Product catalog"
         columns:
           - name: product_id
             description: "Unique product identifier"
@@ -81,7 +82,7 @@ sources:
             description: "Product price"
 
       - name: raw_reviews
-        description: "Customer product reviews"
+        description: "Product reviews"
         columns:
           - name: review_id
             description: "Unique review identifier"
@@ -89,10 +90,10 @@ sources:
               - unique
               - not_null
           - name: rating
-            description: "Review rating score"
+            description: "Review rating"
 
       - name: raw_shipments
-        description: "Order shipment tracking"
+        description: "Order shipment information"
         columns:
           - name: shipment_id
             description: "Unique shipment identifier"
@@ -103,7 +104,7 @@ sources:
             description: "Date of delivery"
 
       - name: raw_transactions
-        description: "Financial transaction records"
+        description: "Financial transactions"
         columns:
           - name: transaction_id
             description: "Unique transaction identifier"
@@ -123,4 +124,4 @@ sources:
           - name: timestamp
             description: "Timestamp of web activity"
           - name: url
-            description: "URL accessed"
+            description: "URL visited"
