@@ -15,7 +15,7 @@ WITH source_data AS (
 
 transformed AS (
     SELECT 
-        -- Direct mapping with proper casting
+        -- Direct mapping
         CAST(shipment_id AS STRING) AS shipment_id,
         
         -- Calculate delivery delay in days

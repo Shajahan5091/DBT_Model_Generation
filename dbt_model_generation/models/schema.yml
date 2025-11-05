@@ -31,7 +31,7 @@ models:
           - unique
           - not_null
       - name: annual_bonus
-        description: Calculated annual bonus amount representing 15% of employee salary
+        description: Annual bonus calculated as 15% of the employee's salary
         tests:
           - not_null
 
@@ -39,12 +39,12 @@ models:
     description: Staging model for inventory data with stock status categorization
     columns:
       - name: product_id
-        description: Unique identifier for each product in inventory
+        description: Unique identifier for each product
         tests:
           - unique
           - not_null
       - name: stock_status
-        description: Current stock availability status indicating IN_STOCK or OUT_OF_STOCK
+        description: Stock availability status indicating whether product is in stock or out of stock
         tests:
           - not_null
           - accepted_values:
@@ -75,7 +75,7 @@ models:
     description: Staging model for payment data with categorized payment methods
     columns:
       - name: payment_id
-        description: Unique identifier for each payment transaction
+        description: Unique identifier for each payment
         tests:
           - unique
           - not_null
@@ -103,12 +103,12 @@ models:
     description: Staging model for review data with sentiment analysis based on ratings
     columns:
       - name: review_id
-        description: Unique identifier for each product review
+        description: Unique identifier for each review
         tests:
           - unique
           - not_null
       - name: sentiment_category
-        description: Sentiment classification based on rating as Positive, Neutral, or Negative
+        description: Sentiment classification based on rating score as Positive, Neutral, or Negative
         tests:
           - not_null
           - accepted_values:
@@ -131,12 +131,12 @@ models:
     description: Staging model for transaction data with tax calculations included
     columns:
       - name: transaction_id
-        description: Unique identifier for each financial transaction
+        description: Unique identifier for each transaction
         tests:
           - unique
           - not_null
       - name: amount_with_tax
-        description: Transaction amount including 18% GST tax
+        description: Transaction amount with 18% GST tax added
         tests:
           - not_null
 

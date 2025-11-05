@@ -1,6 +1,6 @@
 {#
     Model: stg_products
-    Description: Staging model for products with discount logic applied
+    Description: Staging model for products data with discount logic applied
     Created Date: 2024-12-19
     Author: AI Generated
 #}
