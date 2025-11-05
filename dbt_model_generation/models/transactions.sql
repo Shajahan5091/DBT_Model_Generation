@@ -1,9 +1,9 @@
-/*
-  Model: stg_transactions
-  Description: Staging model for transactions data with GST calculations
-  Created Date: 2024-12-19
-  Author: AI Generated
-*/
+{#
+    Model: stg_transactions
+    Description: Staging model for transactions data with GST calculations
+    Created Date: 2024-12-19
+    Author: AI Generated
+#}
 
 WITH source_data AS (
     SELECT 

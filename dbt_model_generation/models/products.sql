@@ -1,9 +1,9 @@
-/*
- * Model Name: stg_products
- * Description: Staging model for products with discount logic applied
- * Created Date: 2024-12-19
- * Author: AI Generated
- */
+{#
+    Model: stg_products
+    Description: Staging model for products with discount logic applied
+    Created Date: 2024-12-19
+    Author: AI Generated
+#}
 
 WITH source_data AS (
     SELECT 

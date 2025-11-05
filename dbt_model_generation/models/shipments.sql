@@ -1,9 +1,9 @@
-/*
- * Model Name: stg_shipments
- * Description: Staging model for shipments data with delivery delay calculation
- * Created Date: 2024-12-19
- * Author: AI Generated
- */
+{#
+    Model: stg_shipments
+    Description: Staging model for shipments data with delivery delay calculation
+    Created Date: 2024-12-19
+    Author: AI Generated
+#}
 
 WITH source_data AS (
     SELECT 
@@ -15,8 +15,16 @@ WITH source_data AS (
 
 transformed AS (
     SELECT 
+        -- Direct mapping with proper casting
         CAST(shipment_id AS STRING) AS shipment_id,
-        DATEDIFF('day', order_date, delivery_date) AS delivery_delay_days
+        
+        -- Calculate delivery delay in days
+        CAST(DATEDIFF('day', order_date, delivery_date) AS INTEGER) AS delivery_delay_days,
+        
+        -- Keep original dates for reference
+        delivery_date,
+        order_date
+        
     FROM source_data
 )
 
