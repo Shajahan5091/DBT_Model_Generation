@@ -118,6 +118,6 @@ sources:
           - name: session_id
             description: "User session identifier"
           - name: timestamp
-            description: "Log entry timestamp"
+            description: "Timestamp of web activity"
           - name: url
-            description: "Accessed URL"
+            description: "URL accessed"

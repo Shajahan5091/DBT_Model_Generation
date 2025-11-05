@@ -1,9 +1,9 @@
 /*
- * Model Name: stg_orders
- * Description: Staging model for orders data with currency conversion and date transformations
- * Created Date: {{ run_started_at.strftime('%Y-%m-%d') }}
- * Author: Shajahan
- */
+  Model: stg_orders
+  Description: Staging model for orders data with currency conversion and date transformations
+  Created Date: 2024-12-19
+  Author: Shajahan
+*/
 
 WITH source_data AS (
     SELECT 

@@ -1,7 +1,7 @@
 /*
- * Model: stg_employees
- * Description: Staging model for employee data with calculated annual bonus
- * Created Date: 2024-01-15
+ * Model Name: stg_employees
+ * Description: Staging model for employees data with transformations for employee_id and annual_bonus calculation
+ * Created Date: 2024-12-19
  * Author: Shajahan
  */
 
@@ -14,19 +14,13 @@ WITH source_data AS (
 
 transformed AS (
     SELECT 
-        -- Direct mapping with type casting
+        -- Direct mapping of emp_id to employee_id
         CAST(emp_id AS STRING) AS employee_id,
         
         -- Calculate 15% of salary as annual bonus
-        CAST(salary * 0.15 AS FLOAT) AS annual_bonus,
-        
-        -- Keep original salary for reference
-        salary
+        CAST(salary * 0.15 AS FLOAT) AS annual_bonus
         
     FROM source_data
 )
 
-SELECT 
-    employee_id,
-    annual_bonus
-FROM transformed
+SELECT * FROM transformed
