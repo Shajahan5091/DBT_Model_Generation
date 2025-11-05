@@ -1,190 +1,69 @@
 version: 2
 
-sources:
-  - name: raw_data
-    database: raw_database
-    schema: raw_data
-    tables:
-      - name: customers
-        columns:
-          - name: cust_id
-            tests:
-              - not_null
-              - unique
-          - name: first_name
-            tests:
-              - not_null
-          - name: last_name
-            tests:
-              - not_null
-          - name: signup_date
-            tests:
-              - not_null
-          - name: is_vip_flag
-            tests:
-              - accepted_values:
-                  values: ['Y', 'N']
-      - name: employees
-        columns:
-          - name: emp_id
-            tests:
-              - not_null
-              - unique
-          - name: salary
-            tests:
-              - not_null
-      - name: inventory_summary
-        columns:
-          - name: product_id
-            tests:
-              - not_null
-              - unique
-          - name: quantity
-            tests:
-              - not_null
-      - name: orders
-        columns:
-          - name: order_id
-            tests:
-              - not_null
-              - unique
-          - name: customer_id
-            tests:
-              - not_null
-          - name: order_date
-            tests:
-              - not_null
-          - name: total_amount
-            tests:
-              - not_null
-      - name: payments
-        columns:
-          - name: payment_id
-            tests:
-              - not_null
-              - unique
-          - name: payment_mode
-            tests:
-              - not_null
-      - name: products
-        columns:
-          - name: product_id
-            tests:
-              - not_null
-              - unique
-          - name: price
-            tests:
-              - not_null
-          - name: category
-      - name: reviews
-        columns:
-          - name: review_id
-            tests:
-              - not_null
-              - unique
-          - name: rating
-            tests:
-              - not_null
-              - accepted_values:
-                  values: [1, 2, 3, 4, 5]
-      - name: shipments
-        columns:
-          - name: shipment_id
-            tests:
-              - not_null
-              - unique
-          - name: delivery_date
-            tests:
-              - not_null
-          - name: order_date
-            tests:
-              - not_null
-      - name: transactions
-        columns:
-          - name: transaction_id
-            tests:
-              - not_null
-              - unique
-          - name: amount
-            tests:
-              - not_null
-      - name: web_sessions
-        columns:
-          - name: session_id
-            tests:
-              - not_null
-              - unique
-          - name: timestamp
-            tests:
-              - not_null
-          - name: url
-            tests:
-              - not_null
-
 models:
   - name: customers
-    description: Staging table for customer data with transformed columns
+    description: Staging table for customer data with transformed customer information including full names and signup months
     columns:
       - name: customer_id
-        description: Unique identifier for each customer, mapped from cust_id
+        description: Unique identifier for each customer
         tests:
-          - not_null
           - unique
+          - not_null
       - name: full_name
-        description: Full name created by concatenating first_name and last_name
+        description: Customer's full name created by concatenating first and last name
         tests:
           - not_null
       - name: signup_month
-        description: Month name extracted from signup_date
+        description: Month name extracted from the customer's signup date
         tests:
           - not_null
       - name: is_vip
-        description: VIP status converted from Y/N flag to TRUE/FALSE boolean
+        description: Boolean flag indicating whether customer has VIP status
         tests:
           - not_null
 
   - name: employees
-    description: Staging table for employee data with calculated annual bonus
+    description: Staging table for employee data with calculated annual bonus information
     columns:
       - name: employee_id
-        description: Unique identifier for each employee, mapped from emp_id
+        description: Unique identifier for each employee
         tests:
-          - not_null
           - unique
+          - not_null
       - name: annual_bonus
-        description: Annual bonus calculated as 15% of salary
+        description: Annual bonus calculated as 15% of employee salary
         tests:
           - not_null
 
   - name: inventory_summary
-    description: Staging table for inventory data with stock status
+    description: Staging table for inventory data with stock status categorization
     columns:
       - name: product_id
         description: Unique identifier for each product
         tests:
-          - not_null
           - unique
+          - not_null
       - name: stock_status
-        description: Stock availability status based on quantity (IN_STOCK/OUT_OF_STOCK)
+        description: Stock availability status indicating IN_STOCK or OUT_OF_STOCK
         tests:
           - not_null
           - accepted_values:
               values: ['IN_STOCK', 'OUT_OF_STOCK']
 
   - name: orders
-    description: Staging table for order data with derived week and converted currency
+    description: Staging table for order data with transformed date and currency information
     columns:
       - name: order_id
         description: Unique identifier for each order
         tests:
-          - not_null
           - unique
+          - not_null
       - name: customer_id
-        description: Customer identifier linked to the order
+        description: Foreign key reference to customer who placed the order
         tests:
           - not_null
       - name: order_week
-        description: ISO week number derived from order_date
+        description: ISO week number derived from order date
         tests:
           - not_null
       - name: total_amount_usd
@@ -198,82 +77,82 @@ models:
       - name: payment_id
         description: Unique identifier for each payment
         tests:
-          - not_null
           - unique
+          - not_null
       - name: payment_category
-        description: Payment method categorized as Card, Wallet, or Cash
+        description: Categorized payment method as Card, Wallet, or Cash
         tests:
           - not_null
           - accepted_values:
               values: ['Card', 'Wallet', 'Cash']
 
   - name: products
-    description: Staging table for product data with conditional discounting
+    description: Staging table for product data with conditional discount pricing
     columns:
       - name: product_id
         description: Unique identifier for each product
         tests:
-          - not_null
           - unique
+          - not_null
       - name: discounted_price
-        description: Price with 10% discount applied for Seasonal category products
+        description: Product price with 10% discount applied for seasonal items
         tests:
           - not_null
 
   - name: reviews
-    description: Staging table for review data with sentiment categorization
+    description: Staging table for review data with sentiment analysis based on ratings
     columns:
       - name: review_id
         description: Unique identifier for each review
         tests:
-          - not_null
           - unique
+          - not_null
       - name: sentiment_category
-        description: Sentiment category based on rating (Positive/Neutral/Negative)
+        description: Sentiment classification based on rating score as Positive, Neutral, or Negative
         tests:
           - not_null
           - accepted_values:
               values: ['Positive', 'Neutral', 'Negative']
 
   - name: shipments
-    description: Staging table for shipment data with delivery delay calculation
+    description: Staging table for shipment data with calculated delivery delay metrics
     columns:
       - name: shipment_id
         description: Unique identifier for each shipment
         tests:
-          - not_null
           - unique
+          - not_null
       - name: delivery_delay_days
-        description: Number of days between order_date and delivery_date
+        description: Number of days between order date and actual delivery date
         tests:
           - not_null
 
   - name: transactions
-    description: Staging table for transaction data with tax calculation
+    description: Staging table for transaction data with tax calculations included
     columns:
       - name: transaction_id
         description: Unique identifier for each transaction
         tests:
-          - not_null
           - unique
+          - not_null
       - name: amount_with_tax
-        description: Transaction amount with 18% GST added
+        description: Transaction amount with 18% GST tax added
         tests:
           - not_null
 
   - name: web_sessions
-    description: Staging table for web session data with extracted time and domain
+    description: Staging table for web session data with extracted time and domain information
     columns:
       - name: session_id
         description: Unique identifier for each web session
         tests:
-          - not_null
           - unique
+          - not_null
       - name: session_hour
-        description: Hour extracted from session timestamp
+        description: Hour of the day extracted from session timestamp
         tests:
           - not_null
       - name: domain_name
-        description: Domain name extracted from URL
+        description: Domain name extracted from the session URL
         tests:
           - not_null

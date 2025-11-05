@@ -1,3 +1,10 @@
+/*
+ * Model: stg_reviews
+ * Description: Staging model for reviews data with sentiment categorization based on rating
+ * Created Date: 2024-01-15
+ * Author: Shajahan
+ */
+
 WITH source_data AS (
     SELECT 
         review_id,

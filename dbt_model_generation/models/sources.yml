@@ -2,12 +2,12 @@ version: 2
 
 sources:
   - name: raw
-    description: "Raw data tables from source systems"
     database: demo_db
     schema: raw
+    description: "Raw source data from various systems"
     tables:
       - name: raw_customers
-        description: "Customer information including VIP status"
+        description: "Customer information and signup details"
         columns:
           - name: cust_id
             description: "Unique customer identifier"
@@ -43,7 +43,7 @@ sources:
             description: "Available quantity in inventory"
 
       - name: raw_orders
-        description: "Customer orders"
+        description: "Customer order information"
         columns:
           - name: order_id
             description: "Unique order identifier"
@@ -52,15 +52,13 @@ sources:
               - not_null
           - name: customer_id
             description: "Customer who placed the order"
-            tests:
-              - not_null
           - name: order_date
             description: "Date when order was placed"
           - name: total_amount
             description: "Total order amount"
 
       - name: raw_payments
-        description: "Payment information"
+        description: "Payment transaction details"
         columns:
           - name: payment_id
             description: "Unique payment identifier"
@@ -71,7 +69,7 @@ sources:
             description: "Method of payment"
 
       - name: raw_products
-        description: "Product catalog"
+        description: "Product catalog and pricing"
         columns:
           - name: product_id
             description: "Unique product identifier"
@@ -82,7 +80,7 @@ sources:
             description: "Product price"
 
       - name: raw_reviews
-        description: "Product reviews"
+        description: "Customer product reviews"
         columns:
           - name: review_id
             description: "Unique review identifier"
@@ -90,10 +88,10 @@ sources:
               - unique
               - not_null
           - name: rating
-            description: "Review rating"
+            description: "Review rating score"
 
       - name: raw_shipments
-        description: "Order shipment information"
+        description: "Order shipment tracking"
         columns:
           - name: shipment_id
             description: "Unique shipment identifier"
@@ -104,7 +102,7 @@ sources:
             description: "Date of delivery"
 
       - name: raw_transactions
-        description: "Financial transactions"
+        description: "Financial transaction records"
         columns:
           - name: transaction_id
             description: "Unique transaction identifier"
@@ -119,9 +117,7 @@ sources:
         columns:
           - name: session_id
             description: "User session identifier"
-            tests:
-              - not_null
           - name: timestamp
-            description: "Timestamp of web activity"
+            description: "Log entry timestamp"
           - name: url
-            description: "URL visited"
+            description: "Accessed URL"

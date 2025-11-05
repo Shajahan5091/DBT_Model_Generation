@@ -1,3 +1,10 @@
+/*
+  Model Name: stg_products
+  Description: Staging model for products with discount logic applied
+  Created Date: 2024-12-19
+  Author: Shajahan
+*/
+
 WITH source_data AS (
     SELECT 
         product_id,

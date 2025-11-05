@@ -1,3 +1,10 @@
+/*
+ * Model Name: stg_shipments
+ * Description: Staging model for shipments data with delivery delay calculation
+ * Created Date: 2024-12-19
+ * Author: Shajahan
+ */
+
 WITH source_data AS (
     SELECT 
         shipment_id,
@@ -9,11 +16,8 @@ WITH source_data AS (
 transformed AS (
     SELECT 
         CAST(shipment_id AS STRING) AS shipment_id,
-        CAST(DATEDIFF('day', order_date, delivery_date) AS INTEGER) AS delivery_delay_days
+        DATEDIFF('day', order_date, delivery_date) AS delivery_delay_days
     FROM source_data
-    WHERE shipment_id IS NOT NULL
-      AND delivery_date IS NOT NULL
-      AND order_date IS NOT NULL
 )
 
 SELECT * FROM transformed

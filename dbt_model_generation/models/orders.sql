@@ -1,3 +1,10 @@
+/*
+ * Model Name: stg_orders
+ * Description: Staging model for orders data with currency conversion and date transformations
+ * Created Date: {{ run_started_at.strftime('%Y-%m-%d') }}
+ * Author: Shajahan
+ */
+
 WITH source_data AS (
     SELECT 
         order_id,
@@ -16,7 +23,7 @@ transformed AS (
         CAST(customer_id AS STRING) AS customer_id,
         
         -- Derive ISO week from order_date
-        CAST(DATE_PART('week', order_date) AS STRING) AS order_week,
+        TO_VARCHAR(DATE_PART('WEEK', order_date)) AS order_week,
         
         -- Convert from INR to USD (assuming conversion rate of 0.012)
         CAST(total_amount * 0.012 AS FLOAT) AS total_amount_usd

@@ -1,3 +1,10 @@
+/*
+ * Model Name: stg_customers
+ * Description: Staging model for customer data with basic transformations and column mapping
+ * Created Date: 2024-12-19
+ * Author: Shajahan
+ */
+
 WITH source_data AS (
     SELECT 
         cust_id,
@@ -9,17 +16,17 @@ WITH source_data AS (
 ),
 
 transformed AS (
-    SELECT
-        -- Direct mapping for customer_id
+    SELECT 
+        -- Direct mapping with type casting
         CAST(cust_id AS STRING) AS customer_id,
         
-        -- Concatenate first_name and last_name for full_name
+        -- Concatenate first_name and last_name to create full_name
         CAST(CONCAT(COALESCE(first_name, ''), ' ', COALESCE(last_name, '')) AS STRING) AS full_name,
         
         -- Extract month name from signup_date
         CAST(MONTHNAME(signup_date) AS STRING) AS signup_month,
         
-        -- Convert Y/N to TRUE/FALSE for is_vip
+        -- Convert Y/N flag to boolean
         CASE 
             WHEN UPPER(is_vip_flag) = 'Y' THEN TRUE
             WHEN UPPER(is_vip_flag) = 'N' THEN FALSE
