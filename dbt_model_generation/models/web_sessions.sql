@@ -1,6 +1,6 @@
 {#
     Model: stg_web_sessions
-    Description: Staging model for web sessions data with extracted domain and session hour
+    Description: Staging model for web sessions data with transformed session and domain information
     Created Date: 2024-12-19
     Author: AI Generated
 #}

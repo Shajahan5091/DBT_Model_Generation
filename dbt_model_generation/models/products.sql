@@ -22,7 +22,6 @@ transformed AS (
             ELSE CAST(price AS FLOAT)
         END AS discounted_price
     FROM source_data
-    WHERE product_id IS NOT NULL
 )
 
 SELECT * FROM transformed
