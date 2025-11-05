@@ -1,6 +1,6 @@
 {#
     Model: stg_products
-    Description: Staging model for products data with discount logic applied
+    Description: Staging model for products with discount logic applied
     Created Date: 2024-12-19
     Author: AI Generated
 #}
@@ -22,6 +22,7 @@ transformed AS (
             ELSE CAST(price AS FLOAT)
         END AS discounted_price
     FROM source_data
+    WHERE product_id IS NOT NULL
 )
 
 SELECT * FROM transformed
