@@ -2,7 +2,7 @@
  * Model Name: stg_employees
  * Description: Staging model for employees data with transformations for employee_id and annual_bonus calculation
  * Created Date: 2024-12-19
- * Author: Shajahan
+ * Author: AI Generated
  */
 
 WITH source_data AS (

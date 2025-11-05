@@ -1,9 +1,9 @@
 /*
- * Model Name: stg_payments
- * Description: Staging model for payments data with payment mode categorization
- * Created Date: 2024-12-19
- * Author: Shajahan
- */
+  Model Name: stg_payments
+  Description: Staging model for payments data with payment mode categorization
+  Created Date: 2024-12-19
+  Author: AI Generated
+*/
 
 WITH source_data AS (
     SELECT 
@@ -22,7 +22,6 @@ transformed AS (
             ELSE 'Card' -- Default fallback
         END AS payment_category
     FROM source_data
-    WHERE payment_id IS NOT NULL
 )
 
 SELECT * FROM transformed

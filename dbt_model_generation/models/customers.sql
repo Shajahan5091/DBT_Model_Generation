@@ -1,8 +1,8 @@
 /*
- * Model: stg_customers
+ * Model Name: stg_customers
  * Description: Staging model for customer data with transformations for customer ID, full name, signup month, and VIP status
  * Created Date: 2024-12-19
- * Author: Shajahan
+ * Author: AI Generated
  */
 
 WITH source_data AS (
@@ -16,7 +16,7 @@ WITH source_data AS (
 ),
 
 transformed AS (
-    SELECT 
+    SELECT
         -- Direct mapping of customer ID
         CAST(cust_id AS STRING) AS customer_id,
         

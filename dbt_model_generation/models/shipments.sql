@@ -1,8 +1,8 @@
 /*
- * Model: stg_shipments
+ * Model Name: stg_shipments
  * Description: Staging model for shipments data with delivery delay calculation
  * Created Date: 2024-12-19
- * Author: Shajahan
+ * Author: AI Generated
  */
 
 WITH source_data AS (

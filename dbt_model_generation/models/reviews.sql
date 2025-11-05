@@ -1,9 +1,9 @@
 /*
-  Model Name: stg_reviews
-  Description: Staging model for reviews data with sentiment categorization based on rating
-  Created Date: 2024-12-19
-  Author: Shajahan
-*/
+ * Model: stg_reviews
+ * Description: Staging model for reviews data with sentiment categorization based on rating
+ * Created Date: 2024-12-19
+ * Author: AI Generated
+ */
 
 WITH source_data AS (
     SELECT 
@@ -17,7 +17,7 @@ transformed AS (
         -- Direct mapping for review_id
         CAST(review_id AS STRING) AS review_id,
         
-        -- Transform rating to sentiment category
+        -- Transform rating to sentiment_category
         CASE 
             WHEN rating >= 4 THEN 'Positive'
             WHEN rating = 3 THEN 'Neutral'

@@ -2,12 +2,12 @@ version: 2
 
 sources:
   - name: raw
+    description: "Raw source data from demo_db database"
     database: demo_db
     schema: raw
-    description: "Raw source data from various systems"
     tables:
       - name: raw_customers
-        description: "Customer information and signup details"
+        description: "Customer information including VIP status"
         columns:
           - name: cust_id
             description: "Unique customer identifier"
@@ -69,7 +69,7 @@ sources:
             description: "Method of payment"
 
       - name: raw_products
-        description: "Product catalog and pricing"
+        description: "Product catalog information"
         columns:
           - name: product_id
             description: "Unique product identifier"
@@ -118,6 +118,6 @@ sources:
           - name: session_id
             description: "User session identifier"
           - name: timestamp
-            description: "Timestamp of web activity"
+            description: "Log entry timestamp"
           - name: url
-            description: "URL accessed"
+            description: "Accessed URL"

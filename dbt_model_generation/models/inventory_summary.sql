@@ -2,7 +2,7 @@
   Model Name: stg_inventory_summary
   Description: Staging model for inventory data with stock status transformation
   Created Date: 2024-12-19
-  Author: Shajahan
+  Author: AI Generated
 */
 
 WITH source_data AS (
