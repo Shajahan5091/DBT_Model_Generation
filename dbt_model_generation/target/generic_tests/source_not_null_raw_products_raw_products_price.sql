@@ -1,0 +1,1 @@
+{{ test_not_null(column_name="price", model=get_where_subquery(source('raw_products', 'raw_products'))) }}

@@ -1,0 +1,1 @@
+{{ test_accepted_values(column_name="is_vip_flag", model=get_where_subquery(source('raw_data', 'customers')), values=["Y","N"]) }}

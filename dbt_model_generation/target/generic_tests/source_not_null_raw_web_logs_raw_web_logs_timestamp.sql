@@ -1,0 +1,1 @@
+{{ test_not_null(column_name="timestamp", model=get_where_subquery(source('raw_web_logs', 'raw_web_logs'))) }}

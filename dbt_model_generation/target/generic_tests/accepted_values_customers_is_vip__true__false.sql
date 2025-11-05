@@ -1,0 +1,1 @@
+{{ test_accepted_values(column_name="is_vip", model=get_where_subquery(ref('customers')), values=[true,false]) }}

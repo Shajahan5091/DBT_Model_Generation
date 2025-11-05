@@ -1,0 +1,1 @@
+{{ test_unique(column_name="review_id", model=get_where_subquery(source('raw_data', 'reviews'))) }}

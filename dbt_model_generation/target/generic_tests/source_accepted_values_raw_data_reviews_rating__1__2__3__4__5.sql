@@ -1,0 +1,1 @@
+{{ test_accepted_values(column_name="rating", model=get_where_subquery(source('raw_data', 'reviews')), values=[1,2,3,4,5]) }}

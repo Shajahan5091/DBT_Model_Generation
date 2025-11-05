@@ -1,0 +1,1 @@
+{{ test_not_null(column_name="url", model=get_where_subquery(source('raw_data', 'web_sessions'))) }}

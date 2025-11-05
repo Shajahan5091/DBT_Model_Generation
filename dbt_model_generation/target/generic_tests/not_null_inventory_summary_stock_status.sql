@@ -1,0 +1,1 @@
+{{ test_not_null(column_name="stock_status", model=get_where_subquery(ref('inventory_summary'))) }}
