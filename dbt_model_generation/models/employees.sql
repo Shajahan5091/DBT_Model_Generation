@@ -1,6 +1,6 @@
 {#
-    Model: stg_employees
-    Description: Staging model for employees data with transformations for employee_id and annual_bonus calculation
+    Model: employees
+    Description: Staging model for employee data with transformed salary to annual bonus
     Created Date: 2024-12-19
     Author: AI Generated
 #}

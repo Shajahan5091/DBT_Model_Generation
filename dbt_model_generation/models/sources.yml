@@ -2,122 +2,126 @@ version: 2
 
 sources:
   - name: raw
+    description: Raw data tables from source systems
     database: demo_db
     schema: raw
-    description: "Raw source data from various systems"
     tables:
       - name: raw_customers
-        description: "Customer information and signup details"
+        description: Customer information and signup details
         columns:
           - name: cust_id
-            description: "Unique customer identifier"
+            description: Unique customer identifier
             tests:
               - unique
               - not_null
           - name: first_name
-            description: "Customer first name"
+            description: Customer first name
           - name: signup_date
-            description: "Date when customer signed up"
+            description: Date when customer signed up
           - name: is_vip_flag
-            description: "Flag indicating VIP customer status"
+            description: Flag indicating VIP customer status
 
       - name: raw_employees
-        description: "Employee information"
+        description: Employee salary information
         columns:
           - name: emp_id
-            description: "Unique employee identifier"
+            description: Unique employee identifier
             tests:
               - unique
               - not_null
           - name: salary
-            description: "Employee salary"
+            description: Employee salary amount
 
       - name: raw_inventory
-        description: "Product inventory levels"
+        description: Product inventory levels
         columns:
           - name: product_id
-            description: "Product identifier"
+            description: Unique product identifier
             tests:
               - not_null
           - name: quantity
-            description: "Available quantity in inventory"
+            description: Available product quantity
 
       - name: raw_orders
-        description: "Customer order information"
+        description: Customer order information
         columns:
           - name: order_id
-            description: "Unique order identifier"
+            description: Unique order identifier
             tests:
               - unique
               - not_null
           - name: customer_id
-            description: "Customer who placed the order"
+            description: Customer who placed the order
+            tests:
+              - not_null
           - name: order_date
-            description: "Date when order was placed"
+            description: Date when order was placed
           - name: total_amount
-            description: "Total order amount"
+            description: Total order amount
 
       - name: raw_payments
-        description: "Payment transaction details"
+        description: Payment transaction details
         columns:
           - name: payment_id
-            description: "Unique payment identifier"
+            description: Unique payment identifier
             tests:
               - unique
               - not_null
           - name: payment_mode
-            description: "Method of payment"
+            description: Method of payment used
 
       - name: raw_products
-        description: "Product catalog and pricing"
+        description: Product catalog and pricing
         columns:
           - name: product_id
-            description: "Unique product identifier"
+            description: Unique product identifier
             tests:
               - unique
               - not_null
           - name: price
-            description: "Product price"
+            description: Product price
 
       - name: raw_reviews
-        description: "Customer product reviews"
+        description: Customer product reviews
         columns:
           - name: review_id
-            description: "Unique review identifier"
+            description: Unique review identifier
             tests:
               - unique
               - not_null
           - name: rating
-            description: "Review rating score"
+            description: Customer rating score
 
       - name: raw_shipments
-        description: "Order shipment tracking"
+        description: Order shipment tracking
         columns:
           - name: shipment_id
-            description: "Unique shipment identifier"
+            description: Unique shipment identifier
             tests:
               - unique
               - not_null
           - name: delivery_date
-            description: "Date of delivery"
+            description: Date of delivery
 
       - name: raw_transactions
-        description: "Financial transaction records"
+        description: Financial transaction records
         columns:
           - name: transaction_id
-            description: "Unique transaction identifier"
+            description: Unique transaction identifier
             tests:
               - unique
               - not_null
           - name: amount
-            description: "Transaction amount"
+            description: Transaction amount
 
       - name: raw_web_logs
-        description: "Website activity logs"
+        description: Website activity logs
         columns:
           - name: session_id
-            description: "User session identifier"
+            description: User session identifier
+            tests:
+              - not_null
           - name: timestamp
-            description: "Timestamp of web activity"
+            description: Log entry timestamp
           - name: url
-            description: "URL accessed"
+            description: Accessed URL path

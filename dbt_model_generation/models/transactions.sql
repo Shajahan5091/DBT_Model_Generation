@@ -1,6 +1,6 @@
 {#
-    Model: stg_transactions
-    Description: Staging model for transactions data with GST calculations
+    Model: transactions
+    Description: Staging model for transactions with GST calculations
     Created Date: 2024-12-19
     Author: AI Generated
 #}

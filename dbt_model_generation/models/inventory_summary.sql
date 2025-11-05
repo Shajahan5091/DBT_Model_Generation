@@ -1,5 +1,5 @@
 {#
-    Model: stg_inventory_summary
+    Model: inventory_summary
     Description: Staging model for inventory data with stock status transformation
     Created Date: 2024-12-19
     Author: AI Generated
@@ -13,7 +13,7 @@ WITH source_data AS (
 ),
 
 transformed AS (
-    SELECT 
+    SELECT
         CAST(product_id AS STRING) AS product_id,
         CASE 
             WHEN quantity > 0 THEN 'IN_STOCK'

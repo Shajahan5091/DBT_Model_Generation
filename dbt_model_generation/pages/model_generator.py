@@ -135,8 +135,9 @@ if st.button("Generate dbt Models"):
             11. Give only sql text no extra text like "```sql" or any other markigs
             12. Use proper intendation
             13. Add a header block in the model as comment with details like the model name, description, created date and Author.
-            14. Keep the Author name as "AI Generated" and the created date as current date(IST).
-            15. Enclose the comment using "{{# #}}"
+            14. The model name shoud be the target table name in the header block
+            15. Keep the Author name as "AI Generated" and the created date as current date(IST).
+            16. Enclose the comment using "{{# #}}"
 
             Your output should include:
             1. The dbt model SQL file content (formatted).

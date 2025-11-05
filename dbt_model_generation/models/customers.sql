@@ -1,6 +1,6 @@
 {#
-    Model: stg_customers
-    Description: Staging model for customer data with basic transformations and column mapping
+    Model: customers
+    Description: Staging model for customer data with transformed columns
     Created Date: 2024-12-19
     Author: AI Generated
 #}
@@ -16,7 +16,7 @@ WITH source_data AS (
 ),
 
 transformed AS (
-    SELECT 
+    SELECT
         -- Direct mapping with type casting
         CAST(cust_id AS STRING) AS customer_id,
         

@@ -8,7 +8,7 @@ WITH source_data AS (
 ),
 
 transformed AS (
-    SELECT 
+    SELECT
         CAST(emp_id AS STRING) AS employee_id,
         CAST(salary * 0.15 AS FLOAT) AS annual_bonus
     FROM source_data

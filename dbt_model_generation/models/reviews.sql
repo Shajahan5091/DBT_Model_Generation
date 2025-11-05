@@ -5,14 +5,14 @@
     Author: AI Generated
 #}
 
-WITH source_data AS (
+WITH source_reviews AS (
     SELECT 
         review_id,
         rating
     FROM {{ source('raw', 'raw_reviews') }}
 ),
 
-transformed AS (
+transformed_reviews AS (
     SELECT 
         CAST(review_id AS STRING) AS review_id,
         CASE 
@@ -20,7 +20,7 @@ transformed AS (
             WHEN rating = 3 THEN 'Neutral'
             ELSE 'Negative'
         END AS sentiment_category
-    FROM source_data
+    FROM source_reviews
 )
 
-SELECT * FROM transformed
+SELECT * FROM transformed_reviews
