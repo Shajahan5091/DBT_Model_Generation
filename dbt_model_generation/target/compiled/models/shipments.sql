@@ -9,17 +9,9 @@ WITH source_data AS (
 ),
 
 transformed AS (
-    SELECT 
-        -- Direct mapping with proper casting
+    SELECT
         CAST(shipment_id AS STRING) AS shipment_id,
-        
-        -- Calculate delivery delay days
-        CAST(DATEDIFF('day', order_date, delivery_date) AS INTEGER) AS delivery_delay_days,
-        
-        -- Keep original dates for reference
-        delivery_date,
-        order_date
-        
+        CAST(DATEDIFF('day', order_date, delivery_date) AS INTEGER) AS delivery_delay_days
     FROM source_data
 )
 

@@ -8,7 +8,7 @@ WITH source_data AS (
 ),
 
 transformed AS (
-    SELECT 
+    SELECT
         CAST(product_id AS STRING) AS product_id,
         CASE 
             WHEN quantity > 0 THEN 'IN_STOCK'

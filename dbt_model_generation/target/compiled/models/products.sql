@@ -12,12 +12,11 @@ transformed AS (
     SELECT 
         CAST(product_id AS STRING) AS product_id,
         CASE 
-            WHEN UPPER(category) = 'SEASONAL' 
+            WHEN category = 'Seasonal' 
             THEN CAST(price * 0.9 AS FLOAT)
             ELSE CAST(price AS FLOAT)
         END AS discounted_price
     FROM source_data
-    WHERE product_id IS NOT NULL
 )
 
 SELECT * FROM transformed

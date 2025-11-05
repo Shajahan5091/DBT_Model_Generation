@@ -11,7 +11,7 @@ WITH source_data AS (
 ),
 
 transformed AS (
-    SELECT 
+    SELECT
         -- Direct mapping with type casting
         CAST(cust_id AS STRING) AS customer_id,
         
