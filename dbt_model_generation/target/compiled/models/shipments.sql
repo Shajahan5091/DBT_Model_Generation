@@ -9,7 +9,7 @@ WITH source_data AS (
 ),
 
 transformed AS (
-    SELECT
+    SELECT 
         -- Direct mapping
         CAST(shipment_id AS STRING) AS shipment_id,
         

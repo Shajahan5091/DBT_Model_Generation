@@ -8,13 +8,9 @@ WITH source_data AS (
 ),
 
 transformed AS (
-    SELECT
-        -- Direct mapping of emp_id to employee_id
+    SELECT 
         CAST(emp_id AS STRING) AS employee_id,
-        
-        -- Calculate 15% of salary as annual bonus
         CAST(salary * 0.15 AS FLOAT) AS annual_bonus
-        
     FROM source_data
 )
 
