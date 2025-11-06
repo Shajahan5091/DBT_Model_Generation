@@ -59,7 +59,7 @@ options = CompleteOptions(
 )
 session = Session.builder.configs(connection_parameters).create() 
 
-models_folder_path = "D:\Automated_dbt_model_generation\dbt_model_generation\models" 
+models_folder_path = r"C:\Users\Shajahan.H\DBT_Model_Generation\dbt_model_generation\models" 
 
 # --- 3. Create folder structure ---
 if os.path.exists(models_folder_path):
