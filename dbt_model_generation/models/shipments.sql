@@ -1,8 +1,8 @@
 {#
-  Model: shipments
-  Description: Staging model for shipments data with delivery delay calculation
-  Created Date: 2024-12-19
-  Author: AI Generated
+    Model: shipments
+    Description: Staging model for shipments data with delivery delay calculation
+    Created Date: 2024-12-19
+    Author: AI Generated
 #}
 
 WITH source_data AS (

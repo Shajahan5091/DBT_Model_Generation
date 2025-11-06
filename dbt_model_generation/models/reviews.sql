@@ -1,5 +1,5 @@
 {#
-    Model: reviews
+    Model: stg_reviews
     Description: Staging model for reviews data with sentiment categorization based on rating
     Created Date: 2024-12-19
     Author: AI Generated

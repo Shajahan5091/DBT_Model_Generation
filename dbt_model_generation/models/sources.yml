@@ -5,7 +5,6 @@ sources:
     database: demo_db
     schema: raw
     description: "Raw source data from various systems"
-    
     tables:
       - name: raw_customers
         description: "Customer information and profile data"
@@ -21,6 +20,8 @@ sources:
             description: "Date when customer signed up"
           - name: is_vip_flag
             description: "Flag indicating VIP customer status"
+          - name: full_name
+            description: "Customer full name"
 
       - name: raw_employees
         description: "Employee information and compensation data"
@@ -52,7 +53,7 @@ sources:
               - unique
               - not_null
           - name: customer_id
-            description: "Reference to customer who placed the order"
+            description: "Customer who placed the order"
             tests:
               - not_null
           - name: order_date
@@ -125,4 +126,4 @@ sources:
           - name: timestamp
             description: "Timestamp of web activity"
           - name: url
-            description: "URL accessed by user"
+            description: "URL visited by user"
