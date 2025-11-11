@@ -3,3 +3,8 @@ target/
 dbt_packages/
 logs/
 dbt_internal_packages/
+testing.py
+system_prompts.py
+BRD.md
+pages/dbt_docs_cache
+docs_folder
