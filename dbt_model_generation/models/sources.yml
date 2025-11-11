@@ -4,20 +4,19 @@ sources:
   - name: dwh_staging
     database: bsl_staging
     schema: dwh_staging
-    description: "Staging tables for data warehouse operations"
     tables:
-      - name: address
-        description: "Address information for customers"
+      - name: Address
+        description: "Address information including city, state, and country. Join customer_address to get address_id and join address to get the country."
         columns:
           - name: city
             description: "City name"
           - name: state
-            description: "State or province"
+            description: "State name"
           - name: country
-            description: "Country name - lookup based on customer_id via customer_address join"
+            description: "Country name - lookup based on customer_id"
 
-      - name: customer
-        description: "Customer master data - active customers have created_ts within 2 years"
+      - name: Customer
+        description: "Customer information. Customer is active only if the created_ts is less than 2 years from current_date."
         columns:
           - name: customer_id
             description: "Unique customer identifier"
@@ -30,56 +29,56 @@ sources:
           - name: phone
             description: "Customer phone number"
           - name: created_ts
-            description: "Customer creation timestamp - used to determine active status"
+            description: "Customer creation timestamp"
 
-      - name: customer_address
-        description: "Junction table linking customers to addresses"
+      - name: Customer_Address
+        description: "Bridge table to join customer and address tables"
 
-      - name: inventory
-        description: "Product inventory levels by warehouse"
+      - name: Inventory
+        description: "Product inventory information by warehouse"
         columns:
           - name: quantity_on_hand
-            description: "Available inventory quantity"
+            description: "Current quantity available"
           - name: product_id
             description: "Product identifier"
           - name: warehouse_id
             description: "Warehouse identifier"
 
-      - name: order_header
+      - name: Order_Header
         description: "Order header information"
         columns:
           - name: order_date
-            description: "Date order was placed"
+            description: "Date when order was placed"
           - name: customer_id
-            description: "Customer who placed the order"
+            description: "Customer identifier"
           - name: order_id
             description: "Unique order identifier"
 
-      - name: order_line
-        description: "Individual line items within orders"
+      - name: Order_Line
+        description: "Order line items. Lookup product_id based on order_line_id."
         columns:
           - name: product_id
-            description: "Product identifier for the line item"
+            description: "Product identifier"
           - name: order_line_id
             description: "Unique order line identifier"
           - name: quantity
             description: "Quantity ordered"
           - name: unit_price
-            description: "Price per unit"
+            description: "Unit price of product"
 
-      - name: payment_transaction
-        description: "Payment transactions for orders"
+      - name: Payment_Transaction
+        description: "Payment transaction details. Convert payment_ts to date."
         columns:
           - name: order_id
-            description: "Associated order identifier"
+            description: "Order identifier"
           - name: payment_method
-            description: "Method of payment used"
+            description: "Method of payment"
           - name: amount_paid
-            description: "Amount paid in transaction"
+            description: "Amount paid"
           - name: payment_ts
-            description: "Payment timestamp - convert to date"
+            description: "Payment timestamp"
 
-      - name: product
+      - name: Product
         description: "Product master data"
         columns:
           - name: product_id
@@ -89,40 +88,33 @@ sources:
           - name: brand
             description: "Product brand"
 
-      - name: product_category
-        description: "Product category lookup table"
+      - name: Product_Category
+        description: "Product category information. Lookup category_name based on product_category_id."
         columns:
           - name: category_name
-            description: "Category name - lookup based on product_category_id"
+            description: "Category name"
 
-      - name: product_discount
-        description: "Product discount information with effective date ranges"
-        columns:
-          - name: discount_pct
-            description: "Discount percentage"
-          - name: effective_from
-            description: "Discount effective start date"
-          - name: effective_to
-            description: "Discount effective end date"
+      - name: Product_Discount
+        description: "Product discount information. Lookup discount_pct and calculate discounted price. Consider the discount effective_from and effective_to dates."
 
-      - name: returns
+      - name: Returns
         description: "Product return information"
         columns:
           - name: return_date
             description: "Date of return"
           - name: order_line_id
-            description: "Associated order line identifier"
+            description: "Order line identifier"
           - name: return_reason
             description: "Reason for return"
 
-      - name: shipment
-        description: "Order shipment tracking information"
+      - name: Shipment
+        description: "Shipment tracking information"
         columns:
           - name: order_id
-            description: "Associated order identifier"
+            description: "Order identifier"
           - name: shipped_date
-            description: "Date order was shipped"
+            description: "Date when order was shipped"
           - name: delivery_date
-            description: "Date order was delivered"
+            description: "Date when order was delivered"
           - name: status
             description: "Shipment status"
