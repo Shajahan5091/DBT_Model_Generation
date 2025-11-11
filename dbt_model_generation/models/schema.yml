@@ -11,7 +11,7 @@ models:
       - name: customer_id
         description: Foreign key reference to customer dimension table
       - name: address_line1
-        description: Primary address line with whitespace trimmed
+        description: Primary address line with trimmed whitespace
       - name: city
         description: City name in uppercase format
       - name: country
@@ -31,7 +31,7 @@ models:
       - name: parent_category_id
         description: Reference to parent category for hierarchical structure
       - name: category_path
-        description: Full hierarchical path showing parent and current category
+        description: Full category path showing hierarchy up to 2 levels
       - name: is_active
         description: Boolean flag indicating if the category is currently active
         tests:
@@ -69,15 +69,15 @@ models:
       - name: product_name
         description: Product name in title case format
       - name: price
-        description: Current product price
+        description: Product price with decimal precision
       - name: price_band
-        description: Price category bucket based on product price ranges
+        description: Price category bucket for product classification
         tests:
           - accepted_values:
               values: ['Low', 'Mid', 'High', 'Premium']
 
   - name: dim_supplier
-    description: Dimension table containing supplier information with standardized contact details
+    description: Dimension table containing supplier information with contact details
     columns:
       - name: supplier_id
         description: Unique identifier for each supplier
@@ -96,7 +96,7 @@ models:
               values: [true, false]
 
   - name: fact_inventory
-    description: Fact table tracking inventory levels by product and supplier with snapshot capabilities
+    description: Fact table tracking inventory levels by product and supplier with snapshot functionality
     columns:
       - name: product_id
         description: Foreign key reference to product dimension
@@ -148,12 +148,12 @@ models:
       - name: extended_amount
         description: Calculated total amount before discounts (quantity * unit_price)
       - name: discount_amount
-        description: Proportionally allocated discount amount for this line item
+        description: Proportionally allocated discount amount for the line item
       - name: net_amount
         description: Final amount after applying discounts (extended_amount - discount_amount)
 
   - name: fact_payment
-    description: Fact table tracking payment transactions with method standardization and application status
+    description: Fact table tracking payment transactions with method standardization and completion status
     columns:
       - name: payment_id
         description: Unique identifier for each payment transaction
@@ -193,4 +193,4 @@ models:
       - name: carrier
         description: Shipping carrier name in uppercase format
       - name: tracking_number
-        description: Tracking number provided by the carrier
+        description: Shipment tracking identifier

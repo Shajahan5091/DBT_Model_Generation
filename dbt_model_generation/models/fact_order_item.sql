@@ -19,7 +19,7 @@ with source_data as (
     select *
     from {{ source('dwh_raw', 'order_items') }}
     {% if is_incremental() %}
-    where exists (select 1 where true) and {{ is_incremental() }}
+        where exists (select 1 where true) and {{ is_incremental() }}
     {% endif %}
 ),
 
@@ -49,7 +49,7 @@ calculated_amounts as (
         -- Ensure integer semantics; round if fractional
         round(quantity) as quantity,
         unit_price,
-        -- Compute extended_amount as quantity * unit_price, treating null unit_price as 0
+        -- Compute extended_amount as quantity * unit_price
         round(quantity) * coalesce(unit_price, 0) as extended_amount,
         -- Set discount_amount to 0 if no discount context
         0.00 as discount_amount
@@ -62,11 +62,11 @@ final as (
         order_id,
         product_id,
         quantity,
-        cast(unit_price as number(10,2)) as unit_price,
-        cast(extended_amount as number(12,2)) as extended_amount,
-        cast(discount_amount as number(12,2)) as discount_amount,
-        -- Compute net_amount as extended_amount - discount_amount, ensuring non-negative
-        cast(greatest(extended_amount - discount_amount, 0) as number(12,2)) as net_amount
+        unit_price::number(10,2) as unit_price,
+        extended_amount::number(12,2) as extended_amount,
+        discount_amount::number(12,2) as discount_amount,
+        -- Compute net_amount as extended_amount - discount_amount, ensure non-negative
+        greatest(0, extended_amount - discount_amount)::number(12,2) as net_amount
     from calculated_amounts
 )
 
