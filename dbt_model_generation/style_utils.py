@@ -86,31 +86,6 @@ def apply_style():
             opacity: 1 !important;
         }
 
-                /* --- Fix Streamlit top toolbar (make it light even in dark browser mode) --- */
-        header[data-testid="stHeader"] {
-            background-color: #E8EEFF !important;   /* light blue matching sidebar */
-            color: #1A1A1A !important;
-            border-bottom: 1px solid #BFD2FF !important;
-        }
-
-        /* Hide or recolor the toolbar icons (hamburger, etc.) */
-        header[data-testid="stHeader"] svg {
-            fill: #1A1A1A !important;  /* dark icons for visibility */
-            stroke: #1A1A1A !important;
-        }
-
-        /* Optional: ensure bar remains visible in dark OS mode */
-        @media (prefers-color-scheme: dark) {
-            header[data-testid="stHeader"] {
-                background-color: #E8EEFF !important;
-                color: #1A1A1A !important;
-            }
-            header[data-testid="stHeader"] svg {
-                fill: #1A1A1A !important;
-                stroke: #1A1A1A !important;
-            }
-        }
-
         </style>
         """,
         unsafe_allow_html=True,
