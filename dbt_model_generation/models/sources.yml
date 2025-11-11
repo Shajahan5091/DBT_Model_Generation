@@ -33,7 +33,7 @@ sources:
             description: "Customer creation timestamp - used to determine active status"
 
       - name: customer_address
-        description: "Junction table linking customers to addresses"
+        description: "Bridge table linking customers to addresses"
 
       - name: inventory
         description: "Product inventory levels by warehouse"
@@ -90,16 +90,14 @@ sources:
             description: "Product brand"
 
       - name: product_category
-        description: "Product category information"
+        description: "Product category lookup table"
         columns:
-          - name: category_name
-            description: "Category name - lookup based on product_category_id"
+          - name: product_category_id
+            description: "Unique category identifier - lookup category_name"
 
       - name: product_discount
-        description: "Product discount information with effective date ranges"
+        description: "Product discount information with effective dates"
         columns:
-          - name: discount_pct
-            description: "Discount percentage"
           - name: effective_from
             description: "Discount effective start date"
           - name: effective_to

@@ -11,9 +11,7 @@ CREATED DATE: 2024-12-19 (IST)
 ------------------------------------------------------------------------
 #}
 
-{{ config(
-    materialized='view'
-) }}
+{{ config(materialized='view') }}
 
 WITH customer_base AS (
     SELECT 
