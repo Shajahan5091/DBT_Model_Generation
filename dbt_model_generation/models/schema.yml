@@ -22,7 +22,7 @@ models:
               to: ref('dim_customer')
               field: customer_sk
       - name: address_line1
-        description: Primary address line with trimmed whitespace
+        description: Primary address line with whitespace trimmed
         tests:
           - not_null
       - name: city
@@ -56,7 +56,7 @@ models:
         tests:
           - not_null
       - name: parent_category_id
-        description: Natural key of parent category for hierarchical structure
+        description: Natural key of parent category for hierarchy
       - name: parent_category_sk
         description: Surrogate key of parent category
         tests:
@@ -64,7 +64,7 @@ models:
               to: ref('dim_category')
               field: category_sk
       - name: category_path
-        description: Full category path showing hierarchy up to 2 levels
+        description: Hierarchical path showing parent and current category
       - name: is_active
         description: Flag indicating if category is currently active
         tests:
@@ -86,11 +86,11 @@ models:
           - unique
           - not_null
       - name: first_name
-        description: Customer first name in proper case
+        description: Customer first name in uppercase format
         tests:
           - not_null
       - name: last_name
-        description: Customer last name in proper case
+        description: Customer last name in uppercase format
         tests:
           - not_null
       - name: email
@@ -109,7 +109,7 @@ models:
               values: ['Gold', 'Silver', 'Bronze']
 
   - name: dim_product
-    description: Dimension table for products with category relationships and price banding
+    description: Dimension table for products with category relationships and price bands
     columns:
       - name: product_sk
         description: Surrogate key generated from product_id
@@ -139,7 +139,7 @@ models:
           - dbt_utils.accepted_range:
               min_value: 0
       - name: price_band
-        description: Price category bucket (Low/Mid/High/Premium)
+        description: Price category (Low/Mid/High/Premium)
         tests:
           - not_null
           - accepted_values:
@@ -178,7 +178,7 @@ models:
               values: [true, false]
 
   - name: fact_inventory
-    description: Fact table tracking inventory levels by product and supplier with snapshot capabilities
+    description: Fact table tracking inventory levels by product and supplier with snapshot dates
     columns:
       - name: product_sk
         description: Foreign key to product dimension table
@@ -209,7 +209,7 @@ models:
         tests:
           - not_null
       - name: is_latest
-        description: Flag indicating if this is the latest inventory record
+        description: Flag indicating latest record per product and supplier
         tests:
           - not_null
           - accepted_values:
@@ -253,7 +253,7 @@ models:
               min_value: 0
 
   - name: fact_order_item
-    description: Fact table containing order line item details with calculated amounts
+    description: Fact table containing order line items with calculated amounts and discounts
     columns:
       - name: order_item_sk
         description: Surrogate key generated from order_item_id
@@ -275,13 +275,13 @@ models:
               to: ref('dim_product')
               field: product_sk
       - name: quantity
-        description: Quantity of items ordered
+        description: Quantity of product ordered
         tests:
           - not_null
           - dbt_utils.accepted_range:
               min_value: 1
       - name: unit_price
-        description: Price per unit
+        description: Price per unit of product
         tests:
           - not_null
           - dbt_utils.accepted_range:
@@ -293,7 +293,7 @@ models:
           - dbt_utils.accepted_range:
               min_value: 0
       - name: discount_amount
-        description: Allocated discount amount for this line item
+        description: Proportionally allocated discount amount
         tests:
           - not_null
           - dbt_utils.accepted_range:
@@ -306,7 +306,7 @@ models:
               min_value: 0
 
   - name: fact_payment
-    description: Fact table tracking payment transactions with payment method standardization
+    description: Fact table tracking payments with standardized payment methods and application status
     columns:
       - name: payment_sk
         description: Surrogate key generated from payment_id
@@ -326,7 +326,7 @@ models:
               to: ref('fact_order')
               field: order_sk
       - name: payment_date
-        description: Date when payment was processed
+        description: Date when payment was made
         tests:
           - not_null
       - name: payment_method
@@ -342,14 +342,14 @@ models:
           - dbt_utils.accepted_range:
               min_value: 0
       - name: is_fully_applied
-        description: Flag indicating if total payments cover full order amount
+        description: Flag indicating if total payments cover order amount
         tests:
           - not_null
           - accepted_values:
               values: [true, false]
 
   - name: fact_shipment
-    description: Fact table containing shipment information with delivery performance metrics
+    description: Fact table containing shipment information with calculated shipping metrics
     columns:
       - name: shipment_sk
         description: Surrogate key generated from shipment_id

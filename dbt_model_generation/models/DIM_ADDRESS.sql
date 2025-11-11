@@ -2,7 +2,7 @@
 ------------------------------------------------------------------------
 MODEL NAME: DIM_ADDRESS
 TARGET TABLE: BSL_MA.DWH_MA.DIM_ADDRESS
-SOURCE TABLES: BSL_RAW.DWH_RAW.ADDRESS, BSL_MA.DWH_MA.DIM_CUSTOMER
+SOURCE TABLES: BSL_RAW.DWH_RAW.ADDRESS
 DESCRIPTION: Customer address dimension table that transforms raw address data into a dimensional model with surrogate keys and standardized formatting
 PREREQUISITES: DIM_CUSTOMER table must exist for customer lookup
 PARAMETER: None
@@ -15,7 +15,7 @@ CREATED DATE: 2024-12-19 (IST)
     materialized='table'
 ) }}
 
-WITH raw_address AS (
+WITH source_data AS (
     SELECT 
         ADDRESS_ID,
         CUSTOMER_ID,
@@ -23,7 +23,7 @@ WITH raw_address AS (
         CITY,
         COUNTRY,
         INSERTED_AT
-    FROM {{ source('BSL_RAW', 'ADDRESS') }}
+    FROM {{ source('dwh_raw', 'ADDRESS') }}
 ),
 
 customer_lookup AS (
@@ -33,33 +33,34 @@ customer_lookup AS (
     FROM {{ ref('DIM_CUSTOMER') }}
 ),
 
-transformed_address AS (
+transformed AS (
     SELECT 
         -- Generate surrogate key from ADDRESS_ID
-        {{ dbt_utils.generate_surrogate_key(['ra.ADDRESS_ID']) }} AS ADDRESS_SK,
+        {{ dbt_utils.generate_surrogate_key(['s.ADDRESS_ID']) }} AS ADDRESS_SK,
         
-        -- Direct mapping of ADDRESS_ID
-        ra.ADDRESS_ID,
+        -- Direct mapping
+        s.ADDRESS_ID,
         
         -- Lookup CUSTOMER_SK from DIM_CUSTOMER
-        cl.CUSTOMER_SK,
+        c.CUSTOMER_SK,
         
-        -- Trim whitespace from ADDRESS_LINE1
-        TRIM(ra.ADDRESS_LINE1) AS ADDRESS_LINE1,
+        -- Trim whitespace from address line
+        TRIM(s.ADDRESS_LINE1) AS ADDRESS_LINE1,
         
         -- Uppercase city and normalize
-        UPPER(ra.CITY) AS CITY,
+        UPPER(s.CITY) AS CITY,
         
-        -- Direct mapping of COUNTRY
-        ra.COUNTRY,
+        -- Direct mapping for country
+        s.COUNTRY,
         
         -- Convert timestamp to date
-        ra.INSERTED_AT::DATE AS CREATED_DATE
+        s.INSERTED_AT::DATE AS CREATED_DATE
         
-    FROM raw_address ra
-    INNER JOIN customer_lookup cl 
-        ON ra.CUSTOMER_ID = cl.CUSTOMER_ID
-    WHERE cl.CUSTOMER_SK IS NOT NULL  -- Skip rows where CUSTOMER_ID not found in DIM_CUSTOMER
+    FROM source_data s
+    INNER JOIN customer_lookup c 
+        ON s.CUSTOMER_ID = c.CUSTOMER_ID
+    -- Skip rows where CUSTOMER_ID not found in DIM_CUSTOMER
+    WHERE c.CUSTOMER_SK IS NOT NULL
 )
 
-SELECT * FROM transformed_address
+SELECT * FROM transformed

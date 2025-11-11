@@ -12,66 +12,65 @@ CREATED DATE: 2024-12-19 (IST)
 #}
 
 {{ config(
-    materialized='table',
-    pre_hook="DELETE FROM {{ this }} WHERE PRODUCT_ID IN (SELECT PRODUCT_ID FROM {{ source('raw', 'product') }} WHERE PRICE IS NOT NULL AND PRICE >= 0)"
+    materialized='table'
 ) }}
 
-WITH source_data AS (
-    SELECT 
+with source_data as (
+    select 
         PRODUCT_ID,
         PRODUCT_NAME,
         CATEGORY_ID,
         PRICE
-    FROM {{ source('raw', 'product') }}
-    WHERE PRICE IS NOT NULL 
-      AND PRICE >= 0  -- Exclude negative or null prices
+    from {{ source('dwh_raw', 'PRODUCT') }}
+    -- Filter out rows with negative or null prices as per business rules
+    where PRICE is not null and PRICE >= 0
 ),
 
-category_lookup AS (
-    SELECT 
+category_lookup as (
+    select 
         CATEGORY_ID,
         CATEGORY_SK
-    FROM {{ ref('dim_category') }}
+    from {{ ref('DIM_CATEGORY') }}
 ),
 
-transformed AS (
-    SELECT
+transformed_data as (
+    select
         -- Generate surrogate key from PRODUCT_ID
-        {{ dbt_utils.generate_surrogate_key(['PRODUCT_ID']) }} AS PRODUCT_SK,
+        {{ dbt_utils.generate_surrogate_key(['s.PRODUCT_ID']) }} as PRODUCT_SK,
         
         -- Direct mapping of PRODUCT_ID
         s.PRODUCT_ID,
         
         -- Title-case product name and trim excessive spaces
-        INITCAP(REGEXP_REPLACE(TRIM(s.PRODUCT_NAME), '\\s+', ' ')) AS PRODUCT_NAME,
+        initcap(trim(regexp_replace(s.PRODUCT_NAME, '\\s+', ' '))) as PRODUCT_NAME,
         
-        -- Lookup CATEGORY_SK, default to 0 if not found
-        COALESCE(c.CATEGORY_SK, 0) AS CATEGORY_SK,
+        -- Lookup CATEGORY_SK, set to 0 if missing in DIM_CATEGORY
+        coalesce(c.CATEGORY_SK, 0) as CATEGORY_SK,
         
         -- Direct mapping of PRICE
-        CAST(s.PRICE AS NUMBER(10,2)) AS PRICE,
+        cast(s.PRICE as number(10,2)) as PRICE,
         
         -- Price banding logic
-        CASE 
-            WHEN s.PRICE < 50 THEN 'Low'
-            WHEN s.PRICE >= 50 AND s.PRICE <= 199.99 THEN 'Mid'
-            WHEN s.PRICE >= 200 AND s.PRICE <= 499.99 THEN 'High'
-            WHEN s.PRICE >= 500 THEN 'Premium'
-            ELSE 'Unknown'
-        END AS PRICE_BAND,
+        case 
+            when s.PRICE < 50 then 'Low'
+            when s.PRICE >= 50 and s.PRICE <= 199.99 then 'Mid'
+            when s.PRICE >= 200 and s.PRICE <= 499.99 then 'High'
+            when s.PRICE >= 500 then 'Premium'
+            else 'Unknown'
+        end as PRICE_BAND,
         
         -- Add notes for zero price items
-        CASE 
-            WHEN s.PRICE = 0 THEN 'Price is zero - flagged for review'
-            ELSE NULL
-        END AS NOTES,
+        case 
+            when s.PRICE = 0 then 'Price is zero - flagged for review'
+            else null
+        end as NOTES,
         
-        CURRENT_TIMESTAMP() AS CREATED_TIMESTAMP,
-        CURRENT_TIMESTAMP() AS UPDATED_TIMESTAMP
+        current_timestamp() as CREATED_TIMESTAMP,
+        current_timestamp() as UPDATED_TIMESTAMP
         
-    FROM source_data s
-    LEFT JOIN category_lookup c 
-        ON s.CATEGORY_ID = c.CATEGORY_ID
+    from source_data s
+    left join category_lookup c
+        on s.CATEGORY_ID = c.CATEGORY_ID
 )
 
-SELECT * FROM transformed
+select * from transformed_data

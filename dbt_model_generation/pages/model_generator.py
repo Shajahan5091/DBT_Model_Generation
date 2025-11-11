@@ -128,6 +128,7 @@ if st.button("Generate dbt Models"):
             Do not include markdown formatting.
             Add comments as required.
             Utilize the notes given below and transform accordingly.
+            Use sorce reference as per dbt guidlines. For source name use {Source_Schema} in lowercase.
 
             Add a header block in the model as comment with details like the below template
             ------------------------------------------------------------------------
@@ -245,7 +246,7 @@ if st.button("Generate dbt Models"):
         Generate a single **sources.yml** file for the following source tables.
         - Follow dbt best practices
         - Output must be valid YAML
-
+        - keep the source names as {Source_Schema} in lowercase
 
 
         Sources:
