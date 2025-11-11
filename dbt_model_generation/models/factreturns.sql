@@ -16,7 +16,7 @@ CREATED DATE: 2024-12-19 (IST)
     unique_key='order_line_id'
 ) }}
 
-with returns_data as (
+with returns_base as (
     select
         return_date,
         order_line_id,
@@ -27,7 +27,7 @@ with returns_data as (
     {% endif %}
 ),
 
-order_line_data as (
+order_line_lookup as (
     select
         order_line_id,
         product_id
@@ -40,8 +40,8 @@ final as (
         r.order_line_id,
         ol.product_id,
         r.return_reason
-    from returns_data r
-    left join order_line_data ol
+    from returns_base r
+    left join order_line_lookup ol
         on r.order_line_id = ol.order_line_id
 )
 

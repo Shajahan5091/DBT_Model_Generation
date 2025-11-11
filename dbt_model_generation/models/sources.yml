@@ -4,10 +4,10 @@ sources:
   - name: dwh_staging
     database: bsl_staging
     schema: dwh_staging
-    description: "Staging tables for data warehouse"
+    description: "Staging tables for data warehouse operations"
     tables:
       - name: address
-        description: "Address information including city, state, and country"
+        description: "Address information including city, state, and country details"
         columns:
           - name: city
             description: "City name"
@@ -17,7 +17,7 @@ sources:
             description: "Country name - lookup based on customer_id via customer_address join"
 
       - name: customer
-        description: "Customer master data with contact information"
+        description: "Customer master data with contact information and creation timestamp"
         columns:
           - name: customer_id
             description: "Unique customer identifier"
@@ -33,7 +33,7 @@ sources:
             description: "Customer creation timestamp - used to determine active status (active if less than 2 years from current date)"
 
       - name: customer_address
-        description: "Junction table linking customers to addresses"
+        description: "Bridge table linking customers to addresses"
 
       - name: inventory
         description: "Product inventory levels by warehouse"
@@ -49,7 +49,7 @@ sources:
         description: "Order header information"
         columns:
           - name: order_date
-            description: "Date order was placed"
+            description: "Date when order was placed"
           - name: customer_id
             description: "Customer who placed the order"
           - name: order_id
@@ -68,14 +68,14 @@ sources:
             description: "Price per unit"
 
       - name: payment_transaction
-        description: "Payment transactions for orders"
+        description: "Payment transaction records"
         columns:
           - name: order_id
             description: "Associated order identifier"
           - name: payment_method
             description: "Method of payment used"
           - name: amount_paid
-            description: "Amount paid in transaction"
+            description: "Amount paid for the transaction"
           - name: payment_ts
             description: "Payment timestamp - to be converted to date"
 
@@ -93,11 +93,15 @@ sources:
         description: "Product category information"
         columns:
           - name: product_category_id
-            description: "Unique product category identifier - used to lookup category_name"
+            description: "Unique product category identifier"
+          - name: category_name
+            description: "Category name - lookup based on product_category_id"
 
       - name: product_discount
-        description: "Product discount information with effective dates"
+        description: "Product discount information with effective date ranges"
         columns:
+          - name: discount_pct
+            description: "Discount percentage - used to calculate discounted price"
           - name: effective_from
             description: "Discount effective start date"
           - name: effective_to
@@ -109,7 +113,7 @@ sources:
           - name: return_date
             description: "Date of return"
           - name: order_line_id
-            description: "Order line being returned"
+            description: "Associated order line identifier"
           - name: return_reason
             description: "Reason for return"
 
@@ -119,8 +123,8 @@ sources:
           - name: order_id
             description: "Associated order identifier"
           - name: shipped_date
-            description: "Date order was shipped"
+            description: "Date when order was shipped"
           - name: delivery_date
-            description: "Date order was delivered"
+            description: "Date when order was delivered"
           - name: status
             description: "Current shipment status"

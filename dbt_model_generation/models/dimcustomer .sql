@@ -24,7 +24,7 @@ WITH customer_base AS (
     FROM {{ source('dwh_staging', 'customer') }}
 ),
 
-customer_address_link AS (
+customer_address_mapping AS (
     SELECT 
         customer_id,
         address_id
@@ -52,10 +52,10 @@ customer_with_address AS (
         ad.state,
         ad.country
     FROM customer_base cb
-    LEFT JOIN customer_address_link cal 
-        ON cb.customer_id = cal.customer_id
+    LEFT JOIN customer_address_mapping cam 
+        ON cb.customer_id = cam.customer_id
     LEFT JOIN address_details ad 
-        ON cal.address_id = ad.address_id
+        ON cam.address_id = ad.address_id
 ),
 
 final AS (

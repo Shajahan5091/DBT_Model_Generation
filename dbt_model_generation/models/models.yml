@@ -13,11 +13,11 @@ models:
       - name: phone
         description: Customer's phone number
       - name: city
-        description: Customer's city based on customer location lookup
+        description: Customer's city location
       - name: state
-        description: Customer's state based on customer location lookup
+        description: Customer's state location
       - name: country
-        description: Customer's country based on customer location lookup
+        description: Customer's country location
       - name: is_current
         description: Flag indicating if customer is active based on creation date within last 2 years
 
@@ -31,14 +31,14 @@ models:
       - name: brand
         description: Brand name of the product
       - name: category_name
-        description: Product category name looked up from category reference
+        description: Product category name
       - name: current_unit_price
-        description: Current discounted unit price calculated from product discount percentage
+        description: Current unit price after applying discount percentage
       - name: active_flag
-        description: Flag indicating if product is active based on inventory availability
+        description: Flag indicating if product is active based on quantity availability
 
   - name: FactInventorySnapshot
-    description: Daily snapshot of inventory levels across warehouses
+    description: Fact table capturing daily inventory snapshots by product and warehouse
     columns:
       - name: snapshot_date
         description: Date of the inventory snapshot
@@ -47,10 +47,10 @@ models:
       - name: warehouse_id
         description: Unique identifier for the warehouse
       - name: quantity_on_hand
-        description: Current quantity available in the warehouse
+        description: Quantity of product available in the warehouse
 
   - name: FactPayment
-    description: Payment transaction fact table containing payment details
+    description: Fact table containing payment transaction details
     columns:
       - name: order_id
         description: Unique identifier for the order
@@ -59,22 +59,22 @@ models:
       - name: amount_paid
         description: Total amount paid for the order
       - name: payment_date
-        description: Date when payment was processed
+        description: Date when payment was made
 
   - name: FactReturns
-    description: Product returns fact table containing return transaction details
+    description: Fact table containing product return information
     columns:
       - name: return_date
-        description: Date when the product was returned
+        description: Date when product was returned
       - name: order_line_id
         description: Unique identifier for the order line item
       - name: product_id
-        description: Product identifier looked up from order line
+        description: Unique identifier for the returned product
       - name: return_reason
         description: Reason provided for the product return
 
   - name: FactSales
-    description: Sales transaction fact table containing order and sales details
+    description: Fact table containing sales transaction details with calculated amounts
     columns:
       - name: order_date
         description: Date when the order was placed
@@ -89,14 +89,14 @@ models:
       - name: quantity_sold
         description: Quantity of product sold
       - name: gross_amount
-        description: Gross sales amount calculated as quantity times unit price
+        description: Gross sales amount before discount
       - name: discount_amount
-        description: Discount amount applied to the sale
+        description: Total discount amount applied
       - name: net_amount
-        description: Net sales amount after applying discounts
+        description: Net sales amount after discount
 
   - name: FactShipment
-    description: Shipment tracking fact table containing delivery information
+    description: Fact table containing shipment and delivery information
     columns:
       - name: order_id
         description: Unique identifier for the order
