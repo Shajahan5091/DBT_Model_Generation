@@ -9,7 +9,7 @@ models:
         tests:
           - unique
       - name: customer_id
-        description: Foreign key linking to customer dimension table
+        description: Foreign key reference to customer dimension table
       - name: address_line1
         description: Primary address line with whitespace trimmed
       - name: city
@@ -71,7 +71,7 @@ models:
       - name: price
         description: Product price with 2 decimal precision
       - name: price_band
-        description: Price category bucket for product classification
+        description: Price category bucket based on product price ranges
         tests:
           - accepted_values:
               values: ['Low', 'Mid', 'High', 'Premium']
@@ -99,11 +99,11 @@ models:
     description: Fact table tracking inventory levels by product and supplier with snapshot capabilities
     columns:
       - name: product_id
-        description: Foreign key to product dimension
+        description: Foreign key reference to product dimension
         tests:
           - not_null
       - name: supplier_id
-        description: Foreign key to supplier dimension
+        description: Foreign key reference to supplier dimension
       - name: stock_qty
         description: Current stock quantity available
       - name: warehouse_location
@@ -121,13 +121,13 @@ models:
         tests:
           - unique
       - name: customer_id
-        description: Foreign key to customer dimension
+        description: Foreign key reference to customer dimension
       - name: order_date
         description: Date when order was placed
         tests:
           - not_null
       - name: order_status
-        description: Normalized order status in uppercase format
+        description: Current status of the order in uppercase format
         tests:
           - accepted_values:
               values: ['PENDING', 'CANCELLED', 'SHIPPED', 'DELIVERED']
@@ -135,12 +135,12 @@ models:
         description: Total order amount with 2 decimal precision
 
   - name: fact_order_item
-    description: Fact table containing order line items with calculated amounts and discount allocation
+    description: Fact table containing order line item details with calculated amounts
     columns:
       - name: order_id
-        description: Foreign key to order fact table
+        description: Foreign key reference to order fact table
       - name: product_id
-        description: Foreign key to product dimension
+        description: Foreign key reference to product dimension
       - name: quantity
         description: Quantity of product ordered
       - name: unit_price
@@ -153,44 +153,44 @@ models:
         description: Final amount after discount (extended_amount - discount_amount)
 
   - name: fact_payment
-    description: Fact table tracking payment transactions with method standardization and application status
+    description: Fact table tracking payment transactions with method standardization and completion status
     columns:
       - name: payment_id
-        description: Unique identifier for each payment
+        description: Unique identifier for each payment transaction
         tests:
           - unique
       - name: order_id
-        description: Foreign key to order fact table
+        description: Foreign key reference to order fact table
       - name: payment_date
         description: Date when payment was processed
         tests:
           - not_null
       - name: payment_method
-        description: Standardized payment method in uppercase
+        description: Payment method in uppercase format
         tests:
           - accepted_values:
               values: ['CARD', 'UPI', 'COD', 'NETBANKING']
       - name: amount
         description: Payment amount with 2 decimal precision
       - name: is_fully_applied
-        description: Flag indicating if total payments cover order amount
+        description: Flag indicating if total payments cover the full order amount
 
   - name: fact_shipment
-    description: Fact table containing shipment information with calculated shipping metrics
+    description: Fact table containing shipment information with delivery performance metrics
     columns:
       - name: shipment_id
         description: Unique identifier for each shipment
         tests:
           - unique
       - name: order_id
-        description: Foreign key to order fact table
+        description: Foreign key reference to order fact table
       - name: shipped_date
         description: Date when shipment was dispatched
         tests:
           - not_null
       - name: days_to_ship
-        description: Number of days between order and shipment dates
+        description: Number of days between order date and shipment date
       - name: carrier
         description: Shipping carrier name in uppercase format
       - name: tracking_number
-        description: Shipment tracking identifier
+        description: Shipment tracking number for customer reference

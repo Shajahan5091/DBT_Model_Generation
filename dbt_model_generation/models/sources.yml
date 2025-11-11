@@ -77,7 +77,7 @@ sources:
             description: "Unique identifier for order item"
 
       - name: orders
-        description: "Customer orders"
+        description: "Customer order transactions"
         columns:
           - name: order_id
             description: "Unique identifier for order"
@@ -88,7 +88,7 @@ sources:
           - name: status
             description: "Current status of the order"
           - name: total_amount
-            description: "Total amount of the order"
+            description: "Total monetary amount of the order"
 
       - name: payments
         description: "Payment transactions for orders"
@@ -105,7 +105,7 @@ sources:
             description: "Payment amount"
 
       - name: products
-        description: "Product catalog"
+        description: "Product catalog information"
         columns:
           - name: product_id
             description: "Unique identifier for product"
@@ -115,7 +115,7 @@ sources:
             description: "Current price of the product"
 
       - name: shipments
-        description: "Order shipment information"
+        description: "Order shipment tracking information"
         columns:
           - name: shipment_id
             description: "Unique identifier for shipment"
@@ -129,7 +129,7 @@ sources:
             description: "Shipment tracking number"
 
       - name: suppliers
-        description: "Supplier information"
+        description: "Supplier master data"
         columns:
           - name: supplier_id
             description: "Unique identifier for supplier"
@@ -138,6 +138,6 @@ sources:
           - name: contact_email
             description: "Supplier contact email"
           - name: country
-            description: "Supplier country"
+            description: "Supplier country location"
           - name: active_flag
             description: "Flag indicating if supplier is active"
