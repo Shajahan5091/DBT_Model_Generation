@@ -2,27 +2,27 @@ version: 2
 
 models:
   - name: DimCustomer
-    description: Customer dimension table containing customer details and location information
+    description: Customer dimension table containing customer details including personal information and location data
     columns:
       - name: customer_id
         description: Unique identifier for each customer
       - name: full_name
-        description: Customer's full name concatenated from first and last name
+        description: Customer's full name created by concatenating first name and last name
       - name: email
         description: Customer's email address
       - name: phone
         description: Customer's phone number
       - name: city
-        description: Customer's city location
+        description: Customer's city obtained through lookup based on customer_id
       - name: state
-        description: Customer's state location
+        description: Customer's state obtained through lookup based on customer_id
       - name: country
-        description: Customer's country location
+        description: Customer's country obtained through lookup based on customer_id
       - name: is_current
-        description: Flag indicating if customer is active based on creation date within last 2 years
+        description: Boolean flag indicating if customer is active based on created timestamp being less than 2 years from current date
 
   - name: DimProduct
-    description: Product dimension table containing product details and pricing information
+    description: Product dimension table containing product information including pricing and availability status
     columns:
       - name: product_id
         description: Unique identifier for each product
@@ -31,26 +31,26 @@ models:
       - name: brand
         description: Brand name of the product
       - name: category_name
-        description: Category classification of the product
+        description: Product category name obtained through lookup based on product_id
       - name: current_unit_price
-        description: Current unit price after applying discounts
+        description: Current unit price after applying discount percentage from Product_Discount table
       - name: active_flag
-        description: Flag indicating if product is active based on inventory availability
+        description: Boolean flag indicating product availability based on quantity on hand
 
   - name: FactInventorySnapshot
-    description: Daily snapshot of inventory levels across warehouses
+    description: Fact table capturing inventory levels at specific points in time across warehouses
     columns:
       - name: snapshot_date
-        description: Date of the inventory snapshot
+        description: Date when the inventory snapshot was taken
       - name: product_id
         description: Unique identifier for the product
       - name: warehouse_id
         description: Unique identifier for the warehouse
       - name: quantity_on_hand
-        description: Current quantity available in the warehouse
+        description: Available quantity of product in the warehouse
 
   - name: FactPayment
-    description: Payment transaction fact table containing payment details
+    description: Fact table containing payment transaction details for orders
     columns:
       - name: order_id
         description: Unique identifier for the order
@@ -59,22 +59,22 @@ models:
       - name: amount_paid
         description: Total amount paid for the order
       - name: payment_date
-        description: Date when payment was processed
+        description: Date when the payment was processed
 
   - name: FactReturns
-    description: Product returns fact table containing return transaction details
+    description: Fact table tracking product returns with reasons and associated order information
     columns:
       - name: return_date
-        description: Date when the return was processed
+        description: Date when the product was returned
       - name: order_line_id
         description: Unique identifier for the order line item
       - name: product_id
-        description: Unique identifier for the returned product
+        description: Product identifier obtained through lookup from Order_Line based on order_line_id
       - name: return_reason
         description: Reason provided for the product return
 
   - name: FactSales
-    description: Sales transaction fact table containing order and financial details
+    description: Fact table containing sales transaction details with calculated amounts and discounts
     columns:
       - name: order_date
         description: Date when the order was placed
@@ -87,16 +87,16 @@ models:
       - name: order_line_id
         description: Unique identifier for the order line item
       - name: quantity_sold
-        description: Quantity of products sold
+        description: Quantity of product sold
       - name: gross_amount
-        description: Total amount before discounts
+        description: Total amount before discount calculated as quantity multiplied by unit price
       - name: discount_amount
-        description: Total discount amount applied
+        description: Discount amount calculated as unit price multiplied by discount percentage
       - name: net_amount
-        description: Final amount after applying discounts
+        description: Final amount after discount calculated as gross amount minus discount amount
 
   - name: FactShipment
-    description: Shipment tracking fact table containing delivery information
+    description: Fact table tracking shipment details and delivery status for orders
     columns:
       - name: order_id
         description: Unique identifier for the order

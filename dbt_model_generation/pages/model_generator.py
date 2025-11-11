@@ -255,10 +255,6 @@ if st.button("Generate dbt Models"):
 
             cols = list(set(cols))
             cols = subdf['Source_Column'].dropna().unique().tolist()
-            print('database: ', database)
-            print('schema: ', schema)
-            print('table: ', table)
-            print('columns list: ', cols)
 
             for _, row in subdf.iterrows():
                 logic = (
@@ -274,6 +270,7 @@ if st.button("Generate dbt Models"):
             source_summary.append(
                 f"Database: {database}\nSchema: {schema}\nTable: {table}\nColumns: {', '.join(cols)}\nMapping_Rule: {logic}\nNotes: {notes}"
             )
+            print(source_summary)
 
         sources_prompt = f"""
         You are a Snowflake + dbt expert.
@@ -282,7 +279,7 @@ if st.button("Generate dbt Models"):
         - Follow dbt best practices
         - Output must be valid YAML
         - keep the source names as {Source_Schema} in lowercase
-        - Look at the mapping_rule and notes for additional source details
+        - Look at the mapping_rule and notes for additional source details and create those sources if not already created.
 
 
         Sources:

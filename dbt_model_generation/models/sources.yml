@@ -4,10 +4,10 @@ sources:
   - name: dwh_staging
     database: bsl_staging
     schema: dwh_staging
-    description: "Staging tables for data warehouse processing"
+    description: "Staging tables for data warehouse operations"
     tables:
-      - name: Address
-        description: "Address information for customers"
+      - name: address
+        description: "Address information including city, state, and country"
         columns:
           - name: city
             description: "City name"
@@ -15,12 +15,9 @@ sources:
             description: "State or province"
           - name: country
             description: "Country name - lookup based on customer_id via customer_address join"
-        meta:
-          mapping_rule: "Lookup country based on customer_id"
-          notes: "Join customer_address to get address_id and join address to get the country"
 
-      - name: Customer
-        description: "Customer master data"
+      - name: customer
+        description: "Customer master data with contact information"
         columns:
           - name: customer_id
             description: "Unique customer identifier"
@@ -33,23 +30,27 @@ sources:
           - name: phone
             description: "Customer phone number"
           - name: created_ts
-            description: "Customer creation timestamp"
-        meta:
-          mapping_rule: "customer is active only if the created_ts is less than 2 years from current_date"
+            description: "Customer creation timestamp - used to determine active status (active if less than 2 years from current_date)"
 
-      - name: Inventory
+      - name: customer_address
+        description: "Junction table linking customers to addresses"
+        columns:
+          - name: customer_id
+            description: "Customer identifier"
+          - name: address_id
+            description: "Address identifier"
+
+      - name: inventory
         description: "Product inventory levels by warehouse"
         columns:
           - name: quantity_on_hand
-            description: "Available quantity in stock"
+            description: "Current inventory quantity"
           - name: product_id
             description: "Product identifier"
           - name: warehouse_id
             description: "Warehouse identifier"
-        meta:
-          mapping_rule: "Direct Mapping"
 
-      - name: Order_Header
+      - name: order_header
         description: "Order header information"
         columns:
           - name: order_date
@@ -58,10 +59,8 @@ sources:
             description: "Customer who placed the order"
           - name: order_id
             description: "Unique order identifier"
-        meta:
-          mapping_rule: "Direct Mapping"
 
-      - name: Order_Line
+      - name: order_line
         description: "Individual line items within orders"
         columns:
           - name: product_id
@@ -71,11 +70,9 @@ sources:
           - name: quantity
             description: "Quantity ordered"
           - name: unit_price
-            description: "Price per unit"
-        meta:
-          mapping_rule: "Lookup product_id from Order_Line based on order_line_id"
+            description: "Unit price for the product"
 
-      - name: Payment_Transaction
+      - name: payment_transaction
         description: "Payment transaction records"
         columns:
           - name: order_id
@@ -85,11 +82,9 @@ sources:
           - name: amount_paid
             description: "Amount paid in transaction"
           - name: payment_ts
-            description: "Payment timestamp"
-        meta:
-          mapping_rule: "Convert to date"
+            description: "Payment timestamp - to be converted to date"
 
-      - name: Product
+      - name: product
         description: "Product master data"
         columns:
           - name: product_id
@@ -100,31 +95,36 @@ sources:
             description: "Product brand"
           - name: unit_price
             description: "Base unit price before discounts"
-        meta:
-          mapping_rule: "Lookup discount_pct from Product_Discount and calculate the discounted price"
-          notes: "Consider the discount effective_from and effective_to dates"
 
-      - name: Product_Category
+      - name: product_category
         description: "Product category information"
         columns:
           - name: category_name
-            description: "Name of the product category"
-        meta:
-          mapping_rule: "Lookup category_name based on product_id"
+            description: "Category name - lookup based on product_id"
 
-      - name: Returns
-        description: "Product return records"
+      - name: product_discount
+        description: "Product discount information with effective dates"
+        columns:
+          - name: product_id
+            description: "Product identifier"
+          - name: discount_pct
+            description: "Discount percentage"
+          - name: effective_from
+            description: "Discount effective start date"
+          - name: effective_to
+            description: "Discount effective end date"
+
+      - name: returns
+        description: "Product return information"
         columns:
           - name: return_date
-            description: "Date when product was returned"
+            description: "Date of return"
           - name: order_line_id
-            description: "Order line item being returned"
+            description: "Associated order line identifier"
           - name: return_reason
-            description: "Reason for the return"
-        meta:
-          mapping_rule: "Direct Mapping"
+            description: "Reason for return"
 
-      - name: Shipment
+      - name: shipment
         description: "Order shipment tracking information"
         columns:
           - name: order_id
@@ -135,5 +135,3 @@ sources:
             description: "Date when order was delivered"
           - name: status
             description: "Current shipment status"
-        meta:
-          mapping_rule: "Direct Mapping"
