@@ -13,11 +13,11 @@ models:
       - name: phone
         description: Customer's phone number
       - name: city
-        description: Customer's city location
+        description: Customer's city based on customer location lookup
       - name: state
-        description: Customer's state location
+        description: Customer's state based on customer location lookup
       - name: country
-        description: Customer's country location
+        description: Customer's country based on customer location lookup
       - name: is_current
         description: Flag indicating if customer is active based on creation date within last 2 years
 
@@ -31,14 +31,14 @@ models:
       - name: brand
         description: Brand name of the product
       - name: category_name
-        description: Product category name
+        description: Product category name looked up from category reference
       - name: current_unit_price
         description: Current unit price after applying discount percentage
       - name: active_flag
-        description: Flag indicating if product is active based on quantity availability
+        description: Flag indicating if product is active based on quantity on hand
 
   - name: FactInventorySnapshot
-    description: Fact table capturing daily inventory snapshots by product and warehouse
+    description: Daily snapshot of inventory levels across warehouses
     columns:
       - name: snapshot_date
         description: Date of the inventory snapshot
@@ -50,7 +50,7 @@ models:
         description: Quantity of product available in the warehouse
 
   - name: FactPayment
-    description: Fact table containing payment transaction details
+    description: Payment transaction fact table containing payment details
     columns:
       - name: order_id
         description: Unique identifier for the order
@@ -59,13 +59,13 @@ models:
       - name: amount_paid
         description: Total amount paid for the order
       - name: payment_date
-        description: Date when payment was made
+        description: Date when payment was processed
 
   - name: FactReturns
-    description: Fact table containing product return information
+    description: Product returns fact table containing return transaction details
     columns:
       - name: return_date
-        description: Date when product was returned
+        description: Date when the product was returned
       - name: order_line_id
         description: Unique identifier for the order line item
       - name: product_id
@@ -74,7 +74,7 @@ models:
         description: Reason provided for the product return
 
   - name: FactSales
-    description: Fact table containing sales transaction details with calculated amounts
+    description: Sales transaction fact table containing order and sales details
     columns:
       - name: order_date
         description: Date when the order was placed
@@ -89,14 +89,14 @@ models:
       - name: quantity_sold
         description: Quantity of product sold
       - name: gross_amount
-        description: Gross sales amount before discount
+        description: Gross sales amount calculated as quantity times unit price
       - name: discount_amount
-        description: Total discount amount applied
+        description: Discount amount applied to the sale
       - name: net_amount
-        description: Net sales amount after discount
+        description: Net sales amount after applying discounts
 
   - name: FactShipment
-    description: Fact table containing shipment and delivery information
+    description: Shipment fact table containing delivery and shipping information
     columns:
       - name: order_id
         description: Unique identifier for the order
