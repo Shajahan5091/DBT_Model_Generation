@@ -30,48 +30,62 @@ fact_order as (
     from {{ ref('fact_order') }}
 ),
 
-payment_transformations as (
-    select
+payment_with_order as (
+    select 
         sp.payment_id,
-        fo.order_id::integer as order_id,
-        sp.payment_date::date as payment_date,
-        case 
-            when upper(sp.payment_method) in ('CARD', 'UPI', 'COD', 'NETBANKING') 
-            then upper(sp.payment_method)
-            else 'CARD'
-        end as payment_method,
-        case 
-            when sp.amount < 0 then null
-            else sp.amount::number(10,2)
-        end as amount,
+        sp.order_id,
+        sp.payment_date,
+        sp.payment_method,
+        sp.amount,
+        fo.order_id as lookup_order_id,
         fo.total_amount as order_total_amount
     from source_payments sp
-    inner join fact_order fo on sp.order_id = fo.order_id
+    left join fact_order fo on sp.order_id = fo.order_id::varchar
+    -- Skip payments if order not present
+    where fo.order_id is not null
 ),
 
-payment_aggregations as (
-    select
+payment_aggregates as (
+    select 
         order_id,
-        sum(amount) as total_payments
-    from payment_transformations
-    where amount is not null
+        sum(case when amount >= 0 then amount else 0 end) as total_payments
+    from payment_with_order
     group by order_id
 ),
 
 final as (
-    select
-        pt.payment_id,
-        pt.order_id,
-        pt.payment_date,
-        pt.payment_method,
-        pt.amount,
+    select 
+        -- Direct mapping of payment_id
+        pwo.payment_id,
+        
+        -- Convert order_id to integer via lookup
+        pwo.lookup_order_id::integer as order_id,
+        
+        -- Convert timestamp to date
+        pwo.payment_date::date as payment_date,
+        
+        -- Standardize payment method to enum values
         case 
-            when pt.order_total_amount is null then false
-            when pa.total_payments >= pt.order_total_amount then true
+            when upper(pwo.payment_method) in ('CARD', 'UPI', 'COD', 'NETBANKING') 
+            then upper(pwo.payment_method)
+            else 'CARD'
+        end as payment_method,
+        
+        -- Handle negative amounts by setting to null
+        case 
+            when pwo.amount < 0 then null
+            else pwo.amount
+        end as amount,
+        
+        -- Calculate if payment is fully applied
+        case 
+            when pwo.order_total_amount is null then false
+            when pa.total_payments >= pwo.order_total_amount then true
             else false
         end as is_fully_applied
-    from payment_transformations pt
-    left join payment_aggregations pa on pt.order_id = pa.order_id
+        
+    from payment_with_order pwo
+    left join payment_aggregates pa on pwo.order_id = pa.order_id
 )
 
 select * from final

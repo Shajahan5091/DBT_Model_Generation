@@ -183,8 +183,13 @@ if st.button("Generate dbt Models"):
                     if pd.notna(row['Mapping_Rule']) and row['Mapping_Rule'].strip()
                     else row['Source_Column']
                 )
+                test = (
+                    row['Test']
+                    if pd.notna(row['Test']) and row['Test'].strip()
+                    else row['Test']
+                )
                 mapping_lines.append(
-                    f"{row['Source_Column']} → {row['Target_Column']} ({row['Target_Data_Type']}) | logic: {logic}"
+                    f"{row['Source_Column']} → {row['Target_Column']} ({row['Target_Data_Type']}) | logic: {logic} | Test: {test}"
                 )
             model_summary.append(f"Model: {t_table}\nSchema: {t_schema}\nColumns:\n" + "\n".join(mapping_lines))
         print(model_summary)
@@ -200,7 +205,7 @@ if st.button("Generate dbt Models"):
             - Use proper intendation
             - Don't skip anything. Give full code.
             - Don't add schema name and type.
-            - Don't add any other tests. Add only provided tests.
+            - Add only provided tests.
 
         The generated yaml file should look like this:
         version: 2

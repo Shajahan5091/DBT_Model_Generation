@@ -4,7 +4,8 @@ sources:
   - name: dwh_raw
     database: bsl_raw
     schema: dwh_raw
-    description: "Raw data source tables from the data warehouse"
+    description: "Raw data warehouse tables"
+    
     tables:
       - name: addresses
         description: "Customer address information"
@@ -49,7 +50,7 @@ sources:
             description: "Timestamp when record was inserted"
 
       - name: inventory
-        description: "Product inventory levels and locations"
+        description: "Product inventory levels"
         columns:
           - name: product_id
             description: "Foreign key to products table"
@@ -111,10 +112,8 @@ sources:
             description: "Unique identifier for product"
           - name: product_name
             description: "Name of the product"
-          - name: category_id
-            description: "Foreign key to categories table"
           - name: price
-            description: "Product price"
+            description: "Current price of the product"
 
       - name: shipments
         description: "Order shipment tracking information"
@@ -128,7 +127,7 @@ sources:
           - name: carrier
             description: "Shipping carrier name"
           - name: tracking_number
-            description: "Shipment tracking number"
+            description: "Carrier tracking number"
 
       - name: suppliers
         description: "Supplier master data"
@@ -140,6 +139,6 @@ sources:
           - name: contact_email
             description: "Supplier contact email"
           - name: country
-            description: "Supplier country location"
+            description: "Supplier country"
           - name: active_flag
             description: "Flag indicating if supplier is active"
