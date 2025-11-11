@@ -177,7 +177,7 @@ if st.button("Generate dbt Models"):
             print(f"✅ Model created successfully → {model_path}")
             st.write(f"✅ Model created: `{t_table}.sql`")
 
-        st.write("🧠 Generating consolidated schema.yml with Cortex...")
+        st.write("🧠 Generating consolidated models.yml with Cortex...")
         # --- Consolidated schema.yml generation via Cortex ---
         model_summary = []
         for (t_database, t_schema, t_table), subdf in grouped:
@@ -235,7 +235,7 @@ if st.button("Generate dbt Models"):
         schema_text = schema_result.get("response") if isinstance(schema_result, dict) else str(schema_result)
         schema_text = re.sub(r"(?i)^sure.*|^here.*|```.*", "", schema_text).strip()
 
-        schema_yml_path = "models/schema.yml"
+        schema_yml_path = "models/models.yml"
         with open(schema_yml_path, "w", encoding="utf-8") as f:
             f.write(schema_text)
 

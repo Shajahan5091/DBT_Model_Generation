@@ -9,21 +9,21 @@ models:
         tests:
           - unique
       - name: customer_id
-        description: Foreign key reference to customer dimension table
+        description: Foreign key linking to customer dimension table
       - name: address_line1
-        description: Primary address line with trimmed whitespace
+        description: Primary address line with whitespace trimmed
       - name: city
         description: City name in uppercase format
       - name: country
         description: Country name for the address
       - name: inserted_at
-        description: Date when the address record was first created
+        description: Date when the address record was created
 
   - name: dim_category
     description: Dimension table for product categories with hierarchical structure and path information
     columns:
       - name: category_id
-        description: Unique identifier for each product category
+        description: Unique identifier for each category
         tests:
           - unique
       - name: category_name
@@ -33,7 +33,7 @@ models:
       - name: category_path
         description: Full category path showing hierarchy up to 2 levels
       - name: is_active
-        description: Boolean flag indicating if the category is currently active
+        description: Boolean flag indicating if category is currently active
         tests:
           - accepted_values:
               values: [true, false]
@@ -52,7 +52,7 @@ models:
       - name: email
         description: Customer email address in lowercase format
       - name: customer_since_date
-        description: Date when the customer first registered
+        description: Date when customer first registered
       - name: customer_tier
         description: Customer spending tier based on last 365 days activity
         tests:
@@ -69,7 +69,7 @@ models:
       - name: product_name
         description: Product name in title case format
       - name: price
-        description: Product price with decimal precision
+        description: Product price with 2 decimal precision
       - name: price_band
         description: Price category bucket for product classification
         tests:
@@ -77,7 +77,7 @@ models:
               values: ['Low', 'Mid', 'High', 'Premium']
 
   - name: dim_supplier
-    description: Dimension table containing supplier information with contact details
+    description: Dimension table containing supplier information with standardized contact details
     columns:
       - name: supplier_id
         description: Unique identifier for each supplier
@@ -90,26 +90,26 @@ models:
       - name: country
         description: Supplier country in uppercase format
       - name: is_active
-        description: Boolean flag indicating if the supplier is currently active
+        description: Boolean flag indicating if supplier is currently active
         tests:
           - accepted_values:
               values: [true, false]
 
   - name: fact_inventory
-    description: Fact table tracking inventory levels by product and supplier with snapshot functionality
+    description: Fact table tracking inventory levels by product and supplier with snapshot capabilities
     columns:
       - name: product_id
-        description: Foreign key reference to product dimension
+        description: Foreign key to product dimension
         tests:
           - not_null
       - name: supplier_id
-        description: Foreign key reference to supplier dimension
+        description: Foreign key to supplier dimension
       - name: stock_qty
         description: Current stock quantity available
       - name: warehouse_location
         description: Warehouse location in uppercase format
       - name: snapshot_date
-        description: Date of the inventory snapshot
+        description: Date of inventory snapshot
       - name: is_latest
         description: Flag indicating the most recent record per product and supplier
 
@@ -121,75 +121,75 @@ models:
         tests:
           - unique
       - name: customer_id
-        description: Foreign key reference to customer dimension
+        description: Foreign key to customer dimension
       - name: order_date
-        description: Date when the order was placed
+        description: Date when order was placed
         tests:
           - not_null
       - name: order_status
-        description: Current status of the order in uppercase format
+        description: Normalized order status in uppercase format
         tests:
           - accepted_values:
               values: ['PENDING', 'CANCELLED', 'SHIPPED', 'DELIVERED']
       - name: total_amount
-        description: Total monetary value of the order
+        description: Total order amount with 2 decimal precision
 
   - name: fact_order_item
-    description: Fact table containing individual line items for each order with calculated amounts
+    description: Fact table containing order line items with calculated amounts and discount allocation
     columns:
       - name: order_id
-        description: Foreign key reference to order fact table
+        description: Foreign key to order fact table
       - name: product_id
-        description: Foreign key reference to product dimension
+        description: Foreign key to product dimension
       - name: quantity
-        description: Quantity of the product ordered
+        description: Quantity of product ordered
       - name: unit_price
-        description: Price per unit of the product
+        description: Price per unit with 2 decimal precision
       - name: extended_amount
-        description: Calculated total amount before discounts (quantity * unit_price)
+        description: Calculated total before discounts (quantity * unit_price)
       - name: discount_amount
-        description: Proportionally allocated discount amount for the line item
+        description: Proportionally allocated discount amount
       - name: net_amount
-        description: Final amount after applying discounts (extended_amount - discount_amount)
+        description: Final amount after discount (extended_amount - discount_amount)
 
   - name: fact_payment
-    description: Fact table tracking payment transactions with method standardization and completion status
+    description: Fact table tracking payment transactions with method standardization and application status
     columns:
       - name: payment_id
-        description: Unique identifier for each payment transaction
+        description: Unique identifier for each payment
         tests:
           - unique
       - name: order_id
-        description: Foreign key reference to order fact table
+        description: Foreign key to order fact table
       - name: payment_date
-        description: Date when the payment was processed
+        description: Date when payment was processed
         tests:
           - not_null
       - name: payment_method
-        description: Method used for payment in uppercase format
+        description: Standardized payment method in uppercase
         tests:
           - accepted_values:
               values: ['CARD', 'UPI', 'COD', 'NETBANKING']
       - name: amount
-        description: Payment amount processed
+        description: Payment amount with 2 decimal precision
       - name: is_fully_applied
-        description: Flag indicating if total payments cover the full order amount
+        description: Flag indicating if total payments cover order amount
 
   - name: fact_shipment
-    description: Fact table containing shipment information with delivery performance metrics
+    description: Fact table containing shipment information with calculated shipping metrics
     columns:
       - name: shipment_id
         description: Unique identifier for each shipment
         tests:
           - unique
       - name: order_id
-        description: Foreign key reference to order fact table
+        description: Foreign key to order fact table
       - name: shipped_date
-        description: Date when the shipment was dispatched
+        description: Date when shipment was dispatched
         tests:
           - not_null
       - name: days_to_ship
-        description: Number of days between order placement and shipment
+        description: Number of days between order and shipment dates
       - name: carrier
         description: Shipping carrier name in uppercase format
       - name: tracking_number

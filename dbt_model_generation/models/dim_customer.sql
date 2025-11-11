@@ -40,35 +40,28 @@ customer_spending as (
 
 transformed_customers as (
     select 
-        sc.customer_id,
-        
-        -- Transform first_name: trim and uppercase
-        upper(trim(sc.first_name)) as first_name,
-        
-        -- Transform last_name: trim and uppercase  
-        upper(trim(sc.last_name)) as last_name,
-        
-        -- Transform email: lowercase and validate pattern
+        c.customer_id,
+        trim(upper(c.first_name)) as first_name,
+        trim(upper(c.last_name)) as last_name,
         case 
-            when sc.email is null then null
-            when sc.email rlike '^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$' 
-                then lower(trim(sc.email))
+            when c.email is not null 
+                and c.email rlike '^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$'
+            then lower(trim(c.email))
             else null
         end as email,
-        
-        -- Convert timestamp to date, default to current_date if null
-        coalesce(sc.inserted_at::date, current_date()) as customer_since_date,
-        
-        -- Derive customer tier based on spending in last 365 days
         case 
-            when coalesce(cs.total_spending_365_days, 0) >= 1000 then 'Gold'
-            when coalesce(cs.total_spending_365_days, 0) >= 500 then 'Silver'
+            when c.inserted_at is not null 
+            then c.inserted_at::date
+            else current_date()
+        end as customer_since_date,
+        case 
+            when cs.total_spending_365_days >= 1000 then 'Gold'
+            when cs.total_spending_365_days >= 500 then 'Silver'
             else 'Bronze'
         end as customer_tier
-        
-    from source_customers sc
-    left join customer_spending cs 
-        on sc.customer_id = cs.customer_id
+    from source_customers c
+    left join customer_spending cs
+        on c.customer_id = cs.customer_id
 )
 
 select * from transformed_customers

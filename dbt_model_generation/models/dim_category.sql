@@ -32,13 +32,13 @@ parent_categories as (
 
 transformed_data as (
     select
-        -- Direct mapping
+        -- Direct mapping for category_id
         s.category_id,
         
-        -- Trim and title-case transformation
+        -- Trim and title-case for category_name
         trim(initcap(s.category_name)) as category_name,
         
-        -- Direct mapping with null handling for root categories
+        -- Direct mapping for parent_category_id (may be null for root categories)
         s.parent_category_id,
         
         -- Build category path up to 2 levels
@@ -49,7 +49,7 @@ transformed_data as (
                 trim(initcap(s.category_name))
         end as category_path,
         
-        -- Direct mapping with null default to true
+        -- Direct mapping for is_active with default true if null
         coalesce(s.is_active, true) as is_active
         
     from source_data s
