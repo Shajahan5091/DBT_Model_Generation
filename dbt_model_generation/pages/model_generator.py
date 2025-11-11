@@ -169,7 +169,7 @@ if st.button("Generate dbt Models"):
             Output only SQL.
             """
 
-            result = Complete(model="claude-sonnet-4-5", prompt=model_prompt_text, session=session, options=options)
+            result = Complete(model="claude-4-sonnet", prompt=model_prompt_text, session=session, options=options)
             result_text = result.get("response") if isinstance(result, dict) else str(result)
             sql_part = re.sub(r"(?i)^sure.*|^here.*|```.*", "", result_text).strip()
 
@@ -236,7 +236,7 @@ if st.button("Generate dbt Models"):
         Output YAML only — no markdown, no code fences, no prose.
         """
 
-        schema_result = Complete(model="claude-sonnet-4-5", prompt=schema_prompt, session=session, options=options,)
+        schema_result = Complete(model="claude-4-sonnet", prompt=schema_prompt, session=session, options=options,)
         schema_text = schema_result.get("response") if isinstance(schema_result, dict) else str(schema_result)
         schema_text = re.sub(r"(?i)^sure.*|^here.*|```.*", "", schema_text).strip()
 
@@ -292,7 +292,7 @@ if st.button("Generate dbt Models"):
         Output YAML only — no markdown or prose.
         """
 
-        sources_result = Complete(model="claude-sonnet-4-5", prompt=sources_prompt, session=session, options=options)
+        sources_result = Complete(model="claude-4-sonnet", prompt=sources_prompt, session=session, options=options)
         sources_text = sources_result.get("response") if isinstance(sources_result, dict) else str(sources_result)
         sources_text = re.sub(r"(?i)^sure.*|^here.*|```.*", "", sources_text).strip()
 
