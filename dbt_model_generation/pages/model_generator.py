@@ -246,9 +246,19 @@ if st.button("Generate dbt Models"):
         
         st.write("🧠 Generating consolidated sources.yml with Cortex...")
         source_summary = []
+        cols = []
         for (schema, table), subdf in df.groupby(['Source_Schema', 'Source_Table']):
             database = subdf['Source_Database'].iloc[0]
-            cols = subdf['Source_Column'].unique().tolist()
+            for val in subdf['Source_Column'].dropna().astype(str):
+                parts = [p.strip() for p in val.split(',')]
+                cols.extend(parts)
+
+            cols = list(set(cols))
+            cols = subdf['Source_Column'].dropna().unique().tolist()
+            print('database: ', database)
+            print('schema: ', schema)
+            print('table: ', table)
+            print('columns list: ', cols)
             source_summary.append(
                 f"Database: {database}\nSchema: {schema}\nTable: {table}\nColumns: {', '.join(cols)}"
             )
