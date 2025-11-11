@@ -4,7 +4,7 @@ sources:
   - name: dwh_raw
     database: bsl_raw
     schema: dwh_raw
-    description: "Raw data warehouse source tables"
+    description: "Raw data warehouse tables"
     tables:
       - name: addresses
         description: "Customer address information"

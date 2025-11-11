@@ -128,7 +128,8 @@ if st.button("Generate dbt Models"):
             Do not include markdown formatting.
             Add comments as required.
             Utilize the notes given below and transform accordingly.
-            Use sorce reference as per dbt guidlines. For source name use {Source_Schema} in lowercase. for model name use {Source_Table} in lowercase
+            Use sorce reference as per dbt guidlines. For source name use {Source_Schema} in lowercase. for model name use {Source_Table} in lowercase.
+            Use ref when referring another model.
 
             Add a header block in the model as comment with details like the below template
             ------------------------------------------------------------------------
