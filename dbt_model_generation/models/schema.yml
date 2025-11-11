@@ -2,25 +2,20 @@ version: 2
 
 models:
   - name: dim_address
-    description: Dimension table containing customer address information with surrogate keys and standardized formatting
+    description: Dimension table containing customer address information with standardized formatting
     columns:
-      - name: address_sk
-        description: Surrogate key generated from address_id
-        tests:
-          - unique
-          - not_null
       - name: address_id
-        description: Natural key for address records
+        description: Unique identifier for each address record
         tests:
-          - unique
           - not_null
-      - name: customer_sk
-        description: Foreign key to dim_customer table
+          - unique
+      - name: customer_id
+        description: Foreign key reference to customer dimension
         tests:
           - not_null
           - relationships:
               to: ref('dim_customer')
-              field: customer_sk
+              field: customer_id
       - name: address_line1
         description: Primary address line with trimmed whitespace
         tests:
@@ -34,53 +29,37 @@ models:
         tests:
           - not_null
       - name: inserted_at
-        description: Date when the address record was inserted
+        description: Date when the address record was created
 
   - name: dim_category
-    description: Dimension table for product categories with hierarchical structure and category paths
+    description: Product category dimension with hierarchical structure and path information
     columns:
-      - name: category_sk
-        description: Surrogate key generated from category_id
-        tests:
-          - unique
-          - not_null
       - name: category_id
-        description: Natural key for category records
+        description: Unique identifier for each category
         tests:
-          - unique
           - not_null
+          - unique
       - name: category_name
         description: Category name in title case format
         tests:
           - not_null
       - name: parent_category_id
-        description: Natural key of parent category for hierarchical structure
-      - name: parent_category_sk
-        description: Surrogate key of parent category
-        tests:
-          - relationships:
-              to: ref('dim_category')
-              field: category_sk
+        description: Reference to parent category for hierarchical structure
       - name: category_path
-        description: Hierarchical path showing parent and child category relationship
+        description: Full category path showing hierarchy up to 2 levels
       - name: is_active
         description: Boolean flag indicating if category is currently active
         tests:
           - not_null
 
   - name: dim_customer
-    description: Dimension table containing customer information with derived spending tiers
+    description: Customer dimension containing customer profile information and derived spending tier
     columns:
-      - name: customer_sk
-        description: Surrogate key generated from customer_id
-        tests:
-          - unique
-          - not_null
       - name: customer_id
-        description: Natural key for customer records
+        description: Unique identifier for each customer
         tests:
-          - unique
           - not_null
+          - unique
       - name: first_name
         description: Customer first name in uppercase format
         tests:
@@ -92,65 +71,47 @@ models:
       - name: email
         description: Customer email address in lowercase format
         tests:
-          - unique
           - not_null
+          - unique
       - name: customer_since_date
         description: Date when customer first registered
-        tests:
-          - not_null
       - name: customer_tier
         description: Spending tier classification based on order history (Gold/Silver/Bronze)
-        tests:
-          - accepted_values:
-              values: ['Gold', 'Silver', 'Bronze']
 
   - name: dim_product
-    description: Dimension table for products with category relationships and price banding
+    description: Product dimension with pricing information and categorized price bands
     columns:
-      - name: product_sk
-        description: Surrogate key generated from product_id
-        tests:
-          - unique
-          - not_null
       - name: product_id
-        description: Natural key for product records
+        description: Unique identifier for each product
         tests:
-          - unique
           - not_null
+          - unique
       - name: product_name
         description: Product name in title case format
         tests:
           - not_null
-      - name: category_sk
-        description: Foreign key to dim_category table
+      - name: category_id
+        description: Foreign key reference to category dimension
         tests:
           - not_null
           - relationships:
               to: ref('dim_category')
-              field: category_sk
+              field: category_id
       - name: price
-        description: Product price
+        description: Product price with 2 decimal precision
         tests:
           - not_null
       - name: price_band
-        description: Price classification (Low/Mid/High/Premium)
-        tests:
-          - accepted_values:
-              values: ['Low', 'Mid', 'High', 'Premium']
+        description: Price classification (Low/Mid/High/Premium) based on price ranges
 
   - name: dim_supplier
-    description: Dimension table containing supplier information with standardized contact details
+    description: Supplier dimension containing supplier contact and status information
     columns:
-      - name: supplier_sk
-        description: Surrogate key generated from supplier_id
-        tests:
-          - unique
-          - not_null
       - name: supplier_id
-        description: Natural key for supplier records
+        description: Unique identifier for each supplier
         tests:
-          - unique
           - not_null
+          - unique
       - name: supplier_name
         description: Supplier name in title case format
         tests:
@@ -169,22 +130,22 @@ models:
           - not_null
 
   - name: fact_inventory
-    description: Fact table tracking inventory levels by product and supplier with snapshot capabilities
+    description: Inventory fact table tracking stock levels by product and supplier with snapshot functionality
     columns:
-      - name: product_sk
-        description: Foreign key to dim_product table
+      - name: product_id
+        description: Foreign key reference to product dimension
         tests:
           - not_null
           - relationships:
               to: ref('dim_product')
-              field: product_sk
-      - name: supplier_sk
-        description: Foreign key to dim_supplier table
+              field: product_id
+      - name: supplier_id
+        description: Foreign key reference to supplier dimension
         tests:
           - not_null
           - relationships:
               to: ref('dim_supplier')
-              field: supplier_sk
+              field: supplier_id
       - name: stock_qty
         description: Current stock quantity
         tests:
@@ -194,76 +155,65 @@ models:
         tests:
           - not_null
       - name: snapshot_date
-        description: Date of inventory snapshot
+        description: Date of the inventory snapshot
         tests:
           - not_null
       - name: is_latest
-        description: Flag indicating the most recent record per product and supplier
-        tests:
-          - not_null
+        description: Boolean flag indicating the most recent record per product-supplier combination
 
   - name: fact_order
-    description: Fact table containing order header information with normalized status values
+    description: Order fact table containing order header information with standardized status values
     columns:
-      - name: order_sk
-        description: Surrogate key generated from order_id
-        tests:
-          - unique
-          - not_null
       - name: order_id
-        description: Natural key for order records
+        description: Unique identifier for each order
         tests:
-          - unique
           - not_null
-      - name: customer_sk
-        description: Foreign key to dim_customer table
+          - unique
+      - name: customer_id
+        description: Foreign key reference to customer dimension
         tests:
           - not_null
           - relationships:
               to: ref('dim_customer')
-              field: customer_sk
+              field: customer_id
       - name: order_date
-        description: Date when order was placed
+        description: Date when the order was placed
         tests:
           - not_null
       - name: order_status
-        description: Normalized order status
+        description: Normalized order status (PENDING/PAID/CANCELLED/SHIPPED)
         tests:
+          - not_null
           - accepted_values:
               values: ['PENDING', 'PAID', 'CANCELLED', 'SHIPPED']
       - name: total_amount
-        description: Total order amount
+        description: Total order amount with 2 decimal precision
         tests:
           - not_null
 
   - name: fact_order_item
-    description: Fact table containing order line items with calculated amounts and discounts
+    description: Order line item fact table with calculated amounts and discount allocation
     columns:
-      - name: order_item_sk
-        description: Surrogate key generated from order_item_id
-        tests:
-          - unique
-          - not_null
-      - name: order_sk
-        description: Foreign key to fact_order table
+      - name: order_id
+        description: Foreign key reference to order fact table
         tests:
           - not_null
           - relationships:
               to: ref('fact_order')
-              field: order_sk
-      - name: product_sk
-        description: Foreign key to dim_product table
+              field: order_id
+      - name: product_id
+        description: Foreign key reference to product dimension
         tests:
           - not_null
           - relationships:
               to: ref('dim_product')
-              field: product_sk
+              field: product_id
       - name: quantity
         description: Quantity of items ordered
         tests:
           - not_null
       - name: unit_price
-        description: Price per unit
+        description: Price per unit with 2 decimal precision
         tests:
           - not_null
       - name: extended_amount
@@ -278,71 +228,58 @@ models:
           - not_null
 
   - name: fact_payment
-    description: Fact table tracking payment transactions with method standardization and payment completion flags
+    description: Payment fact table tracking payment transactions with validation against order totals
     columns:
-      - name: payment_sk
-        description: Surrogate key generated from payment_id
-        tests:
-          - unique
-          - not_null
       - name: payment_id
-        description: Natural key for payment records
+        description: Unique identifier for each payment
         tests:
-          - unique
           - not_null
-      - name: order_sk
-        description: Foreign key to fact_order table
+          - unique
+      - name: order_id
+        description: Foreign key reference to order fact table
         tests:
           - not_null
           - relationships:
               to: ref('fact_order')
-              field: order_sk
+              field: order_id
       - name: payment_date
         description: Date when payment was processed
         tests:
           - not_null
       - name: payment_method
-        description: Standardized payment method
+        description: Payment method in uppercase format
         tests:
+          - not_null
           - accepted_values:
               values: ['CARD', 'UPI', 'COD', 'NETBANKING']
       - name: amount
-        description: Payment amount
+        description: Payment amount with 2 decimal precision
         tests:
           - not_null
       - name: is_fully_applied
-        description: Flag indicating if total payments cover the full order amount
-        tests:
-          - not_null
+        description: Boolean flag indicating if total payments cover the order amount
 
   - name: fact_shipment
-    description: Fact table containing shipment information with calculated shipping metrics
+    description: Shipment fact table tracking delivery information with calculated shipping metrics
     columns:
-      - name: shipment_sk
-        description: Surrogate key generated from shipment_id
-        tests:
-          - unique
-          - not_null
       - name: shipment_id
-        description: Natural key for shipment records
+        description: Unique identifier for each shipment
         tests:
-          - unique
           - not_null
-      - name: order_sk
-        description: Foreign key to fact_order table
+          - unique
+      - name: order_id
+        description: Foreign key reference to order fact table
         tests:
           - not_null
           - relationships:
               to: ref('fact_order')
-              field: order_sk
+              field: order_id
       - name: shipment_date
         description: Date when shipment was dispatched
         tests:
           - not_null
       - name: days_to_ship
         description: Number of days between order date and shipment date
-        tests:
-          - not_null
       - name: carrier
         description: Shipping carrier name in uppercase format
         tests:

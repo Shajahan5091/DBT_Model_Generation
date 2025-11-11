@@ -4,8 +4,7 @@ sources:
   - name: dwh_raw
     database: bsl_raw
     schema: dwh_raw
-    description: "Raw data warehouse tables"
-    
+    description: "Raw data warehouse source tables"
     tables:
       - name: addresses
         description: "Customer address information"
@@ -79,11 +78,6 @@ sources:
       - name: order_items
         description: "Individual items within orders"
         columns:
-          - name: order_item_id
-            description: "Unique identifier for order item"
-            tests:
-              - unique
-              - not_null
           - name: order_id
             description: "Foreign key to orders table"
             tests:
@@ -96,6 +90,11 @@ sources:
             description: "Quantity of product ordered"
           - name: unit_price
             description: "Price per unit at time of order"
+          - name: order_item_id
+            description: "Unique identifier for order item"
+            tests:
+              - unique
+              - not_null
 
       - name: orders
         description: "Customer orders"
