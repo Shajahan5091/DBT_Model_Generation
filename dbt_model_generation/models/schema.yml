@@ -11,7 +11,7 @@ models:
       - name: customer_id
         description: Foreign key reference to customer dimension table
       - name: address_line1
-        description: Primary address line with trimmed whitespace
+        description: Primary address line with whitespace trimmed
       - name: city
         description: City name in uppercase format
       - name: country
@@ -31,7 +31,7 @@ models:
       - name: parent_category_id
         description: Reference to parent category for hierarchical structure
       - name: category_path
-        description: Full category path showing hierarchy up to 2 levels
+        description: Full hierarchical path showing parent and current category
       - name: is_active
         description: Boolean flag indicating if the category is currently active
         tests:
@@ -69,7 +69,7 @@ models:
       - name: product_name
         description: Product name in title case format
       - name: price
-        description: Product price with decimal precision
+        description: Current product price
       - name: price_band
         description: Price category bucket based on product price ranges
         tests:
@@ -114,7 +114,7 @@ models:
         description: Flag indicating the most recent record per product and supplier
 
   - name: fact_order
-    description: Fact table containing order header information with normalized status values
+    description: Fact table containing order header information with standardized status values
     columns:
       - name: order_id
         description: Unique identifier for each order
@@ -126,29 +126,29 @@ models:
         description: Date when the order was placed
         tests:
           - not_null
-      - name: ORDER_status
-        description: Normalized order status in uppercase format
+      - name: order_status
+        description: Current status of the order in uppercase format
         tests:
           - accepted_values:
-              values: ['PENDING', 'PAID', 'CANCELLED', 'SHIPPED']
+              values: ['PENDING', 'CANCELLED', 'SHIPPED', 'DELIVERED']
       - name: total_amount
-        description: Total order amount with decimal precision
+        description: Total monetary value of the order
 
   - name: fact_order_item
-    description: Fact table containing order line item details with calculated amounts
+    description: Fact table containing individual line items for each order with calculated amounts
     columns:
       - name: order_id
         description: Foreign key reference to order fact table
       - name: product_id
         description: Foreign key reference to product dimension
       - name: quantity
-        description: Quantity of product ordered
+        description: Quantity of the product ordered
       - name: unit_price
         description: Price per unit of the product
       - name: extended_amount
         description: Calculated total amount before discounts (quantity * unit_price)
       - name: discount_amount
-        description: Proportionally allocated discount amount for the line item
+        description: Proportionally allocated discount amount for this line item
       - name: net_amount
         description: Final amount after applying discounts (extended_amount - discount_amount)
 
@@ -166,12 +166,12 @@ models:
         tests:
           - not_null
       - name: payment_method
-        description: Standardized payment method in uppercase format
+        description: Method used for payment in uppercase format
         tests:
           - accepted_values:
               values: ['CARD', 'UPI', 'COD', 'NETBANKING']
       - name: amount
-        description: Payment amount with decimal precision
+        description: Payment amount processed
       - name: is_fully_applied
         description: Flag indicating if total payments cover the full order amount
 
@@ -193,4 +193,4 @@ models:
       - name: carrier
         description: Shipping carrier name in uppercase format
       - name: tracking_number
-        description: Shipment tracking number for delivery monitoring
+        description: Tracking number provided by the carrier

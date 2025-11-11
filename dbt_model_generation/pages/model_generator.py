@@ -10,6 +10,10 @@ from snowflake.cortex import Complete, CompleteOptions
 import re
 import subprocess
 from datetime import datetime
+from style_utils import apply_style, render_header
+
+apply_style()
+render_header()
 
 st.title("Snowflake dbt Model Generator")
 

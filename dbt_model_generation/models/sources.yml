@@ -100,7 +100,7 @@ sources:
           - name: payment_date
             description: "Date when payment was processed"
           - name: payment_method
-            description: "Method used for payment"
+            description: "Method of payment used"
           - name: amount
             description: "Payment amount"
 
@@ -115,7 +115,7 @@ sources:
             description: "Current price of the product"
 
       - name: shipments
-        description: "Order shipment tracking information"
+        description: "Order shipment information"
         columns:
           - name: shipment_id
             description: "Unique identifier for shipment"
