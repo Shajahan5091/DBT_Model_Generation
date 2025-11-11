@@ -1,0 +1,388 @@
+version: 2
+
+models:
+  - name: dim_address
+    description: Dimension table containing customer address information with surrogate keys and standardized formatting
+    columns:
+      - name: address_sk
+        description: Surrogate key generated from address_id
+        tests:
+          - unique
+          - not_null
+      - name: address_id
+        description: Natural key for address records
+        tests:
+          - unique
+          - not_null
+      - name: customer_sk
+        description: Foreign key to customer dimension table
+        tests:
+          - not_null
+          - relationships:
+              to: ref('dim_customer')
+              field: customer_sk
+      - name: address_line1
+        description: Primary address line with trimmed whitespace
+        tests:
+          - not_null
+      - name: city
+        description: City name in uppercase format
+        tests:
+          - not_null
+      - name: country
+        description: Country name
+        tests:
+          - not_null
+      - name: created_date
+        description: Date when address record was created
+        tests:
+          - not_null
+
+  - name: dim_category
+    description: Dimension table for product categories with hierarchical structure and category paths
+    columns:
+      - name: category_sk
+        description: Surrogate key generated from category_id
+        tests:
+          - unique
+          - not_null
+      - name: category_id
+        description: Natural key for category records
+        tests:
+          - unique
+          - not_null
+      - name: category_name
+        description: Category name in title case format
+        tests:
+          - not_null
+      - name: parent_category_id
+        description: Natural key of parent category for hierarchical structure
+      - name: parent_category_sk
+        description: Surrogate key of parent category
+        tests:
+          - relationships:
+              to: ref('dim_category')
+              field: category_sk
+      - name: category_path
+        description: Full category path showing hierarchy up to 2 levels
+      - name: is_active
+        description: Flag indicating if category is currently active
+        tests:
+          - not_null
+          - accepted_values:
+              values: [true, false]
+
+  - name: dim_customer
+    description: Dimension table containing customer information with derived spending tiers
+    columns:
+      - name: customer_sk
+        description: Surrogate key generated from customer_id
+        tests:
+          - unique
+          - not_null
+      - name: customer_id
+        description: Natural key for customer records
+        tests:
+          - unique
+          - not_null
+      - name: first_name
+        description: Customer first name in proper case
+        tests:
+          - not_null
+      - name: last_name
+        description: Customer last name in proper case
+        tests:
+          - not_null
+      - name: email
+        description: Customer email address in lowercase format
+        tests:
+          - not_null
+          - unique
+      - name: customer_since_date
+        description: Date when customer first registered
+        tests:
+          - not_null
+      - name: customer_tier
+        description: Spending tier based on order history (Gold/Silver/Bronze)
+        tests:
+          - accepted_values:
+              values: ['Gold', 'Silver', 'Bronze']
+
+  - name: dim_product
+    description: Dimension table for products with category relationships and price banding
+    columns:
+      - name: product_sk
+        description: Surrogate key generated from product_id
+        tests:
+          - unique
+          - not_null
+      - name: product_id
+        description: Natural key for product records
+        tests:
+          - unique
+          - not_null
+      - name: product_name
+        description: Product name in title case format
+        tests:
+          - not_null
+      - name: category_sk
+        description: Foreign key to category dimension table
+        tests:
+          - not_null
+          - relationships:
+              to: ref('dim_category')
+              field: category_sk
+      - name: price
+        description: Product price
+        tests:
+          - not_null
+          - dbt_utils.accepted_range:
+              min_value: 0
+      - name: price_band
+        description: Price category bucket (Low/Mid/High/Premium)
+        tests:
+          - not_null
+          - accepted_values:
+              values: ['Low', 'Mid', 'High', 'Premium']
+
+  - name: dim_supplier
+    description: Dimension table containing supplier information with standardized contact details
+    columns:
+      - name: supplier_sk
+        description: Surrogate key generated from supplier_id
+        tests:
+          - unique
+          - not_null
+      - name: supplier_id
+        description: Natural key for supplier records
+        tests:
+          - unique
+          - not_null
+      - name: supplier_name
+        description: Supplier name in title case format
+        tests:
+          - not_null
+      - name: contact_email
+        description: Supplier contact email in lowercase format
+        tests:
+          - not_null
+      - name: country
+        description: Supplier country in uppercase format
+        tests:
+          - not_null
+      - name: is_active
+        description: Flag indicating if supplier is currently active
+        tests:
+          - not_null
+          - accepted_values:
+              values: [true, false]
+
+  - name: fact_inventory
+    description: Fact table tracking inventory levels by product and supplier with snapshot capabilities
+    columns:
+      - name: product_sk
+        description: Foreign key to product dimension table
+        tests:
+          - not_null
+          - relationships:
+              to: ref('dim_product')
+              field: product_sk
+      - name: supplier_sk
+        description: Foreign key to supplier dimension table
+        tests:
+          - not_null
+          - relationships:
+              to: ref('dim_supplier')
+              field: supplier_sk
+      - name: stock_qty
+        description: Current stock quantity
+        tests:
+          - not_null
+          - dbt_utils.accepted_range:
+              min_value: 0
+      - name: warehouse_location
+        description: Warehouse location in uppercase format
+        tests:
+          - not_null
+      - name: snapshot_date
+        description: Date of inventory snapshot
+        tests:
+          - not_null
+      - name: is_latest
+        description: Flag indicating if this is the latest inventory record
+        tests:
+          - not_null
+          - accepted_values:
+              values: [true, false]
+
+  - name: fact_order
+    description: Fact table containing order header information with normalized status values
+    columns:
+      - name: order_sk
+        description: Surrogate key generated from order_id
+        tests:
+          - unique
+          - not_null
+      - name: order_id
+        description: Natural key for order records
+        tests:
+          - unique
+          - not_null
+      - name: customer_sk
+        description: Foreign key to customer dimension table
+        tests:
+          - not_null
+          - relationships:
+              to: ref('dim_customer')
+              field: customer_sk
+      - name: order_date
+        description: Date when order was placed
+        tests:
+          - not_null
+      - name: order_status
+        description: Normalized order status
+        tests:
+          - not_null
+          - accepted_values:
+              values: ['PENDING', 'PAID', 'CANCELLED', 'SHIPPED']
+      - name: total_amount
+        description: Total order amount
+        tests:
+          - not_null
+          - dbt_utils.accepted_range:
+              min_value: 0
+
+  - name: fact_order_item
+    description: Fact table containing order line item details with calculated amounts
+    columns:
+      - name: order_item_sk
+        description: Surrogate key generated from order_item_id
+        tests:
+          - unique
+          - not_null
+      - name: order_sk
+        description: Foreign key to order fact table
+        tests:
+          - not_null
+          - relationships:
+              to: ref('fact_order')
+              field: order_sk
+      - name: product_sk
+        description: Foreign key to product dimension table
+        tests:
+          - not_null
+          - relationships:
+              to: ref('dim_product')
+              field: product_sk
+      - name: quantity
+        description: Quantity of items ordered
+        tests:
+          - not_null
+          - dbt_utils.accepted_range:
+              min_value: 1
+      - name: unit_price
+        description: Price per unit
+        tests:
+          - not_null
+          - dbt_utils.accepted_range:
+              min_value: 0
+      - name: extended_amount
+        description: Calculated amount (quantity * unit_price)
+        tests:
+          - not_null
+          - dbt_utils.accepted_range:
+              min_value: 0
+      - name: discount_amount
+        description: Allocated discount amount for this line item
+        tests:
+          - not_null
+          - dbt_utils.accepted_range:
+              min_value: 0
+      - name: net_amount
+        description: Final amount after discount (extended_amount - discount_amount)
+        tests:
+          - not_null
+          - dbt_utils.accepted_range:
+              min_value: 0
+
+  - name: fact_payment
+    description: Fact table tracking payment transactions with payment method standardization
+    columns:
+      - name: payment_sk
+        description: Surrogate key generated from payment_id
+        tests:
+          - unique
+          - not_null
+      - name: payment_id
+        description: Natural key for payment records
+        tests:
+          - unique
+          - not_null
+      - name: order_sk
+        description: Foreign key to order fact table
+        tests:
+          - not_null
+          - relationships:
+              to: ref('fact_order')
+              field: order_sk
+      - name: payment_date
+        description: Date when payment was processed
+        tests:
+          - not_null
+      - name: payment_method
+        description: Standardized payment method
+        tests:
+          - not_null
+          - accepted_values:
+              values: ['CARD', 'UPI', 'COD', 'NETBANKING']
+      - name: amount
+        description: Payment amount
+        tests:
+          - not_null
+          - dbt_utils.accepted_range:
+              min_value: 0
+      - name: is_fully_applied
+        description: Flag indicating if total payments cover full order amount
+        tests:
+          - not_null
+          - accepted_values:
+              values: [true, false]
+
+  - name: fact_shipment
+    description: Fact table containing shipment information with delivery performance metrics
+    columns:
+      - name: shipment_sk
+        description: Surrogate key generated from shipment_id
+        tests:
+          - unique
+          - not_null
+      - name: shipment_id
+        description: Natural key for shipment records
+        tests:
+          - unique
+          - not_null
+      - name: order_sk
+        description: Foreign key to order fact table
+        tests:
+          - not_null
+          - relationships:
+              to: ref('fact_order')
+              field: order_sk
+      - name: shipped_date
+        description: Date when order was shipped
+        tests:
+          - not_null
+      - name: days_to_ship
+        description: Number of days between order and shipment
+        tests:
+          - not_null
+          - dbt_utils.accepted_range:
+              min_value: 0
+      - name: carrier
+        description: Shipping carrier in uppercase format
+        tests:
+          - not_null
+      - name: tracking_number
+        description: Shipment tracking number
+        tests:
+          - not_null

@@ -45,11 +45,11 @@ if mapping_file:  # and semantic_file:
 connection_parameters = {
     "user": "SHAJAHAN",
     "password": "Shajahan@snowflake_2002",
-    "account": "DTJCYHT-WGB03396",
+    "account": "HPAFNDX-IW71152",
     "role": "ACCOUNTADMIN",
     "warehouse": "COMPUTE_WH",
-    "database": "DATASET",
-    "schema": "PUBLIC",
+    "database": "BSL_RAW",
+    "schema": "DWH_RAW",
 }
 
 options = CompleteOptions(
@@ -78,109 +78,114 @@ if st.button("Generate dbt Models"):
         st.write("🚀 Generating dbt models... please wait.")
         print("\n🚀 Starting dbt model generation...")
 
-        all_model_yamls = []
-        source_tables = set()
+        grouped = df.groupby(['Target_Database', 'Target_Schema', 'Target_Table'])
 
-        grouped = df.groupby(['target_schema', 'target_table'])
+        Source_Tables = set()
 
-        for (t_schema, t_table), subdf in grouped:
-            source_schema = subdf['source_schema'].iloc[0]
-            source_table = subdf['source_table'].iloc[0]
-            source_tables.add((source_schema, source_table))
+        for (t_database, t_schema, t_table), subdf in grouped:
+        
+            Source_Database = subdf['Source_Database'].iloc[0]
+            Source_Schema = subdf['Source_Schema'].iloc[0]
+            Source_Table = subdf['Source_Table'].iloc[0]
+            Source_Tables.add((Source_Schema, Source_Table))
+
+            print("\n🔹 Processing Model:", t_table)
+            print("   Source_Database:", Source_Database)
+            print("   Source_Schema  :", Source_Schema)
+            print("   Source_Table   :", Source_Table)
 
             mapping_details = []
+
+            # ✅ Loop rows only to collect mapping details
             for _, row in subdf.iterrows():
-                source_expr = (
-                    row['transformation_logic']
-                    if pd.notna(row['transformation_logic']) and row['transformation_logic'].strip()
-                    else row['source_column']
-                )
 
-                description = (
-                    row['description']
-                    if 'description' in row and pd.notna(row['description'])
-                    else "No description provided"
-                )
-
-                test_info = (
-                    row['test']
-                    if 'test' in row and pd.notna(row['test'])
-                    else "none"
-                )
+                Source_Column = row.get('Source_Column', '')
+                target_column = row.get('Target_Column', '')
+                source_datatype = row.get('Source_Data_Type', '')
+                target_datatype = row.get('Target_Data_Type', '')
+                mapping_rule = row.get('Mapping_Rule', Source_Column)
+                description = row.get('Table_Description', "No description provided")
+                test_info = row.get('Test', "none")
+                notes = row.get('Notes', '')
+                Materialization = row.get('Materialization', '')
+                Incremental_Where_Condition = row.get('Incremental_Where_Condition', '')
 
                 mapping_details.append(
-                    f"{row['source_column']} → {row['target_column']} ({row['data_type']}) "
-                    f"| logic: {source_expr} | description: {description} | test: {test_info}"
+                    f"{Source_Database} {Source_Schema} {Source_Column} ({source_datatype}) "
+                    f"→ {t_database} {t_schema} {target_column} ({target_datatype}) "
+                    f"| logic: {mapping_rule} | notes: {notes} | description: {description} | test: {test_info} | Materialization: {Materialization} | Incremental_Where_Condition: {Incremental_Where_Condition}"
                 )
 
+            # ✅ Combine mapping once per table
             mapping_str = "\n".join(mapping_details)
 
-            # --- AI Prompt for SQL only ---
-            prompt_text = f"""
+            # ✅ Call AI once per table (NOT inside row loop)
+            model_prompt_text = f"""
             You are an expert AI assistant specializing in data modeling, dbt, and analytics engineering for Snowflake.
-            Your task is to automatically generate dbt models based on provided metadata, SQL logic, or schema definitions.
+            Your task is to automatically generate dbt models based on provided metadata.
 
-            You should:
-            Follow dbt best practices for model structure, naming conventions, and documentation.
-            1. Generate Snowflake-optimized SQL (use CTEs, proper casting, and efficient warehouse functions).
-            2. Make sure the snowflake syntax and function usage is as per snowflake's documentation.
-            3. Ensure modularity and lineage — staging models should map cleanly to intermediate and final marts.
-            4. Include Jinja and dbt macros where appropriate (e.g., for reusable logic, timestamps, or source references).
-            5. Clearly separate source, staging, intermediate, and mart layers following dbt folder structure.
-            6. Do not add semicolon at the end of the sql.
-            7. Use `{{{{ source('{source_schema}', '{source_table}') }}}}` for source references.
-            8. Apply transformation logic when provided.
-            9. Rename columns as per target mapping.
-            10. SQL must start directly with WITH.
-            11. Give only sql text no extra text like "```sql" or any other markigs
-            12. Use proper intendation
-            13. Add a header block in the model as comment with details like the model name, description, created date and Author.
-            14. The model name shoud be the target table name in the header block
-            15. Keep the Author name as "AI Generated" and the created date as current date(IST).
-            16. Enclose the comment using "{{# #}}"
+            Follow dbt & Snowflake best practices.
+            Do not include markdown formatting.
+            Add comments as required.
+            Utilize the notes given below and transform accordingly.
 
-            Your output should include:
-            1. The dbt model SQL file content (formatted).
-            2. (Optional) Add comments wherever necessary.
+            Add a header block in the model as comment with details like the below template
+            ------------------------------------------------------------------------
+            MODEL NAME: 
+            TARGET TABLE: 
+            SOURCE TABLES: 
+            DESCRIPTION: 
+            PREREQUISITES: 
+            PARAMETER: 
+            AUTHOUR: 
+            ------------------------------------------------------------------------
+            model name shoud be the target table name in the header block
+            target table name should be the fully qualified name (as per snowflake standards) of the model.
+            Source tables are the source names that the model is referring to (include all the source names). Give as snowflake's fully qualified table names. Get the table name from the mapping details give below.
+            Give some description about the model.
+            Provide prerequisites if any and similarly for parameter.
+            Keep the Author name as "AI Generated by Shajahan" and the created date as current date(IST).
+            Enclose the comment using "{{# #}}"
 
             Mapping:
             {mapping_str}
 
+            Target Database: {t_database}
             Target Schema: {t_schema}
             Target Table: {t_table}
 
-            Output: SQL only, no markdown or YAML.
+            Output only SQL.
             """
 
-            result = Complete(model="claude-4-sonnet", prompt=prompt_text, session=session, options=options)
+            result = Complete(model="claude-4-sonnet", prompt=model_prompt_text, session=session, options=options)
             result_text = result.get("response") if isinstance(result, dict) else str(result)
             sql_part = re.sub(r"(?i)^sure.*|^here.*|```.*", "", result_text).strip()
 
+            # ✅ Save the dbt model once
+            os.makedirs("models", exist_ok=True)
             model_path = f"models/{t_table}.sql"
             with open(model_path, "w", encoding="utf-8") as f:
                 f.write(sql_part)
 
-            print(f"✅ Model created: {model_path}")
+            print(f"✅ Model created successfully → {model_path}")
             st.write(f"✅ Model created: `{t_table}.sql`")
 
-        # --- Consolidated schema.yml generation via Cortex ---
         st.write("🧠 Generating consolidated schema.yml with Cortex...")
-        print("\n🧠 Starting final Cortex call for schema.yml...")
-
+        # --- Consolidated schema.yml generation via Cortex ---
         model_summary = []
-        for (t_schema, t_table), subdf in df.groupby(['target_schema', 'target_table']):
+        for (t_database, t_schema, t_table), subdf in grouped:
             mapping_lines = []
             for _, row in subdf.iterrows():
                 logic = (
-                    row['transformation_logic']
-                    if pd.notna(row['transformation_logic']) and row['transformation_logic'].strip()
-                    else row['source_column']
+                    row['Mapping_Rule']
+                    if pd.notna(row['Mapping_Rule']) and row['Mapping_Rule'].strip()
+                    else row['Source_Column']
                 )
                 mapping_lines.append(
-                    f"{row['source_column']} → {row['target_column']} ({row['data_type']}) | logic: {logic}"
+                    f"{row['Source_Column']} → {row['Target_Column']} ({row['Target_Data_Type']}) | logic: {logic}"
                 )
             model_summary.append(f"Model: {t_table}\nSchema: {t_schema}\nColumns:\n" + "\n".join(mapping_lines))
-        print("models: ", model_summary)
+        print(model_summary)
 
         schema_prompt = f"""
         You are a Snowflake + dbt expert.
@@ -198,13 +203,13 @@ if st.button("Generate dbt Models"):
         version: 2
 
         models:
-          - name: {{ model_name }}
+            - name: {{ model_name }}
             description: {{ add some description about the model }}
             columns:
-              - name: {{column1}}
+                - name: {{column1}}
                 description: {{ add some description about the column }}
                 tests:
-                  {{tests}}
+                    {{tests}}
 
 
         Models:
@@ -224,14 +229,12 @@ if st.button("Generate dbt Models"):
         print(f"✅ Final consolidated schema.yml generated: {schema_yml_path}")
         st.write("✅ Final consolidated `schema.yml` generated by Cortex AI")
 
-        # --- Consolidated sources.yml generation via Cortex ---
+        
         st.write("🧠 Generating consolidated sources.yml with Cortex...")
-        print("\n🧠 Starting final Cortex call for sources.yml...")
-
         source_summary = []
-        for (schema, table), subdf in df.groupby(['source_schema', 'source_table']):
-            database = subdf['database'].iloc[0] if 'database' in subdf.columns else "UNKNOWN_DB"
-            cols = subdf['source_column'].unique().tolist()
+        for (schema, table), subdf in df.groupby(['Source_Schema', 'Source_Table']):
+            database = subdf['Source_Database'].iloc[0]
+            cols = subdf['Source_Column'].unique().tolist()
             source_summary.append(
                 f"Database: {database}\nSchema: {schema}\nTable: {table}\nColumns: {', '.join(cols)}"
             )
@@ -262,8 +265,8 @@ if st.button("Generate dbt Models"):
         print(f"✅ Final consolidated sources.yml generated: {sources_yml_path}")
         st.write("✅ Final consolidated `sources.yml` generated by Cortex AI")
 
-        st.success("🎉 All DBT files successfully created under `generated_dbt/`")
-        print("\n🎉 All DBT files successfully created under generated_dbt/")
+        print("\n🎉 All DBT files successfully created under dbt_model_generation/")
+        st.success("🎉 All DBT files successfully created under `dbt_model_generation/`")
 
         # Stage all changes
         subprocess.run(["git", "add", "."], check=True)
