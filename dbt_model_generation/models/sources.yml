@@ -1,0 +1,144 @@
+version: 2
+
+sources:
+  - name: dwh_raw
+    database: bsl_raw
+    schema: dwh_raw
+    description: "Raw data source tables from the data warehouse"
+    
+    tables:
+      - name: addresses
+        description: "Customer address information"
+        columns:
+          - name: address_id
+            description: "Unique identifier for address"
+          - name: customer_id
+            description: "Foreign key to customers table"
+          - name: address_line1
+            description: "Primary address line"
+          - name: city
+            description: "City name"
+          - name: country
+            description: "Country name"
+          - name: inserted_at
+            description: "Timestamp when record was inserted"
+
+      - name: categories
+        description: "Product category information"
+        columns:
+          - name: category_id
+            description: "Unique identifier for category"
+          - name: category_name
+            description: "Name of the category"
+          - name: parent_category_id
+            description: "Parent category identifier for hierarchical structure"
+          - name: is_active
+            description: "Flag indicating if category is active"
+
+      - name: customers
+        description: "Customer information"
+        columns:
+          - name: customer_id
+            description: "Unique identifier for customer"
+          - name: first_name
+            description: "Customer first name"
+          - name: last_name
+            description: "Customer last name"
+          - name: email
+            description: "Customer email address"
+          - name: inserted_at
+            description: "Timestamp when record was inserted"
+
+      - name: inventory
+        description: "Product inventory information"
+        columns:
+          - name: product_id
+            description: "Foreign key to products table"
+          - name: supplier_id
+            description: "Foreign key to suppliers table"
+          - name: stock_qty
+            description: "Current stock quantity"
+          - name: warehouse_location
+            description: "Location of inventory in warehouse"
+          - name: last_updated
+            description: "Timestamp when inventory was last updated"
+
+      - name: order_items
+        description: "Individual items within orders"
+        columns:
+          - name: order_id
+            description: "Foreign key to orders table"
+          - name: product_id
+            description: "Foreign key to products table"
+          - name: quantity
+            description: "Quantity of product ordered"
+          - name: unit_price
+            description: "Price per unit of product"
+          - name: order_item_id
+            description: "Unique identifier for order item"
+
+      - name: orders
+        description: "Customer order information"
+        columns:
+          - name: order_id
+            description: "Unique identifier for order"
+          - name: customer_id
+            description: "Foreign key to customers table"
+          - name: order_date
+            description: "Date when order was placed"
+          - name: status
+            description: "Current status of the order"
+          - name: total_amount
+            description: "Total amount of the order"
+
+      - name: payments
+        description: "Payment transaction information"
+        columns:
+          - name: payment_id
+            description: "Unique identifier for payment"
+          - name: order_id
+            description: "Foreign key to orders table"
+          - name: payment_date
+            description: "Date when payment was processed"
+          - name: payment_method
+            description: "Method used for payment"
+          - name: amount
+            description: "Payment amount"
+
+      - name: products
+        description: "Product catalog information"
+        columns:
+          - name: product_id
+            description: "Unique identifier for product"
+          - name: product_name
+            description: "Name of the product"
+          - name: price
+            description: "Product price"
+
+      - name: shipments
+        description: "Order shipment information"
+        columns:
+          - name: shipment_id
+            description: "Unique identifier for shipment"
+          - name: order_id
+            description: "Foreign key to orders table"
+          - name: shipment_date
+            description: "Date when shipment was sent"
+          - name: carrier
+            description: "Shipping carrier name"
+          - name: tracking_number
+            description: "Shipment tracking number"
+
+      - name: suppliers
+        description: "Supplier information"
+        columns:
+          - name: supplier_id
+            description: "Unique identifier for supplier"
+          - name: supplier_name
+            description: "Name of the supplier"
+          - name: contact_email
+            description: "Supplier contact email"
+          - name: country
+            description: "Supplier country"
+          - name: active_flag
+            description: "Flag indicating if supplier is active"
