@@ -1,7 +1,12 @@
 import streamlit as st
 import os
+from style_utils import apply_style, render_header
 
-st.title("🗂 File Explorer")
+apply_style()
+render_header()
+
+st.set_page_config(page_title="DBT File Viewer", layout="wide")
+st.title("📂 File Explorer")
 
 # Base directory (change if needed)
 BASE_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))

@@ -1,40 +1,53 @@
 import streamlit as st
 import os
 import base64
+from style_utils import apply_style, render_header
 
+apply_style()
+render_header()
 
+# -------------------- PAGE CONFIG --------------------
 st.set_page_config(
     page_title="Snowflake DBT Automation Workbench",
     layout="wide",
     initial_sidebar_state="expanded"
 )
-# Resolve image path
 
 
-image_path = os.path.join(os.path.dirname(__file__), "assets", "elait.png")
+# -------------------- HEADER: LOGO + TITLE --------------------
+# Create a container for the header
+header_container = st.container()
 
-# Read and encode the image
-with open(image_path, "rb") as img:
-    img_base64 = base64.b64encode(img.read()).decode()
+with header_container:
+    col1, col2 = st.columns([1, 10])
+    with col2:
+        st.markdown(
+            """
+            <h1 style='margin-bottom:0; font-size:48px; font-weight:600; color:#1F4FE0;'>
+                DBT Automation Workbench
+            </h1>
+            <p style='font-size:17px; color:#444;'>Accelerate dbt development with AI-powered model generation using Snowflake Cortex</p>
+            """,
+            unsafe_allow_html=True
+        )
 
-# Display centered image
+st.markdown("---")
+
+# -------------------- MAIN CONTENT --------------------
 st.markdown(
-    f"""
-    <div style="text-align:center;">
-        <img src="data:image/png;base64,{img_base64}" width="100">
-    </div>
+    """
+    <p style='font-size:16px;'>
+    Welcome to the <b>DBT Automation Workbench</b> — an intelligent workspace designed to automate dbt model and YAML generation using <b>Snowflake Cortex</b>.
+    </p>
+    <p style='font-size:15px;'>
+    Use the sidebar to navigate between:
+    </p>
+    <ul style='font-size:15px;'>
+        <li>🧱 <b>Model Generator</b> – Upload mapping documents and generate dbt models automatically.</li>
+        <li>🗂 <b>File Explorer</b> – Browse and preview generated dbt files interactively.</li>
+    </ul>
     """,
     unsafe_allow_html=True
 )
-
-st.title("⚙️ Snowflake DBT Automation Workbench")
-
-st.markdown("""
-Welcome to **DBT Automation Workbench**.  
-Use the sidebar to navigate between:
-
-- 🧱 **Model Generator** – upload mapping documents and generate dbt models automatically.  
-- 🗂 **File Explorer** – browse and preview generated dbt files interactively.
-""")
 
 st.info("👉 Select a page from the sidebar to get started.")
