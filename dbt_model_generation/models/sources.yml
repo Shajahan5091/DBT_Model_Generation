@@ -60,7 +60,7 @@ sources:
           - name: warehouse_location
             description: "Warehouse location identifier"
           - name: last_updated
-            description: "Timestamp when inventory was last updated"
+            description: "Timestamp of last inventory update"
 
       - name: order_items
         description: "Individual items within orders"
@@ -114,7 +114,7 @@ sources:
           - name: category_id
             description: "Foreign key to categories table"
           - name: price
-            description: "Current price of the product"
+            description: "Product price"
 
       - name: shipments
         description: "Order shipment tracking information"
@@ -128,7 +128,7 @@ sources:
           - name: carrier
             description: "Shipping carrier name"
           - name: tracking_number
-            description: "Carrier tracking number"
+            description: "Shipment tracking number"
 
       - name: suppliers
         description: "Supplier master data"

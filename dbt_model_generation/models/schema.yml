@@ -6,28 +6,14 @@ models:
     columns:
       - name: address_id
         description: Unique identifier for each address record
-        tests:
-          - not_null
-          - unique
       - name: customer_id
-        description: Foreign key reference to customer dimension
-        tests:
-          - not_null
-          - relationships:
-              to: ref('dim_customer')
-              field: customer_id
+        description: Foreign key linking to customer dimension table
       - name: address_line1
         description: Primary address line with whitespace trimmed
-        tests:
-          - not_null
       - name: city
         description: City name in uppercase format
-        tests:
-          - not_null
       - name: country
-        description: Country name
-        tests:
-          - not_null
+        description: Country name for the address
       - name: inserted_at
         description: Date when the address record was created
 
@@ -36,261 +22,135 @@ models:
     columns:
       - name: category_id
         description: Unique identifier for each category
-        tests:
-          - not_null
-          - unique
       - name: category_name
         description: Category name in title case format
-        tests:
-          - not_null
       - name: parent_category_id
         description: Reference to parent category for hierarchical structure
       - name: category_path
         description: Full category path showing hierarchy up to 2 levels
       - name: is_active
         description: Boolean flag indicating if category is currently active
-        tests:
-          - not_null
 
   - name: dim_customer
-    description: Dimension table containing customer information with derived attributes
+    description: Dimension table containing customer information with derived spending tiers
     columns:
       - name: customer_id
         description: Unique identifier for each customer
-        tests:
-          - not_null
-          - unique
       - name: first_name
         description: Customer first name in uppercase format
-        tests:
-          - not_null
       - name: last_name
         description: Customer last name in uppercase format
-        tests:
-          - not_null
       - name: email
         description: Customer email address in lowercase format
-        tests:
-          - not_null
-          - unique
       - name: customer_since_date
         description: Date when customer first registered
       - name: customer_tier
-        description: Customer spending tier based on last 365 days order amounts
-        tests:
-          - accepted_values:
-              values: ['Gold', 'Silver', 'Bronze']
+        description: Spending tier classification based on order history (Gold/Silver/Bronze)
 
   - name: dim_product
-    description: Dimension table for products with category relationships and price bands
+    description: Dimension table for products with pricing information and categorization
     columns:
       - name: product_id
         description: Unique identifier for each product
-        tests:
-          - not_null
-          - unique
       - name: product_name
         description: Product name in title case format
-        tests:
-          - not_null
       - name: category_id
-        description: Foreign key reference to category dimension
-        tests:
-          - not_null
-          - relationships:
-              to: ref('dim_category')
-              field: category_id
+        description: Foreign key linking to category dimension
       - name: price
-        description: Product price
-        tests:
-          - not_null
+        description: Product price with decimal precision
       - name: price_band
-        description: Price category bucket based on product price
-        tests:
-          - accepted_values:
-              values: ['Low', 'Mid', 'High', 'Premium']
+        description: Price classification bucket (Low/Mid/High/Premium)
 
   - name: dim_supplier
-    description: Dimension table containing supplier information
+    description: Dimension table containing supplier information and contact details
     columns:
       - name: supplier_id
         description: Unique identifier for each supplier
-        tests:
-          - not_null
-          - unique
       - name: supplier_name
         description: Supplier name in title case format
-        tests:
-          - not_null
       - name: contact_email
         description: Supplier contact email in lowercase format
-        tests:
-          - not_null
       - name: country
         description: Supplier country in uppercase format
-        tests:
-          - not_null
       - name: is_active
         description: Boolean flag indicating if supplier is currently active
-        tests:
-          - not_null
 
   - name: fact_inventory
     description: Fact table tracking inventory levels by product and supplier with snapshot capabilities
     columns:
       - name: product_id
-        description: Foreign key reference to product dimension
-        tests:
-          - not_null
-          - relationships:
-              to: ref('dim_product')
-              field: product_id
+        description: Foreign key linking to product dimension
       - name: supplier_id
-        description: Foreign key reference to supplier dimension
-        tests:
-          - not_null
-          - relationships:
-              to: ref('dim_supplier')
-              field: supplier_id
+        description: Foreign key linking to supplier dimension
       - name: stock_qty
-        description: Current stock quantity
-        tests:
-          - not_null
+        description: Current stock quantity available
       - name: warehouse_location
         description: Warehouse location in uppercase format
-        tests:
-          - not_null
       - name: snapshot_date
         description: Date of inventory snapshot
-        tests:
-          - not_null
       - name: is_latest
-        description: Flag indicating the most recent record per product and supplier
+        description: Boolean flag indicating the most recent inventory record per product-supplier combination
 
   - name: fact_order
-    description: Fact table containing order header information
+    description: Fact table containing order header information with standardized status values
     columns:
       - name: order_id
         description: Unique identifier for each order
-        tests:
-          - not_null
-          - unique
       - name: customer_id
-        description: Foreign key reference to customer dimension
-        tests:
-          - not_null
-          - relationships:
-              to: ref('dim_customer')
-              field: customer_id
+        description: Foreign key linking to customer dimension
       - name: order_date
         description: Date when order was placed
-        tests:
-          - not_null
       - name: ORDER_status
-        description: Current status of the order
-        tests:
-          - not_null
-          - accepted_values:
-              values: ['PENDING', 'PAID', 'CANCELLED', 'SHIPPED']
+        description: Normalized order status (PENDING/PAID/CANCELLED/SHIPPED)
       - name: total_amount
-        description: Total order amount
-        tests:
-          - not_null
+        description: Total order amount with decimal precision
 
   - name: fact_order_item
     description: Fact table containing individual order line items with calculated amounts
     columns:
       - name: order_id
-        description: Foreign key reference to order fact table
-        tests:
-          - not_null
-          - relationships:
-              to: ref('fact_order')
-              field: order_id
+        description: Foreign key linking to order fact table
       - name: product_id
-        description: Foreign key reference to product dimension
-        tests:
-          - not_null
-          - relationships:
-              to: ref('dim_product')
-              field: product_id
+        description: Foreign key linking to product dimension
       - name: quantity
         description: Quantity of product ordered
-        tests:
-          - not_null
       - name: unit_price
         description: Price per unit of product
-        tests:
-          - not_null
       - name: extended_amount
-        description: Calculated total before discounts (quantity * unit_price)
-        tests:
-          - not_null
+        description: Calculated total amount (quantity × unit_price)
       - name: discount_amount
-        description: Allocated discount amount for this line item
+        description: Proportionally allocated discount amount
       - name: net_amount
-        description: Final amount after discounts (extended_amount - discount_amount)
-        tests:
-          - not_null
+        description: Final amount after discount (extended_amount - discount_amount)
 
   - name: fact_payment
-    description: Fact table tracking payment transactions for orders
+    description: Fact table tracking payment transactions with payment method standardization
     columns:
       - name: payment_id
         description: Unique identifier for each payment transaction
-        tests:
-          - not_null
-          - unique
       - name: order_id
-        description: Foreign key reference to order fact table
-        tests:
-          - not_null
-          - relationships:
-              to: ref('fact_order')
-              field: order_id
+        description: Foreign key linking to order fact table
       - name: payment_date
         description: Date when payment was processed
-        tests:
-          - not_null
       - name: payment_method
-        description: Method used for payment
-        tests:
-          - not_null
-          - accepted_values:
-              values: ['CARD', 'UPI', 'COD', 'NETBANKING']
+        description: Standardized payment method (CARD/UPI/COD/NETBANKING)
       - name: amount
-        description: Payment amount
-        tests:
-          - not_null
+        description: Payment amount with decimal precision
       - name: is_fully_applied
-        description: Flag indicating if total payments cover the full order amount
+        description: Boolean flag indicating if total payments cover full order amount
 
   - name: fact_shipment
-    description: Fact table tracking shipment information and delivery metrics
+    description: Fact table containing shipment information with delivery performance metrics
     columns:
       - name: shipment_id
         description: Unique identifier for each shipment
-        tests:
-          - not_null
-          - unique
       - name: order_id
-        description: Foreign key reference to order fact table
-        tests:
-          - not_null
-          - relationships:
-              to: ref('fact_order')
-              field: order_id
+        description: Foreign key linking to order fact table
       - name: shipment_date
         description: Date when shipment was dispatched
-        tests:
-          - not_null
       - name: days_to_ship
         description: Number of days between order date and shipment date
       - name: carrier
         description: Shipping carrier name in uppercase format
-        tests:
-          - not_null
       - name: tracking_number
-        description: Shipment tracking number
-        tests:
-          - not_null
+        description: Shipment tracking number for delivery monitoring

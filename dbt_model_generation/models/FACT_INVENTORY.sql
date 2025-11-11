@@ -13,7 +13,7 @@ CREATED DATE: 2024-12-19 (IST)
 
 {{ config(materialized='table') }}
 
-WITH inventory_base AS (
+WITH source_data AS (
     SELECT 
         product_id,
         supplier_id,
@@ -23,66 +23,59 @@ WITH inventory_base AS (
     FROM {{ source('dwh_raw', 'inventory') }}
 ),
 
-inventory_transformed AS (
+product_lookup AS (
+    SELECT 
+        product_id
+    FROM {{ ref('dim_product') }}
+),
+
+supplier_lookup AS (
+    SELECT 
+        supplier_id
+    FROM {{ ref('dim_supplier') }}
+),
+
+transformed_data AS (
     SELECT 
         -- Product ID lookup with unknown handling
-        COALESCE(dp.product_id, 0) AS product_id,
+        COALESCE(p.product_id, 0) AS product_id,
         
         -- Supplier ID lookup with unknown handling  
-        COALESCE(ds.supplier_id, 0) AS supplier_id,
+        COALESCE(s.supplier_id, 0) AS supplier_id,
         
         -- Stock quantity with negative value handling
         CASE 
-            WHEN ib.stock_qty < 0 THEN NULL
-            ELSE ib.stock_qty
+            WHEN s_data.stock_qty < 0 THEN NULL
+            ELSE s_data.stock_qty
         END AS stock_qty,
         
         -- Warehouse location uppercase transformation
-        UPPER(ib.warehouse_location) AS warehouse_location,
+        UPPER(s_data.warehouse_location) AS warehouse_location,
         
         -- Convert timestamp to date
-        ib.last_updated::DATE AS snapshot_date,
+        s_data.last_updated::DATE AS snapshot_date,
         
-        -- Keep original timestamp for latest record calculation
-        ib.last_updated,
-        
-        -- Audit flag for negative stock quantities
+        -- Flag for latest record per product_id + supplier_id
         CASE 
-            WHEN ib.stock_qty < 0 THEN TRUE
-            ELSE FALSE
-        END AS has_negative_stock_flag
-        
-    FROM inventory_base ib
-    
-    -- Left join with dim_product to lookup product_id
-    LEFT JOIN {{ ref('dim_product') }} dp 
-        ON ib.product_id = dp.product_id
-    
-    -- Left join with dim_supplier to lookup supplier_id  
-    LEFT JOIN {{ ref('dim_supplier') }} ds
-        ON ib.supplier_id = ds.supplier_id
-),
-
-inventory_with_latest_flag AS (
-    SELECT 
-        *,
-        -- Flag latest record per product_id + supplier_id composite key
-        CASE 
-            WHEN last_updated = MAX(last_updated) OVER (
-                PARTITION BY product_id, supplier_id
-            ) THEN TRUE
-            ELSE FALSE
+            WHEN s_data.last_updated = MAX(s_data.last_updated) OVER (
+                PARTITION BY COALESCE(p.product_id, 0), COALESCE(s.supplier_id, 0)
+            ) 
+            THEN TRUE 
+            ELSE FALSE 
         END AS is_latest
         
-    FROM inventory_transformed
+    FROM source_data s_data
+    LEFT JOIN product_lookup p 
+        ON s_data.product_id::INTEGER = p.product_id
+    LEFT JOIN supplier_lookup s 
+        ON s_data.supplier_id::INTEGER = s.supplier_id
 )
 
 SELECT 
     product_id,
-    supplier_id, 
+    supplier_id,
     stock_qty,
     warehouse_location,
     snapshot_date,
-    is_latest,
-    has_negative_stock_flag
-FROM inventory_with_latest_flag
+    is_latest
+FROM transformed_data

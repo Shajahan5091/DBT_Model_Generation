@@ -38,40 +38,35 @@ product_lookup as (
 transformed as (
     select
         s.order_item_id,
-        -- Order ID lookup with skip logic for missing orders
-        case 
-            when o.order_id is not null then cast(s.order_id as integer)
-            else null
-        end as order_id,
-        -- Product ID lookup with unknown handling
-        case 
-            when p.product_id is not null then cast(s.product_id as integer)
-            else 0
-        end as product_id,
-        coalesce(p.product_sk, 0) as product_sk,
-        -- Quantity with integer semantics
-        round(coalesce(s.quantity, 0)) as quantity,
-        -- Unit price direct mapping
-        cast(coalesce(s.unit_price, 0) as number(10,2)) as unit_price,
-        -- Extended amount calculation
+        -- Lookup order_id and convert to integer
+        cast(o.order_id as integer) as order_id,
+        -- Lookup product_id and convert to integer, default to 0 if missing
+        cast(coalesce(p.product_id, 0) as integer) as product_id,
+        -- Direct mapping with integer semantics
+        cast(round(s.quantity) as number) as quantity,
+        -- Direct mapping for unit_price
+        cast(s.unit_price as number(10,2)) as unit_price,
+        -- Compute extended_amount (quantity * unit_price)
         cast(
-            round(coalesce(s.quantity, 0)) * coalesce(s.unit_price, 0) 
+            round(s.quantity) * coalesce(s.unit_price, 0) 
             as number(12,2)
         ) as extended_amount,
-        -- Discount amount - set to 0 as no discount context available
+        -- Set discount_amount to 0 for now (no discount context)
         cast(0 as number(12,2)) as discount_amount,
-        -- Net amount calculation with non-negative floor
+        -- Compute net_amount (extended_amount - discount_amount), ensure non-negative
         cast(
             greatest(
                 0,
-                (round(coalesce(s.quantity, 0)) * coalesce(s.unit_price, 0)) - 0
+                (round(s.quantity) * coalesce(s.unit_price, 0)) - 0
             ) as number(12,2)
         ) as net_amount
     from source_data s
-    left join order_lookup o on cast(s.order_id as integer) = o.order_id
-    left join product_lookup p on cast(s.product_id as integer) = p.product_id
-    -- Skip items if order_id missing in fact_order
-    where o.order_id is not null
+    -- Join with order lookup - skip items if order_id missing
+    inner join order_lookup o
+        on s.order_id = o.order_id
+    -- Left join with product lookup - use 0 for unknown products
+    left join product_lookup p
+        on s.product_id = p.product_id
 )
 
 select * from transformed

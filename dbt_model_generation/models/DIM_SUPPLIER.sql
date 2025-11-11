@@ -22,15 +22,15 @@ SELECT
     -- Trim and title-case supplier name
     INITCAP(TRIM(supplier_name)) AS supplier_name,
     
-    -- Lowercase email with validation - set null if invalid pattern
+    -- Lowercase email with validation, set null if invalid pattern
     CASE 
         WHEN contact_email REGEXP '^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$' 
-        THEN LOWER(TRIM(contact_email))
-        ELSE NULL 
+        THEN LOWER(contact_email)
+        ELSE NULL
     END AS contact_email,
     
     -- Uppercase country
-    UPPER(TRIM(country)) AS country,
+    UPPER(country) AS country,
     
     -- Direct mapping with null handling - default false if null
     COALESCE(active_flag, FALSE) AS is_active
