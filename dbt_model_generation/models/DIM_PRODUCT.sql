@@ -38,9 +38,9 @@ transformed_data as (
             else 'Unknown'
         end as price_band,
         
-        -- Flag for review when price is 0
+        -- Flag for zero price review
         case
-            when price = 0 then 'Price is zero - requires review'
+            when price = 0 then 'Price requires review - zero value detected'
             else null
         end as review_notes
         

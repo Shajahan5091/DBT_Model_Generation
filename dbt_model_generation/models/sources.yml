@@ -12,7 +12,7 @@ sources:
           - name: address_id
             description: "Unique identifier for address"
           - name: customer_id
-            description: "Reference to customer"
+            description: "Foreign key to customers table"
           - name: address_line1
             description: "Primary address line"
           - name: city
@@ -20,7 +20,7 @@ sources:
           - name: country
             description: "Country name"
           - name: inserted_at
-            description: "Record insertion timestamp"
+            description: "Timestamp when record was inserted"
 
       - name: categories
         description: "Product category hierarchy"
@@ -28,11 +28,11 @@ sources:
           - name: category_id
             description: "Unique identifier for category"
           - name: category_name
-            description: "Category name"
+            description: "Name of the category"
           - name: parent_category_id
-            description: "Reference to parent category"
+            description: "Parent category identifier for hierarchy"
           - name: is_active
-            description: "Category active status flag"
+            description: "Flag indicating if category is active"
 
       - name: customers
         description: "Customer master data"
@@ -46,33 +46,33 @@ sources:
           - name: email
             description: "Customer email address"
           - name: inserted_at
-            description: "Record insertion timestamp"
+            description: "Timestamp when record was inserted"
 
       - name: inventory
         description: "Product inventory levels"
         columns:
           - name: product_id
-            description: "Reference to product"
+            description: "Foreign key to products table"
           - name: supplier_id
-            description: "Reference to supplier"
+            description: "Foreign key to suppliers table"
           - name: stock_qty
             description: "Current stock quantity"
           - name: warehouse_location
             description: "Warehouse location identifier"
           - name: last_updated
-            description: "Last inventory update timestamp"
+            description: "Timestamp when inventory was last updated"
 
       - name: order_items
         description: "Individual items within orders"
         columns:
           - name: order_id
-            description: "Reference to order"
+            description: "Foreign key to orders table"
           - name: product_id
-            description: "Reference to product"
+            description: "Foreign key to products table"
           - name: quantity
-            description: "Quantity ordered"
+            description: "Quantity of product ordered"
           - name: unit_price
-            description: "Price per unit"
+            description: "Price per unit at time of order"
           - name: order_item_id
             description: "Unique identifier for order item"
 
@@ -82,13 +82,13 @@ sources:
           - name: order_id
             description: "Unique identifier for order"
           - name: customer_id
-            description: "Reference to customer"
+            description: "Foreign key to customers table"
           - name: order_date
-            description: "Date order was placed"
+            description: "Date when order was placed"
           - name: status
-            description: "Current order status"
+            description: "Current status of the order"
           - name: total_amount
-            description: "Total order amount"
+            description: "Total amount of the order"
 
       - name: payments
         description: "Payment transactions"
@@ -96,11 +96,11 @@ sources:
           - name: payment_id
             description: "Unique identifier for payment"
           - name: order_id
-            description: "Reference to order"
+            description: "Foreign key to orders table"
           - name: payment_date
-            description: "Date payment was processed"
+            description: "Date when payment was processed"
           - name: payment_method
-            description: "Payment method used"
+            description: "Method used for payment"
           - name: amount
             description: "Payment amount"
 
@@ -110,7 +110,7 @@ sources:
           - name: product_id
             description: "Unique identifier for product"
           - name: product_name
-            description: "Product name"
+            description: "Name of the product"
           - name: price
             description: "Product price"
 
@@ -120,11 +120,11 @@ sources:
           - name: shipment_id
             description: "Unique identifier for shipment"
           - name: order_id
-            description: "Reference to order"
+            description: "Foreign key to orders table"
           - name: shipment_date
-            description: "Date shipment was sent"
+            description: "Date when shipment was sent"
           - name: carrier
-            description: "Shipping carrier"
+            description: "Shipping carrier name"
           - name: tracking_number
             description: "Shipment tracking number"
 
@@ -134,10 +134,10 @@ sources:
           - name: supplier_id
             description: "Unique identifier for supplier"
           - name: supplier_name
-            description: "Supplier company name"
+            description: "Name of the supplier"
           - name: contact_email
             description: "Supplier contact email"
           - name: country
             description: "Supplier country"
           - name: active_flag
-            description: "Supplier active status flag"
+            description: "Flag indicating if supplier is active"

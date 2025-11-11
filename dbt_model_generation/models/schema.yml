@@ -23,7 +23,7 @@ models:
     description: Dimension table for product categories with hierarchical structure and path information
     columns:
       - name: category_id
-        description: Unique identifier for each product category
+        description: Unique identifier for each category
         tests:
           - unique
       - name: category_name
@@ -33,7 +33,7 @@ models:
       - name: category_path
         description: Full category path showing hierarchy up to 2 levels
       - name: is_active
-        description: Boolean flag indicating if the category is currently active
+        description: Boolean flag indicating if category is currently active
         tests:
           - accepted_values:
               values: [true, false]
@@ -52,9 +52,9 @@ models:
       - name: email
         description: Customer email address in lowercase format
       - name: customer_since_date
-        description: Date when the customer first registered
+        description: Date when customer first registered
       - name: customer_tier
-        description: Customer spending tier based on last 365 days order amounts
+        description: Customer spending tier based on last 365 days order amount
         tests:
           - accepted_values:
               values: ['Gold', 'Silver', 'Bronze']
@@ -90,7 +90,7 @@ models:
       - name: country
         description: Supplier country in uppercase format
       - name: is_active
-        description: Boolean flag indicating if the supplier is currently active
+        description: Boolean flag indicating if supplier is currently active
         tests:
           - accepted_values:
               values: [true, false]
@@ -109,7 +109,7 @@ models:
       - name: warehouse_location
         description: Warehouse location in uppercase format
       - name: snapshot_date
-        description: Date of the inventory snapshot
+        description: Date of inventory snapshot
       - name: is_latest
         description: Flag indicating the most recent record per product and supplier
 
@@ -123,7 +123,7 @@ models:
       - name: customer_id
         description: Foreign key reference to customer dimension
       - name: order_date
-        description: Date when the order was placed
+        description: Date when order was placed
         tests:
           - not_null
       - name: ORDER_status
@@ -135,7 +135,7 @@ models:
         description: Total order amount with decimal precision
 
   - name: fact_order_item
-    description: Fact table containing individual order line items with calculated amounts
+    description: Fact table containing order line item details with calculated amounts
     columns:
       - name: order_id
         description: Foreign key reference to order fact table
@@ -144,11 +144,11 @@ models:
       - name: quantity
         description: Quantity of product ordered
       - name: unit_price
-        description: Price per unit of the product
+        description: Price per unit of product
       - name: extended_amount
         description: Calculated total amount before discounts (quantity * unit_price)
       - name: discount_amount
-        description: Proportionally allocated discount amount for the line item
+        description: Proportionally allocated discount amount from order level
       - name: net_amount
         description: Final amount after applying discounts (extended_amount - discount_amount)
 
@@ -162,7 +162,7 @@ models:
       - name: order_id
         description: Foreign key reference to order fact table
       - name: payment_date
-        description: Date when the payment was processed
+        description: Date when payment was processed
         tests:
           - not_null
       - name: payment_method
@@ -185,11 +185,11 @@ models:
       - name: order_id
         description: Foreign key reference to order fact table
       - name: shipment_date
-        description: Date when the shipment was dispatched
+        description: Date when shipment was dispatched
         tests:
           - not_null
       - name: days_to_ship
-        description: Number of days between order placement and shipment
+        description: Number of days between order date and shipment date
       - name: carrier
         description: Shipping carrier name in uppercase format
       - name: tracking_number

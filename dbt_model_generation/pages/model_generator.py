@@ -166,7 +166,7 @@ if st.button("Generate dbt Models"):
 
             # ✅ Save the dbt model once
             os.makedirs("models", exist_ok=True)
-            model_path = f"models/{t_table}.sql"
+            model_path = f"models/{t_table.lower()}.sql"
             with open(model_path, "w", encoding="utf-8") as f:
                 f.write(sql_part)
 
