@@ -5,6 +5,10 @@ import http.server
 import socketserver
 from functools import partial
 import webbrowser
+from style_utils import apply_style, render_header
+
+apply_style()
+render_header()
 
 # --- Streamlit Page Setup ---
 st.set_page_config(page_title="DBT Docs Viewer", layout="wide")
