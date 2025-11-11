@@ -4,20 +4,20 @@ sources:
   - name: dwh_staging
     database: bsl_staging
     schema: dwh_staging
-    description: "Staging tables for data warehouse operations"
+    description: "Staging tables for data warehouse processing"
     tables:
       - name: address
-        description: "Address information including city, state, and country"
+        description: "Address information for customers"
         columns:
           - name: city
             description: "City name"
           - name: state
             description: "State or province"
           - name: country
-            description: "Country name - lookup based on customer_id via customer_address join"
+            description: "Country name"
 
       - name: customer
-        description: "Customer master data with contact information"
+        description: "Customer master data with activity based on creation date"
         columns:
           - name: customer_id
             description: "Unique customer identifier"
@@ -30,21 +30,21 @@ sources:
           - name: phone
             description: "Customer phone number"
           - name: created_ts
-            description: "Customer creation timestamp - used to determine active status (active if less than 2 years from current_date)"
+            description: "Customer creation timestamp - used to determine active status"
 
       - name: customer_address
         description: "Junction table linking customers to addresses"
         columns:
           - name: customer_id
-            description: "Customer identifier"
+            description: "Reference to customer"
           - name: address_id
-            description: "Address identifier"
+            description: "Reference to address"
 
       - name: inventory
         description: "Product inventory levels by warehouse"
         columns:
           - name: quantity_on_hand
-            description: "Current inventory quantity"
+            description: "Available inventory quantity"
           - name: product_id
             description: "Product identifier"
           - name: warehouse_id
@@ -54,7 +54,7 @@ sources:
         description: "Order header information"
         columns:
           - name: order_date
-            description: "Date when order was placed"
+            description: "Date order was placed"
           - name: customer_id
             description: "Customer who placed the order"
           - name: order_id
@@ -64,28 +64,28 @@ sources:
         description: "Individual line items within orders"
         columns:
           - name: product_id
-            description: "Product identifier for the line item"
+            description: "Product ordered"
           - name: order_line_id
             description: "Unique order line identifier"
           - name: quantity
             description: "Quantity ordered"
           - name: unit_price
-            description: "Unit price for the product"
+            description: "Price per unit"
 
       - name: payment_transaction
-        description: "Payment transaction records"
+        description: "Payment transactions for orders"
         columns:
           - name: order_id
-            description: "Associated order identifier"
+            description: "Associated order"
           - name: payment_method
-            description: "Method of payment used"
+            description: "Method of payment"
           - name: amount_paid
-            description: "Amount paid in transaction"
+            description: "Payment amount"
           - name: payment_ts
-            description: "Payment timestamp - to be converted to date"
+            description: "Payment timestamp"
 
       - name: product
-        description: "Product master data"
+        description: "Product master data with discount calculations"
         columns:
           - name: product_id
             description: "Unique product identifier"
@@ -99,8 +99,10 @@ sources:
       - name: product_category
         description: "Product category information"
         columns:
+          - name: product_id
+            description: "Product identifier"
           - name: category_name
-            description: "Category name - lookup based on product_id"
+            description: "Category name"
 
       - name: product_discount
         description: "Product discount information with effective dates"
@@ -120,7 +122,7 @@ sources:
           - name: return_date
             description: "Date of return"
           - name: order_line_id
-            description: "Associated order line identifier"
+            description: "Order line being returned"
           - name: return_reason
             description: "Reason for return"
 
@@ -128,10 +130,10 @@ sources:
         description: "Order shipment tracking information"
         columns:
           - name: order_id
-            description: "Associated order identifier"
+            description: "Associated order"
           - name: shipped_date
-            description: "Date when order was shipped"
+            description: "Date order was shipped"
           - name: delivery_date
-            description: "Date when order was delivered"
+            description: "Date order was delivered"
           - name: status
-            description: "Current shipment status"
+            description: "Shipment status"
