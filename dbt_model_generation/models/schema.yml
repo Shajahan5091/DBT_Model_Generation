@@ -11,7 +11,7 @@ models:
       - name: customer_id
         description: Foreign key reference to customer dimension table
       - name: address_line1
-        description: Primary address line with whitespace trimmed
+        description: Primary address line with trimmed whitespace
       - name: city
         description: City name in uppercase format
       - name: country
@@ -69,9 +69,9 @@ models:
       - name: product_name
         description: Product name in title case format
       - name: price
-        description: Product price with decimal precision
+        description: Product price with 2 decimal precision
       - name: price_band
-        description: Price category bucket for product classification
+        description: Price category bucket based on product price ranges
         tests:
           - accepted_values:
               values: ['Low', 'Mid', 'High', 'Premium']
@@ -132,10 +132,10 @@ models:
           - accepted_values:
               values: ['PENDING', 'PAID', 'CANCELLED', 'SHIPPED']
       - name: total_amount
-        description: Total order amount with decimal precision
+        description: Total order amount with 2 decimal precision
 
   - name: fact_order_item
-    description: Fact table containing order line items with calculated amounts and discounts
+    description: Fact table containing order line item details with calculated amounts
     columns:
       - name: order_id
         description: Foreign key reference to order fact table
@@ -144,7 +144,7 @@ models:
       - name: quantity
         description: Quantity of product ordered
       - name: unit_price
-        description: Price per unit of product
+        description: Price per unit with 2 decimal precision
       - name: extended_amount
         description: Calculated total amount before discounts (quantity * unit_price)
       - name: discount_amount
@@ -171,7 +171,7 @@ models:
           - accepted_values:
               values: ['CARD', 'UPI', 'COD', 'NETBANKING']
       - name: amount
-        description: Payment amount with decimal precision
+        description: Payment amount with 2 decimal precision
       - name: is_fully_applied
         description: Flag indicating if total payments cover the full order amount
 
@@ -193,4 +193,4 @@ models:
       - name: carrier
         description: Shipping carrier name in uppercase format
       - name: tracking_number
-        description: Shipment tracking number for customer reference
+        description: Shipment tracking number for delivery monitoring
