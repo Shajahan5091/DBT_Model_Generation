@@ -20,13 +20,13 @@ with source_data as (
 
 transformed_data as (
     select
-        -- Direct mapping with unique constraint
+        -- Direct mapping for product_id
         product_id,
         
         -- Title-case product name with trimmed spaces
         initcap(trim(regexp_replace(product_name, '\\s+', ' '))) as product_name,
         
-        -- Direct price mapping with precision
+        -- Direct mapping for price with precision
         cast(price as number(10,2)) as price,
         
         -- Price banding logic
@@ -40,7 +40,7 @@ transformed_data as (
         
         -- Flag for review when price is 0
         case
-            when price = 0 then 'Price requires review - zero value detected'
+            when price = 0 then 'Price is zero - requires review'
             else null
         end as review_notes
         

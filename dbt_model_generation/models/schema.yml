@@ -17,13 +17,13 @@ models:
       - name: country
         description: Country name for the address
       - name: inserted_at
-        description: Date when the address record was created
+        description: Date when the address record was first created
 
   - name: dim_category
     description: Dimension table for product categories with hierarchical structure and path information
     columns:
       - name: category_id
-        description: Unique identifier for each category
+        description: Unique identifier for each product category
         tests:
           - unique
       - name: category_name
@@ -33,7 +33,7 @@ models:
       - name: category_path
         description: Full category path showing hierarchy up to 2 levels
       - name: is_active
-        description: Boolean flag indicating if category is currently active
+        description: Boolean flag indicating if the category is currently active
         tests:
           - accepted_values:
               values: [true, false]
@@ -52,7 +52,7 @@ models:
       - name: email
         description: Customer email address in lowercase format
       - name: customer_since_date
-        description: Date when customer first registered
+        description: Date when the customer first registered
       - name: customer_tier
         description: Customer spending tier based on last 365 days activity
         tests:
@@ -69,7 +69,7 @@ models:
       - name: product_name
         description: Product name in title case format
       - name: price
-        description: Product price with 2 decimal precision
+        description: Product price with decimal precision
       - name: price_band
         description: Price category bucket based on product price ranges
         tests:
@@ -90,13 +90,13 @@ models:
       - name: country
         description: Supplier country in uppercase format
       - name: is_active
-        description: Boolean flag indicating if supplier is currently active
+        description: Boolean flag indicating if the supplier is currently active
         tests:
           - accepted_values:
               values: [true, false]
 
   - name: fact_inventory
-    description: Fact table tracking inventory levels by product and supplier with snapshot functionality
+    description: Fact table tracking inventory levels by product and supplier with snapshot capabilities
     columns:
       - name: product_id
         description: Foreign key reference to product dimension
@@ -109,7 +109,7 @@ models:
       - name: warehouse_location
         description: Warehouse location in uppercase format
       - name: snapshot_date
-        description: Date of inventory snapshot
+        description: Date of the inventory snapshot
       - name: is_latest
         description: Flag indicating the most recent record per product and supplier
 
@@ -123,7 +123,7 @@ models:
       - name: customer_id
         description: Foreign key reference to customer dimension
       - name: order_date
-        description: Date when order was placed
+        description: Date when the order was placed
         tests:
           - not_null
       - name: ORDER_status
@@ -132,7 +132,7 @@ models:
           - accepted_values:
               values: ['PENDING', 'PAID', 'CANCELLED', 'SHIPPED']
       - name: total_amount
-        description: Total order amount with 2 decimal precision
+        description: Total order amount with decimal precision
 
   - name: fact_order_item
     description: Fact table containing order line item details with calculated amounts
@@ -144,13 +144,13 @@ models:
       - name: quantity
         description: Quantity of product ordered
       - name: unit_price
-        description: Price per unit with 2 decimal precision
+        description: Price per unit of the product
       - name: extended_amount
         description: Calculated total amount before discounts (quantity * unit_price)
       - name: discount_amount
-        description: Proportionally allocated discount amount
+        description: Proportionally allocated discount amount for the line item
       - name: net_amount
-        description: Final amount after applying discounts
+        description: Final amount after applying discounts (extended_amount - discount_amount)
 
   - name: fact_payment
     description: Fact table tracking payment transactions with method standardization and application status
@@ -162,7 +162,7 @@ models:
       - name: order_id
         description: Foreign key reference to order fact table
       - name: payment_date
-        description: Date when payment was processed
+        description: Date when the payment was processed
         tests:
           - not_null
       - name: payment_method
@@ -171,7 +171,7 @@ models:
           - accepted_values:
               values: ['CARD', 'UPI', 'COD', 'NETBANKING']
       - name: amount
-        description: Payment amount with 2 decimal precision
+        description: Payment amount with decimal precision
       - name: is_fully_applied
         description: Flag indicating if total payments cover the full order amount
 
@@ -185,11 +185,11 @@ models:
       - name: order_id
         description: Foreign key reference to order fact table
       - name: shipped_date
-        description: Date when shipment was dispatched
+        description: Date when the shipment was dispatched
         tests:
           - not_null
       - name: days_to_ship
-        description: Number of days between order date and shipment date
+        description: Number of days between order placement and shipment
       - name: carrier
         description: Shipping carrier name in uppercase format
       - name: tracking_number
