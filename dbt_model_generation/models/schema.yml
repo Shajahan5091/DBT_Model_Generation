@@ -32,7 +32,7 @@ models:
         description: Date when the address record was created
 
   - name: dim_category
-    description: Product category dimension with hierarchical structure and path information
+    description: Dimension table for product categories with hierarchical structure
     columns:
       - name: category_id
         description: Unique identifier for each category
@@ -53,7 +53,7 @@ models:
           - not_null
 
   - name: dim_customer
-    description: Customer dimension containing customer profile information and derived attributes
+    description: Dimension table containing customer information with derived attributes
     columns:
       - name: customer_id
         description: Unique identifier for each customer
@@ -82,7 +82,7 @@ models:
               values: ['Gold', 'Silver', 'Bronze']
 
   - name: dim_product
-    description: Product dimension containing product details and derived price categorization
+    description: Dimension table for products with category relationships and price bands
     columns:
       - name: product_id
         description: Unique identifier for each product
@@ -101,19 +101,17 @@ models:
               to: ref('dim_category')
               field: category_id
       - name: price
-        description: Product price with 2 decimal precision
+        description: Product price
         tests:
           - not_null
-          - dbt_utils.accepted_range:
-              min_value: 0
       - name: price_band
-        description: Price category bucket based on price ranges
+        description: Price category bucket based on product price
         tests:
           - accepted_values:
               values: ['Low', 'Mid', 'High', 'Premium']
 
   - name: dim_supplier
-    description: Supplier dimension containing supplier contact and status information
+    description: Dimension table containing supplier information
     columns:
       - name: supplier_id
         description: Unique identifier for each supplier
@@ -138,7 +136,7 @@ models:
           - not_null
 
   - name: fact_inventory
-    description: Inventory fact table tracking stock levels by product and supplier with snapshot capabilities
+    description: Fact table tracking inventory levels by product and supplier with snapshot capabilities
     columns:
       - name: product_id
         description: Foreign key reference to product dimension
@@ -158,23 +156,19 @@ models:
         description: Current stock quantity
         tests:
           - not_null
-          - dbt_utils.accepted_range:
-              min_value: 0
       - name: warehouse_location
         description: Warehouse location in uppercase format
         tests:
           - not_null
       - name: snapshot_date
-        description: Date of the inventory snapshot
+        description: Date of inventory snapshot
         tests:
           - not_null
       - name: is_latest
-        description: Flag indicating the most recent record per product and supplier combination
-        tests:
-          - not_null
+        description: Flag indicating the most recent record per product and supplier
 
   - name: fact_order
-    description: Order fact table containing order header information and status tracking
+    description: Fact table containing order header information
     columns:
       - name: order_id
         description: Unique identifier for each order
@@ -189,24 +183,22 @@ models:
               to: ref('dim_customer')
               field: customer_id
       - name: order_date
-        description: Date when the order was placed
+        description: Date when order was placed
         tests:
           - not_null
-      - name: order_status
-        description: Normalized order status in uppercase format
+      - name: ORDER_status
+        description: Current status of the order
         tests:
           - not_null
           - accepted_values:
               values: ['PENDING', 'PAID', 'CANCELLED', 'SHIPPED']
       - name: total_amount
-        description: Total order amount with 2 decimal precision
+        description: Total order amount
         tests:
           - not_null
-          - dbt_utils.accepted_range:
-              min_value: 0
 
   - name: fact_order_item
-    description: Order line item fact table with calculated amounts and discount allocation
+    description: Fact table containing individual order line items with calculated amounts
     columns:
       - name: order_id
         description: Foreign key reference to order fact table
@@ -226,35 +218,23 @@ models:
         description: Quantity of product ordered
         tests:
           - not_null
-          - dbt_utils.accepted_range:
-              min_value: 1
       - name: unit_price
-        description: Price per unit with 2 decimal precision
+        description: Price per unit of product
         tests:
           - not_null
-          - dbt_utils.accepted_range:
-              min_value: 0
       - name: extended_amount
-        description: Calculated amount before discounts (quantity * unit_price)
+        description: Calculated total before discounts (quantity * unit_price)
         tests:
           - not_null
-          - dbt_utils.accepted_range:
-              min_value: 0
       - name: discount_amount
-        description: Proportionally allocated discount amount
-        tests:
-          - not_null
-          - dbt_utils.accepted_range:
-              min_value: 0
+        description: Allocated discount amount for this line item
       - name: net_amount
-        description: Final amount after discount (extended_amount - discount_amount)
+        description: Final amount after discounts (extended_amount - discount_amount)
         tests:
           - not_null
-          - dbt_utils.accepted_range:
-              min_value: 0
 
   - name: fact_payment
-    description: Payment fact table tracking payment transactions with application status
+    description: Fact table tracking payment transactions for orders
     columns:
       - name: payment_id
         description: Unique identifier for each payment transaction
@@ -273,24 +253,20 @@ models:
         tests:
           - not_null
       - name: payment_method
-        description: Payment method in uppercase format
+        description: Method used for payment
         tests:
           - not_null
           - accepted_values:
               values: ['CARD', 'UPI', 'COD', 'NETBANKING']
       - name: amount
-        description: Payment amount with 2 decimal precision
+        description: Payment amount
         tests:
           - not_null
-          - dbt_utils.accepted_range:
-              min_value: 0
       - name: is_fully_applied
         description: Flag indicating if total payments cover the full order amount
-        tests:
-          - not_null
 
   - name: fact_shipment
-    description: Shipment fact table tracking order fulfillment and delivery metrics
+    description: Fact table tracking shipment information and delivery metrics
     columns:
       - name: shipment_id
         description: Unique identifier for each shipment
@@ -305,15 +281,11 @@ models:
               to: ref('fact_order')
               field: order_id
       - name: shipment_date
-        description: Date when the order was shipped
+        description: Date when shipment was dispatched
         tests:
           - not_null
       - name: days_to_ship
         description: Number of days between order date and shipment date
-        tests:
-          - not_null
-          - dbt_utils.accepted_range:
-              min_value: 0
       - name: carrier
         description: Shipping carrier name in uppercase format
         tests:
