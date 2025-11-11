@@ -2,7 +2,7 @@ version: 2
 
 models:
   - name: DimCustomer
-    description: Customer dimension table containing customer details including demographics and current status
+    description: Customer dimension table containing customer details and location information
     columns:
       - name: customer_id
         description: Unique identifier for each customer
@@ -13,16 +13,16 @@ models:
       - name: phone
         description: Customer's phone number
       - name: city
-        description: Customer's city of residence
+        description: Customer's city based on customer location lookup
       - name: state
-        description: Customer's state of residence
+        description: Customer's state based on customer location lookup
       - name: country
-        description: Customer's country of residence
+        description: Customer's country based on customer location lookup
       - name: is_current
         description: Flag indicating if customer is active based on creation date within last 2 years
 
   - name: DimProduct
-    description: Product dimension table containing product information including pricing and availability
+    description: Product dimension table containing product details and pricing information
     columns:
       - name: product_id
         description: Unique identifier for each product
@@ -31,9 +31,9 @@ models:
       - name: brand
         description: Brand name of the product
       - name: category_name
-        description: Product category name looked up from category table
+        description: Product category name looked up from category reference
       - name: current_unit_price
-        description: Current unit price after applying discounts
+        description: Current discounted unit price calculated from product discount percentage
       - name: active_flag
         description: Flag indicating if product is active based on inventory availability
 
@@ -50,7 +50,7 @@ models:
         description: Current quantity available in the warehouse
 
   - name: FactPayment
-    description: Payment transaction fact table capturing payment details
+    description: Payment transaction fact table containing payment details
     columns:
       - name: order_id
         description: Unique identifier for the order
@@ -62,19 +62,19 @@ models:
         description: Date when payment was processed
 
   - name: FactReturns
-    description: Product returns fact table tracking returned items and reasons
+    description: Product returns fact table containing return transaction details
     columns:
       - name: return_date
         description: Date when the product was returned
       - name: order_line_id
         description: Unique identifier for the order line item
       - name: product_id
-        description: Unique identifier for the returned product
+        description: Product identifier looked up from order line
       - name: return_reason
         description: Reason provided for the product return
 
   - name: FactSales
-    description: Sales transaction fact table containing order and financial details
+    description: Sales transaction fact table containing order and sales details
     columns:
       - name: order_date
         description: Date when the order was placed
@@ -87,13 +87,13 @@ models:
       - name: order_line_id
         description: Unique identifier for the order line item
       - name: quantity_sold
-        description: Quantity of products sold
+        description: Quantity of product sold
       - name: gross_amount
-        description: Total amount before discounts
+        description: Gross sales amount calculated as quantity times unit price
       - name: discount_amount
-        description: Total discount amount applied
+        description: Discount amount applied to the sale
       - name: net_amount
-        description: Final amount after applying discounts
+        description: Net sales amount after applying discounts
 
   - name: FactShipment
     description: Shipment tracking fact table containing delivery information
