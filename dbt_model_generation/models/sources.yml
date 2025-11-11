@@ -2,9 +2,10 @@ version: 2
 
 sources:
   - name: dwh_raw
-    database: BSL_RAW
-    schema: DWH_RAW
-    description: "Raw data source tables from the data warehouse"
+    database: bsl_raw
+    schema: dwh_raw
+    description: "Raw data warehouse tables"
+    
     tables:
       - name: addresses
         description: "Customer address information"
@@ -71,28 +72,9 @@ sources:
           - name: stock_qty
             description: "Current stock quantity"
           - name: warehouse_location
-            description: "Location of inventory in warehouse"
+            description: "Warehouse location identifier"
           - name: last_updated
-            description: "Timestamp when inventory was last updated"
-
-      - name: orders
-        description: "Customer orders"
-        columns:
-          - name: order_id
-            description: "Unique identifier for order"
-            tests:
-              - unique
-              - not_null
-          - name: customer_id
-            description: "Foreign key to customers table"
-            tests:
-              - not_null
-          - name: order_date
-            description: "Date when order was placed"
-          - name: status
-            description: "Current status of the order"
-          - name: total_amount
-            description: "Total amount of the order"
+            description: "Timestamp of last inventory update"
 
       - name: order_items
         description: "Individual items within orders"
@@ -113,7 +95,26 @@ sources:
           - name: quantity
             description: "Quantity of product ordered"
           - name: unit_price
-            description: "Price per unit of product"
+            description: "Price per unit at time of order"
+
+      - name: orders
+        description: "Customer orders"
+        columns:
+          - name: order_id
+            description: "Unique identifier for order"
+            tests:
+              - unique
+              - not_null
+          - name: customer_id
+            description: "Foreign key to customers table"
+            tests:
+              - not_null
+          - name: order_date
+            description: "Date when order was placed"
+          - name: status
+            description: "Current status of the order"
+          - name: total_amount
+            description: "Total order amount"
 
       - name: payments
         description: "Payment transactions"
@@ -130,7 +131,7 @@ sources:
           - name: payment_date
             description: "Date when payment was processed"
           - name: payment_method
-            description: "Method used for payment"
+            description: "Method of payment used"
           - name: amount
             description: "Payment amount"
 
@@ -161,10 +162,10 @@ sources:
             description: "Foreign key to orders table"
             tests:
               - not_null
-          - name: shipped_date
-            description: "Date when order was shipped"
+          - name: shipment_date
+            description: "Date when shipment was sent"
           - name: carrier
-            description: "Shipping carrier"
+            description: "Shipping carrier name"
           - name: tracking_number
             description: "Shipment tracking number"
 

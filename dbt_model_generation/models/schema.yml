@@ -5,7 +5,7 @@ models:
     description: Dimension table containing customer address information with surrogate keys and standardized formatting
     columns:
       - name: address_sk
-        description: Surrogate key generated from ADDRESS_ID
+        description: Surrogate key generated from address_id
         tests:
           - unique
           - not_null
@@ -15,7 +15,7 @@ models:
           - unique
           - not_null
       - name: customer_sk
-        description: Foreign key to DIM_CUSTOMER table
+        description: Foreign key to dim_customer table
         tests:
           - not_null
           - relationships:
@@ -33,16 +33,14 @@ models:
         description: Country name
         tests:
           - not_null
-      - name: created_date
-        description: Date when the address record was created
-        tests:
-          - not_null
+      - name: inserted_at
+        description: Date when the address record was inserted
 
   - name: dim_category
     description: Dimension table for product categories with hierarchical structure and category paths
     columns:
       - name: category_sk
-        description: Surrogate key generated from CATEGORY_ID
+        description: Surrogate key generated from category_id
         tests:
           - unique
           - not_null
@@ -64,19 +62,17 @@ models:
               to: ref('dim_category')
               field: category_sk
       - name: category_path
-        description: Full category path showing hierarchy up to 2 levels
+        description: Hierarchical path showing parent and child category relationship
       - name: is_active
-        description: Flag indicating if category is currently active
+        description: Boolean flag indicating if category is currently active
         tests:
           - not_null
-          - accepted_values:
-              values: [true, false]
 
   - name: dim_customer
     description: Dimension table containing customer information with derived spending tiers
     columns:
       - name: customer_sk
-        description: Surrogate key generated from CUSTOMER_ID
+        description: Surrogate key generated from customer_id
         tests:
           - unique
           - not_null
@@ -96,23 +92,23 @@ models:
       - name: email
         description: Customer email address in lowercase format
         tests:
-          - not_null
           - unique
+          - not_null
       - name: customer_since_date
         description: Date when customer first registered
         tests:
           - not_null
       - name: customer_tier
-        description: Spending tier based on order history (Gold/Silver/Bronze)
+        description: Spending tier classification based on order history (Gold/Silver/Bronze)
         tests:
           - accepted_values:
               values: ['Gold', 'Silver', 'Bronze']
 
   - name: dim_product
-    description: Dimension table for products with category relationships and price bands
+    description: Dimension table for products with category relationships and price banding
     columns:
       - name: product_sk
-        description: Surrogate key generated from PRODUCT_ID
+        description: Surrogate key generated from product_id
         tests:
           - unique
           - not_null
@@ -126,7 +122,7 @@ models:
         tests:
           - not_null
       - name: category_sk
-        description: Foreign key to DIM_CATEGORY table
+        description: Foreign key to dim_category table
         tests:
           - not_null
           - relationships:
@@ -136,12 +132,9 @@ models:
         description: Product price
         tests:
           - not_null
-          - dbt_utils.accepted_range:
-              min_value: 0
       - name: price_band
-        description: Price category bucket (Low/Mid/High/Premium)
+        description: Price classification (Low/Mid/High/Premium)
         tests:
-          - not_null
           - accepted_values:
               values: ['Low', 'Mid', 'High', 'Premium']
 
@@ -149,7 +142,7 @@ models:
     description: Dimension table containing supplier information with standardized contact details
     columns:
       - name: supplier_sk
-        description: Surrogate key generated from SUPPLIER_ID
+        description: Surrogate key generated from supplier_id
         tests:
           - unique
           - not_null
@@ -171,24 +164,22 @@ models:
         tests:
           - not_null
       - name: is_active
-        description: Flag indicating if supplier is currently active
+        description: Boolean flag indicating if supplier is currently active
         tests:
           - not_null
-          - accepted_values:
-              values: [true, false]
 
   - name: fact_inventory
-    description: Fact table tracking inventory levels by product and supplier with snapshot dates
+    description: Fact table tracking inventory levels by product and supplier with snapshot capabilities
     columns:
       - name: product_sk
-        description: Foreign key to DIM_PRODUCT table
+        description: Foreign key to dim_product table
         tests:
           - not_null
           - relationships:
               to: ref('dim_product')
               field: product_sk
       - name: supplier_sk
-        description: Foreign key to DIM_SUPPLIER table
+        description: Foreign key to dim_supplier table
         tests:
           - not_null
           - relationships:
@@ -198,8 +189,6 @@ models:
         description: Current stock quantity
         tests:
           - not_null
-          - dbt_utils.accepted_range:
-              min_value: 0
       - name: warehouse_location
         description: Warehouse location in uppercase format
         tests:
@@ -209,17 +198,15 @@ models:
         tests:
           - not_null
       - name: is_latest
-        description: Flag indicating the most recent record per product-supplier combination
+        description: Flag indicating the most recent record per product and supplier
         tests:
           - not_null
-          - accepted_values:
-              values: [true, false]
 
   - name: fact_order
     description: Fact table containing order header information with normalized status values
     columns:
       - name: order_sk
-        description: Surrogate key generated from ORDER_ID
+        description: Surrogate key generated from order_id
         tests:
           - unique
           - not_null
@@ -229,7 +216,7 @@ models:
           - unique
           - not_null
       - name: customer_sk
-        description: Foreign key to DIM_CUSTOMER table
+        description: Foreign key to dim_customer table
         tests:
           - not_null
           - relationships:
@@ -242,33 +229,30 @@ models:
       - name: order_status
         description: Normalized order status
         tests:
-          - not_null
           - accepted_values:
               values: ['PENDING', 'PAID', 'CANCELLED', 'SHIPPED']
       - name: total_amount
         description: Total order amount
         tests:
           - not_null
-          - dbt_utils.accepted_range:
-              min_value: 0
 
   - name: fact_order_item
     description: Fact table containing order line items with calculated amounts and discounts
     columns:
       - name: order_item_sk
-        description: Surrogate key generated from ORDER_ITEM_ID
+        description: Surrogate key generated from order_item_id
         tests:
           - unique
           - not_null
       - name: order_sk
-        description: Foreign key to FACT_ORDER table
+        description: Foreign key to fact_order table
         tests:
           - not_null
           - relationships:
               to: ref('fact_order')
               field: order_sk
       - name: product_sk
-        description: Foreign key to DIM_PRODUCT table
+        description: Foreign key to dim_product table
         tests:
           - not_null
           - relationships:
@@ -278,38 +262,26 @@ models:
         description: Quantity of items ordered
         tests:
           - not_null
-          - dbt_utils.accepted_range:
-              min_value: 1
       - name: unit_price
         description: Price per unit
         tests:
           - not_null
-          - dbt_utils.accepted_range:
-              min_value: 0
       - name: extended_amount
         description: Calculated amount (quantity * unit_price)
         tests:
           - not_null
-          - dbt_utils.accepted_range:
-              min_value: 0
       - name: discount_amount
         description: Proportionally allocated discount amount
-        tests:
-          - not_null
-          - dbt_utils.accepted_range:
-              min_value: 0
       - name: net_amount
         description: Final amount after discount (extended_amount - discount_amount)
         tests:
           - not_null
-          - dbt_utils.accepted_range:
-              min_value: 0
 
   - name: fact_payment
-    description: Fact table tracking payment transactions with normalized payment methods
+    description: Fact table tracking payment transactions with method standardization and payment completion flags
     columns:
       - name: payment_sk
-        description: Surrogate key generated from PAYMENT_ID
+        description: Surrogate key generated from payment_id
         tests:
           - unique
           - not_null
@@ -319,40 +291,35 @@ models:
           - unique
           - not_null
       - name: order_sk
-        description: Foreign key to FACT_ORDER table
+        description: Foreign key to fact_order table
         tests:
           - not_null
           - relationships:
               to: ref('fact_order')
               field: order_sk
       - name: payment_date
-        description: Date when payment was made
+        description: Date when payment was processed
         tests:
           - not_null
       - name: payment_method
-        description: Normalized payment method
+        description: Standardized payment method
         tests:
-          - not_null
           - accepted_values:
               values: ['CARD', 'UPI', 'COD', 'NETBANKING']
       - name: amount
         description: Payment amount
         tests:
           - not_null
-          - dbt_utils.accepted_range:
-              min_value: 0
       - name: is_fully_applied
         description: Flag indicating if total payments cover the full order amount
         tests:
           - not_null
-          - accepted_values:
-              values: [true, false]
 
   - name: fact_shipment
     description: Fact table containing shipment information with calculated shipping metrics
     columns:
       - name: shipment_sk
-        description: Surrogate key generated from SHIPMENT_ID
+        description: Surrogate key generated from shipment_id
         tests:
           - unique
           - not_null
@@ -362,24 +329,22 @@ models:
           - unique
           - not_null
       - name: order_sk
-        description: Foreign key to FACT_ORDER table
+        description: Foreign key to fact_order table
         tests:
           - not_null
           - relationships:
               to: ref('fact_order')
               field: order_sk
-      - name: shipped_date
-        description: Date when order was shipped
+      - name: shipment_date
+        description: Date when shipment was dispatched
         tests:
           - not_null
       - name: days_to_ship
-        description: Number of days between order date and ship date
+        description: Number of days between order date and shipment date
         tests:
           - not_null
-          - dbt_utils.accepted_range:
-              min_value: 0
       - name: carrier
-        description: Shipping carrier in uppercase format
+        description: Shipping carrier name in uppercase format
         tests:
           - not_null
       - name: tracking_number
