@@ -1,11 +1,11 @@
 dbt_model_generation:
   outputs:
     dev:
-      account: DTJCYHT-WGB03396
-      database: DEMO_DB
+      account: HPAFNDX-IW71152
+      database: BSL_RAW
       password: Shajahan@snowflake_2002
       role: ACCOUNTADMIN
-      schema: STAGING
+      schema: DWH_RAW
       threads: 1
       type: snowflake
       user: SHAJAHAN
