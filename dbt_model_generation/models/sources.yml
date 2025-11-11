@@ -5,7 +5,6 @@ sources:
     database: BSL_RAW
     schema: DWH_RAW
     description: "Raw data source tables from the data warehouse"
-    
     tables:
       - name: addresses
         description: "Customer address information"
@@ -117,7 +116,7 @@ sources:
             description: "Price per unit of product"
 
       - name: payments
-        description: "Payment transactions for orders"
+        description: "Payment transactions"
         columns:
           - name: payment_id
             description: "Unique identifier for payment"

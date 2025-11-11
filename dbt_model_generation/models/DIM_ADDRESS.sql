@@ -2,7 +2,7 @@
 ------------------------------------------------------------------------
 MODEL NAME: DIM_ADDRESS
 TARGET TABLE: BSL_MA.DWH_MA.DIM_ADDRESS
-SOURCE TABLES: BSL_RAW.DWH_RAW.ADDRESS
+SOURCE TABLES: BSL_RAW.DWH_RAW.ADDRESSES
 DESCRIPTION: Customer address dimension table that transforms raw address data into a dimensional model with surrogate keys and standardized formatting
 PREREQUISITES: DIM_CUSTOMER table must exist for customer lookup
 PARAMETER: None
@@ -23,14 +23,14 @@ WITH source_data AS (
         CITY,
         COUNTRY,
         INSERTED_AT
-    FROM {{ source('dwh_raw', 'ADDRESS') }}
+    FROM {{ source('dwh_raw', 'addresses') }}
 ),
 
 customer_lookup AS (
     SELECT 
         CUSTOMER_ID,
         CUSTOMER_SK
-    FROM {{ ref('DIM_CUSTOMER') }}
+    FROM {{ ref('dim_customer') }}
 ),
 
 transformed AS (
@@ -38,29 +38,28 @@ transformed AS (
         -- Generate surrogate key from ADDRESS_ID
         {{ dbt_utils.generate_surrogate_key(['s.ADDRESS_ID']) }} AS ADDRESS_SK,
         
-        -- Direct mapping
+        -- Direct mapping of ADDRESS_ID
         s.ADDRESS_ID,
         
         -- Lookup CUSTOMER_SK from DIM_CUSTOMER
         c.CUSTOMER_SK,
         
-        -- Trim whitespace from address line
+        -- Trim whitespace from ADDRESS_LINE1
         TRIM(s.ADDRESS_LINE1) AS ADDRESS_LINE1,
         
         -- Uppercase city and normalize
         UPPER(s.CITY) AS CITY,
         
-        -- Direct mapping for country
+        -- Direct mapping of COUNTRY
         s.COUNTRY,
         
         -- Convert timestamp to date
-        s.INSERTED_AT::DATE AS CREATED_DATE
+        DATE(s.INSERTED_AT) AS CREATED_DATE
         
     FROM source_data s
     INNER JOIN customer_lookup c 
         ON s.CUSTOMER_ID = c.CUSTOMER_ID
-    -- Skip rows where CUSTOMER_ID not found in DIM_CUSTOMER
-    WHERE c.CUSTOMER_SK IS NOT NULL
+    WHERE c.CUSTOMER_SK IS NOT NULL  -- Skip rows where CUSTOMER_ID not found in DIM_CUSTOMER
 )
 
 SELECT * FROM transformed
