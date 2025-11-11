@@ -2,10 +2,10 @@ dbt_model_generation:
   outputs:
     dev:
       account: HPAFNDX-IW71152
-      database: BSL_RAW
+      database: BSL_MA
       password: Shajahan@snowflake_2002
       role: ACCOUNTADMIN
-      schema: DWH_RAW
+      schema: DWH_MA
       threads: 1
       type: snowflake
       user: SHAJAHAN

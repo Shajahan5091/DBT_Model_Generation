@@ -9,7 +9,7 @@ models:
         tests:
           - unique
       - name: customer_id
-        description: Foreign key linking to customer dimension table
+        description: Foreign key reference to customer dimension table
       - name: address_line1
         description: Primary address line with whitespace trimmed
       - name: city
@@ -23,7 +23,7 @@ models:
     description: Dimension table for product categories with hierarchical structure and path information
     columns:
       - name: category_id
-        description: Unique identifier for each product category
+        description: Unique identifier for each category
         tests:
           - unique
       - name: category_name
@@ -31,9 +31,9 @@ models:
       - name: parent_category_id
         description: Reference to parent category for hierarchical structure
       - name: category_path
-        description: Full hierarchical path showing parent and current category
+        description: Full category path showing hierarchy up to 2 levels
       - name: is_active
-        description: Boolean flag indicating if the category is currently active
+        description: Boolean flag indicating if category is currently active
         tests:
           - accepted_values:
               values: [true, false]
@@ -52,7 +52,7 @@ models:
       - name: email
         description: Customer email address in lowercase format
       - name: customer_since_date
-        description: Date when the customer first registered
+        description: Date when customer first registered
       - name: customer_tier
         description: Customer spending tier based on last 365 days activity
         tests:
@@ -71,7 +71,7 @@ models:
       - name: price
         description: Product price with decimal precision
       - name: price_band
-        description: Price classification bucket based on product price ranges
+        description: Price category bucket for product classification
         tests:
           - accepted_values:
               values: ['Low', 'Mid', 'High', 'Premium']
@@ -90,13 +90,13 @@ models:
       - name: country
         description: Supplier country in uppercase format
       - name: is_active
-        description: Boolean flag indicating if the supplier is currently active
+        description: Boolean flag indicating if supplier is currently active
         tests:
           - accepted_values:
               values: [true, false]
 
   - name: fact_inventory
-    description: Fact table tracking inventory levels by product and supplier with snapshot capabilities
+    description: Fact table tracking inventory levels by product and supplier with snapshot functionality
     columns:
       - name: product_id
         description: Foreign key reference to product dimension
@@ -109,7 +109,7 @@ models:
       - name: warehouse_location
         description: Warehouse location in uppercase format
       - name: snapshot_date
-        description: Date of the inventory snapshot
+        description: Date of inventory snapshot
       - name: is_latest
         description: Flag indicating the most recent record per product and supplier
 
@@ -123,7 +123,7 @@ models:
       - name: customer_id
         description: Foreign key reference to customer dimension
       - name: order_date
-        description: Date when the order was placed
+        description: Date when order was placed
         tests:
           - not_null
       - name: ORDER_status
@@ -132,10 +132,10 @@ models:
           - accepted_values:
               values: ['PENDING', 'PAID', 'CANCELLED', 'SHIPPED']
       - name: total_amount
-        description: Total monetary value of the order
+        description: Total order amount with decimal precision
 
   - name: fact_order_item
-    description: Fact table containing individual order line items with calculated amounts
+    description: Fact table containing order line items with calculated amounts and discounts
     columns:
       - name: order_id
         description: Foreign key reference to order fact table
@@ -144,13 +144,13 @@ models:
       - name: quantity
         description: Quantity of product ordered
       - name: unit_price
-        description: Price per unit of the product
+        description: Price per unit of product
       - name: extended_amount
         description: Calculated total amount before discounts (quantity * unit_price)
       - name: discount_amount
-        description: Proportionally allocated discount amount for the line item
+        description: Proportionally allocated discount amount
       - name: net_amount
-        description: Final amount after applying discounts (extended_amount - discount_amount)
+        description: Final amount after applying discounts
 
   - name: fact_payment
     description: Fact table tracking payment transactions with method standardization and application status
@@ -162,7 +162,7 @@ models:
       - name: order_id
         description: Foreign key reference to order fact table
       - name: payment_date
-        description: Date when the payment was processed
+        description: Date when payment was processed
         tests:
           - not_null
       - name: payment_method
@@ -171,7 +171,7 @@ models:
           - accepted_values:
               values: ['CARD', 'UPI', 'COD', 'NETBANKING']
       - name: amount
-        description: Payment amount processed
+        description: Payment amount with decimal precision
       - name: is_fully_applied
         description: Flag indicating if total payments cover the full order amount
 
@@ -184,13 +184,13 @@ models:
           - unique
       - name: order_id
         description: Foreign key reference to order fact table
-      - name: shipment_date
-        description: Date when the shipment was dispatched
+      - name: shipped_date
+        description: Date when shipment was dispatched
         tests:
           - not_null
       - name: days_to_ship
-        description: Number of days between order placement and shipment
+        description: Number of days between order date and shipment date
       - name: carrier
         description: Shipping carrier name in uppercase format
       - name: tracking_number
-        description: Shipment tracking number for delivery monitoring
+        description: Shipment tracking number for customer reference
