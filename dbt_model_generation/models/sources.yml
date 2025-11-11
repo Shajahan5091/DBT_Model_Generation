@@ -12,8 +12,13 @@ sources:
         columns:
           - name: address_id
             description: "Unique identifier for address"
+            tests:
+              - unique
+              - not_null
           - name: customer_id
             description: "Foreign key to customers table"
+            tests:
+              - not_null
           - name: address_line1
             description: "Primary address line"
           - name: city
@@ -24,22 +29,28 @@ sources:
             description: "Timestamp when record was inserted"
 
       - name: categories
-        description: "Product category information"
+        description: "Product category hierarchy"
         columns:
           - name: category_id
             description: "Unique identifier for category"
+            tests:
+              - unique
+              - not_null
           - name: category_name
             description: "Name of the category"
           - name: parent_category_id
-            description: "Parent category identifier for hierarchical structure"
+            description: "Parent category for hierarchical structure"
           - name: is_active
             description: "Flag indicating if category is active"
 
       - name: customers
-        description: "Customer information"
+        description: "Customer master data"
         columns:
           - name: customer_id
             description: "Unique identifier for customer"
+            tests:
+              - unique
+              - not_null
           - name: first_name
             description: "Customer first name"
           - name: last_name
@@ -50,78 +61,105 @@ sources:
             description: "Timestamp when record was inserted"
 
       - name: inventory
-        description: "Product inventory information"
+        description: "Product inventory levels"
         columns:
           - name: product_id
             description: "Foreign key to products table"
+            tests:
+              - not_null
           - name: supplier_id
             description: "Foreign key to suppliers table"
           - name: stock_qty
             description: "Current stock quantity"
           - name: warehouse_location
-            description: "Location of inventory in warehouse"
+            description: "Warehouse location identifier"
           - name: last_updated
-            description: "Timestamp when inventory was last updated"
+            description: "Timestamp of last inventory update"
 
       - name: order_items
         description: "Individual items within orders"
         columns:
           - name: order_id
             description: "Foreign key to orders table"
+            tests:
+              - not_null
           - name: product_id
             description: "Foreign key to products table"
+            tests:
+              - not_null
           - name: quantity
             description: "Quantity of product ordered"
           - name: unit_price
-            description: "Price per unit of product"
+            description: "Price per unit at time of order"
           - name: order_item_id
             description: "Unique identifier for order item"
+            tests:
+              - unique
+              - not_null
 
       - name: orders
-        description: "Customer order information"
+        description: "Customer orders"
         columns:
           - name: order_id
             description: "Unique identifier for order"
+            tests:
+              - unique
+              - not_null
           - name: customer_id
             description: "Foreign key to customers table"
+            tests:
+              - not_null
           - name: order_date
             description: "Date when order was placed"
           - name: status
             description: "Current status of the order"
           - name: total_amount
-            description: "Total amount of the order"
+            description: "Total order amount"
 
       - name: payments
-        description: "Payment transaction information"
+        description: "Payment transactions"
         columns:
           - name: payment_id
             description: "Unique identifier for payment"
+            tests:
+              - unique
+              - not_null
           - name: order_id
             description: "Foreign key to orders table"
+            tests:
+              - not_null
           - name: payment_date
             description: "Date when payment was processed"
           - name: payment_method
-            description: "Method used for payment"
+            description: "Method of payment used"
           - name: amount
             description: "Payment amount"
 
       - name: products
-        description: "Product catalog information"
+        description: "Product catalog"
         columns:
           - name: product_id
             description: "Unique identifier for product"
+            tests:
+              - unique
+              - not_null
           - name: product_name
             description: "Name of the product"
           - name: price
-            description: "Product price"
+            description: "Current product price"
 
       - name: shipments
         description: "Order shipment information"
         columns:
           - name: shipment_id
             description: "Unique identifier for shipment"
+            tests:
+              - unique
+              - not_null
           - name: order_id
             description: "Foreign key to orders table"
+            tests:
+              - not_null
           - name: shipment_date
             description: "Date when shipment was sent"
           - name: carrier
@@ -134,6 +172,9 @@ sources:
         columns:
           - name: supplier_id
             description: "Unique identifier for supplier"
+            tests:
+              - unique
+              - not_null
           - name: supplier_name
             description: "Name of the supplier"
           - name: contact_email
