@@ -4,10 +4,10 @@ sources:
   - name: dwh_staging
     database: bsl_staging
     schema: dwh_staging
-    description: "Staging tables for data warehouse"
+    description: "Staging tables for data warehouse operations"
     tables:
       - name: address
-        description: "Address information including city, state, and country"
+        description: "Address information for customers"
         columns:
           - name: city
             description: "City name"
@@ -17,7 +17,7 @@ sources:
             description: "Country name - lookup based on customer_id via customer_address join"
 
       - name: customer
-        description: "Customer master data with contact information"
+        description: "Customer master data - active customers have created_ts within 2 years"
         columns:
           - name: customer_id
             description: "Unique customer identifier"
@@ -30,21 +30,16 @@ sources:
           - name: phone
             description: "Customer phone number"
           - name: created_ts
-            description: "Customer creation timestamp - used to determine active status (active if less than 2 years from current date)"
+            description: "Customer creation timestamp - used to determine active status"
 
       - name: customer_address
-        description: "Bridge table linking customers to addresses"
-        columns:
-          - name: customer_id
-            description: "Customer identifier"
-          - name: address_id
-            description: "Address identifier"
+        description: "Junction table linking customers to addresses"
 
       - name: inventory
         description: "Product inventory levels by warehouse"
         columns:
           - name: quantity_on_hand
-            description: "Current inventory quantity"
+            description: "Available inventory quantity"
           - name: product_id
             description: "Product identifier"
           - name: warehouse_id
@@ -82,7 +77,7 @@ sources:
           - name: amount_paid
             description: "Amount paid in transaction"
           - name: payment_ts
-            description: "Payment timestamp - to be converted to date"
+            description: "Payment timestamp - convert to date"
 
       - name: product
         description: "Product master data"
@@ -93,20 +88,16 @@ sources:
             description: "Product name"
           - name: brand
             description: "Product brand"
-          - name: unit_price
-            description: "Base unit price before discounts"
 
       - name: product_category
-        description: "Product category information"
+        description: "Product category lookup table"
         columns:
           - name: category_name
-            description: "Category name - lookup based on product_id"
+            description: "Category name - lookup based on product_category_id"
 
       - name: product_discount
-        description: "Product discount information with effective dates"
+        description: "Product discount information with effective date ranges"
         columns:
-          - name: product_id
-            description: "Product identifier"
           - name: discount_pct
             description: "Discount percentage"
           - name: effective_from
@@ -120,7 +111,7 @@ sources:
           - name: return_date
             description: "Date of return"
           - name: order_line_id
-            description: "Order line being returned"
+            description: "Associated order line identifier"
           - name: return_reason
             description: "Reason for return"
 
@@ -134,4 +125,4 @@ sources:
           - name: delivery_date
             description: "Date order was delivered"
           - name: status
-            description: "Current shipment status"
+            description: "Shipment status"

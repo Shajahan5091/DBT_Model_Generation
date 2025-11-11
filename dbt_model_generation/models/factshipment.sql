@@ -16,7 +16,7 @@ CREATED DATE: 2024-12-19 (IST)
     unique_key='order_id'
 ) }}
 
-with shipment_data as (
+with source_data as (
     select
         order_id,
         shipped_date,
@@ -26,11 +26,15 @@ with shipment_data as (
     {% if is_incremental() %}
         where shipped_date > (select max(shipped_date) from {{ this }})
     {% endif %}
+),
+
+final as (
+    select
+        order_id,
+        shipped_date,
+        delivery_date,
+        status
+    from source_data
 )
 
-select
-    order_id,
-    shipped_date,
-    delivery_date,
-    status
-from shipment_data
+select * from final
