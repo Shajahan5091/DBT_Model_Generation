@@ -2,7 +2,7 @@ version: 2
 
 models:
   - name: DimCustomer
-    description: Customer dimension table containing customer demographics and location information
+    description: Customer dimension table containing customer details and location information
     columns:
       - name: customer_id
         description: Unique identifier for each customer
@@ -50,7 +50,7 @@ models:
         description: Current quantity available in the warehouse
 
   - name: FactPayment
-    description: Payment transaction facts for customer orders
+    description: Payment transaction fact table containing payment details
     columns:
       - name: order_id
         description: Unique identifier for the order
@@ -62,7 +62,7 @@ models:
         description: Date when payment was processed
 
   - name: FactReturns
-    description: Product return transaction facts
+    description: Product returns fact table containing return transaction details
     columns:
       - name: return_date
         description: Date when the product was returned
@@ -74,7 +74,7 @@ models:
         description: Reason provided for the product return
 
   - name: FactSales
-    description: Sales transaction facts with order and product details
+    description: Sales transaction fact table containing order and sales details
     columns:
       - name: order_date
         description: Date when the order was placed
@@ -89,14 +89,14 @@ models:
       - name: quantity_sold
         description: Quantity of products sold
       - name: gross_amount
-        description: Total amount before discounts (quantity * unit_price)
+        description: Total amount before discount calculated as quantity times unit price
       - name: discount_amount
-        description: Total discount amount applied
+        description: Discount amount calculated from unit price and discount percentage
       - name: net_amount
-        description: Final amount after applying discounts
+        description: Final amount after applying discount
 
   - name: FactShipment
-    description: Shipment tracking facts for order deliveries
+    description: Shipment tracking fact table containing delivery information
     columns:
       - name: order_id
         description: Unique identifier for the order

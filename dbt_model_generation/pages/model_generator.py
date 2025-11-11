@@ -88,22 +88,25 @@ if st.button("Generate dbt Models"):
 
         for (t_database, t_schema, t_table), subdf in grouped:
         
-            Source_Database = subdf['Source_Database'].iloc[0]
-            Source_Schema = subdf['Source_Schema'].iloc[0]
-            Source_Table = subdf['Source_Table'].iloc[0]
-            Source_Tables.add((Source_Schema, Source_Table))
+            # Source_Database = subdf['Source_Database'].iloc[0]
+            # Source_Schema = subdf['Source_Schema'].iloc[0]
+            # Source_Table = subdf['Source_Table'].iloc[0]
+            # Source_Tables.add((Source_Schema, Source_Table))
 
-            print("\n🔹 Processing Model:", t_table)
-            print("   Source_Database:", Source_Database)
-            print("   Source_Schema  :", Source_Schema)
-            print("   Source_Table   :", Source_Table)
+            # print("\n🔹 Processing Model:", t_table)
+            # print("   Source_Database:", Source_Database)
+            # print("   Source_Schema  :", Source_Schema)
+            # print("   Source_Table   :", Source_Table)
 
             mapping_details = []
 
             # ✅ Loop rows only to collect mapping details
             for _, row in subdf.iterrows():
-
+                Source_Database = row.get('Source_Database', '')
+                Source_Schema = row.get('Source_Schema', '')
+                Source_Table = row.get('Source_Table', '')
                 Source_Column = row.get('Source_Column', '')
+                target_table = row.get('Target_Table', '')
                 target_column = row.get('Target_Column', '')
                 source_datatype = row.get('Source_Data_Type', '')
                 target_datatype = row.get('Target_Data_Type', '')
@@ -115,13 +118,14 @@ if st.button("Generate dbt Models"):
                 Incremental_Where_Condition = row.get('Incremental_Where_Condition', '')
 
                 mapping_details.append(
-                    f"{Source_Database} {Source_Schema} {Source_Column} ({source_datatype}) "
-                    f"→ {t_database} {t_schema} {target_column} ({target_datatype}) "
+                    f"{Source_Database} {Source_Schema} {Source_Table} {Source_Column} ({source_datatype}) "
+                    f"→ {t_database} {t_schema} {target_table} {target_column} ({target_datatype}) "
                     f"| logic: {mapping_rule} | notes: {notes} | description: {description} | test: {test_info} | Materialization: {Materialization} | Incremental_Where_Condition: {Incremental_Where_Condition}"
                 )
 
             # ✅ Combine mapping once per table
             mapping_str = "\n".join(mapping_details)
+            print('mapping details:\n',mapping_str)
 
             # ✅ Call AI once per table (NOT inside row loop)
             model_prompt_text = f"""
@@ -131,7 +135,7 @@ if st.button("Generate dbt Models"):
             Follow dbt & Snowflake best practices.
             Do not include markdown formatting.
             Add comments as required.
-            Utilize the notes given below and transform accordingly.
+            Utilize the Mapping_Rule and notes given below and transform accordingly.
             Use sorce reference as per dbt guidlines. For source name use {Source_Schema} in lowercase. for model name use {Source_Table} in lowercase.
             Use ref when referring another model or target table.
             Must generate the models as CTEs.
@@ -198,7 +202,7 @@ if st.button("Generate dbt Models"):
                     f"{row['Source_Column']} → {row['Target_Column']} ({row['Target_Data_Type']}) | logic: {logic} | Test: {test}"
                 )
             model_summary.append(f"Model: {t_table}\nSchema: {t_schema}\nColumns:\n" + "\n".join(mapping_lines))
-        print(model_summary)
+        # print(model_summary)
 
         schema_prompt = f"""
         You are a Snowflake + dbt expert.
@@ -270,7 +274,7 @@ if st.button("Generate dbt Models"):
             source_summary.append(
                 f"Database: {database}\nSchema: {schema}\nTable: {table}\nColumns: {', '.join(cols)}\nMapping_Rule: {logic}\nNotes: {notes}"
             )
-            print(source_summary)
+            # print(source_summary)
 
         sources_prompt = f"""
         You are a Snowflake + dbt expert.

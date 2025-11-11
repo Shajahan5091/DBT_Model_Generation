@@ -4,20 +4,20 @@ sources:
   - name: dwh_staging
     database: bsl_staging
     schema: dwh_staging
-    description: "Staging tables for data warehouse processing"
+    description: "Staging tables for data warehouse"
     tables:
       - name: address
-        description: "Address information for customers"
+        description: "Address information including city, state, and country"
         columns:
           - name: city
             description: "City name"
           - name: state
             description: "State or province"
           - name: country
-            description: "Country name"
+            description: "Country name - lookup based on customer_id via customer_address join"
 
       - name: customer
-        description: "Customer master data with activity based on creation date"
+        description: "Customer master data with contact information"
         columns:
           - name: customer_id
             description: "Unique customer identifier"
@@ -30,21 +30,21 @@ sources:
           - name: phone
             description: "Customer phone number"
           - name: created_ts
-            description: "Customer creation timestamp - used to determine active status"
+            description: "Customer creation timestamp - used to determine active status (active if less than 2 years from current date)"
 
       - name: customer_address
-        description: "Junction table linking customers to addresses"
+        description: "Bridge table linking customers to addresses"
         columns:
           - name: customer_id
-            description: "Reference to customer"
+            description: "Customer identifier"
           - name: address_id
-            description: "Reference to address"
+            description: "Address identifier"
 
       - name: inventory
         description: "Product inventory levels by warehouse"
         columns:
           - name: quantity_on_hand
-            description: "Available inventory quantity"
+            description: "Current inventory quantity"
           - name: product_id
             description: "Product identifier"
           - name: warehouse_id
@@ -64,7 +64,7 @@ sources:
         description: "Individual line items within orders"
         columns:
           - name: product_id
-            description: "Product ordered"
+            description: "Product identifier for the line item"
           - name: order_line_id
             description: "Unique order line identifier"
           - name: quantity
@@ -76,16 +76,16 @@ sources:
         description: "Payment transactions for orders"
         columns:
           - name: order_id
-            description: "Associated order"
+            description: "Associated order identifier"
           - name: payment_method
-            description: "Method of payment"
+            description: "Method of payment used"
           - name: amount_paid
-            description: "Payment amount"
+            description: "Amount paid in transaction"
           - name: payment_ts
-            description: "Payment timestamp"
+            description: "Payment timestamp - to be converted to date"
 
       - name: product
-        description: "Product master data with discount calculations"
+        description: "Product master data"
         columns:
           - name: product_id
             description: "Unique product identifier"
@@ -99,10 +99,8 @@ sources:
       - name: product_category
         description: "Product category information"
         columns:
-          - name: product_id
-            description: "Product identifier"
           - name: category_name
-            description: "Category name"
+            description: "Category name - lookup based on product_id"
 
       - name: product_discount
         description: "Product discount information with effective dates"
@@ -130,10 +128,10 @@ sources:
         description: "Order shipment tracking information"
         columns:
           - name: order_id
-            description: "Associated order"
+            description: "Associated order identifier"
           - name: shipped_date
             description: "Date order was shipped"
           - name: delivery_date
             description: "Date order was delivered"
           - name: status
-            description: "Shipment status"
+            description: "Current shipment status"
