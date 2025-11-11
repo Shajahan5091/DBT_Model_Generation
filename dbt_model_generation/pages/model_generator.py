@@ -59,7 +59,7 @@ options = CompleteOptions(
 )
 session = Session.builder.configs(connection_parameters).create() 
 
-models_folder_path = "dbt_model_generation\models"
+models_folder_path = "D:\Automated_dbt_model_generation\dbt_model_generation\models" 
 
 # --- 3. Create folder structure ---
 if os.path.exists(models_folder_path):
@@ -134,6 +134,10 @@ if st.button("Generate dbt Models"):
             10. SQL must start directly with WITH.
             11. Give only sql text no extra text like "```sql" or any other markigs
             12. Use proper intendation
+            13. Add a header block in the model as comment with details like the model name, description, created date and Author.
+            14. The model name shoud be the target table name in the header block
+            15. Keep the Author name as "AI Generated" and the created date as current date(IST).
+            16. Enclose the comment using "{{# #}}"
 
             Your output should include:
             1. The dbt model SQL file content (formatted).
@@ -193,19 +197,16 @@ if st.button("Generate dbt Models"):
         The generated yaml file should look like this:
         version: 2
 
-        sources:
-        - name: {{ Source_schema }}
-            database: {{ Source_database}}
-            schema: {{ Source_schema }}
-            tables:
-            - name: {{source_table}}
-                columns:
-                - name: {{column1}}
-                    tests:
-                    - {{ tests }}
-                - name: {{ column2}}
-                    tests:
-                    - {{ tests}}
+        models:
+          - name: {{ model_name }}
+            description: {{ add some description about the model }}
+            columns:
+              - name: {{column1}}
+                description: {{ add some description about the column }}
+                tests:
+                  {{tests}}
+
+
         Models:
         {chr(10).join(model_summary)}
 

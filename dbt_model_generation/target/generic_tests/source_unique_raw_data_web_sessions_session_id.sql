@@ -1,0 +1,1 @@
+{{ test_unique(column_name="session_id", model=get_where_subquery(source('raw_data', 'web_sessions'))) }}

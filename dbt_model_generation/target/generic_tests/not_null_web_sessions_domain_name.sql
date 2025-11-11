@@ -1,0 +1,1 @@
+{{ test_not_null(column_name="domain_name", model=get_where_subquery(ref('web_sessions'))) }}

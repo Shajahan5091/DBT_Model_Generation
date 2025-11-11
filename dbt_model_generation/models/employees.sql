@@ -1,3 +1,10 @@
+{#
+    Model: employees
+    Description: Staging model for employee data with transformed salary to annual bonus
+    Created Date: 2024-12-19
+    Author: AI Generated
+#}
+
 WITH source_data AS (
     SELECT 
         emp_id,
@@ -6,15 +13,10 @@ WITH source_data AS (
 ),
 
 transformed AS (
-    SELECT 
-        -- Direct mapping with type casting
+    SELECT
         CAST(emp_id AS STRING) AS employee_id,
-        
-        -- Calculate 15% of salary as annual bonus
         CAST(salary * 0.15 AS FLOAT) AS annual_bonus
-        
     FROM source_data
-    WHERE emp_id IS NOT NULL
 )
 
 SELECT * FROM transformed

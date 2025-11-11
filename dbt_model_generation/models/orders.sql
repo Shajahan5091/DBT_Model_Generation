@@ -1,4 +1,11 @@
-WITH source_data AS (
+{#
+    Model: orders
+    Description: Staging model for orders data with currency conversion and date transformations
+    Created Date: 2024-12-19
+    Author: AI Generated
+#}
+
+WITH source_orders AS (
     SELECT 
         order_id,
         customer_id,
@@ -7,21 +14,22 @@ WITH source_data AS (
     FROM {{ source('raw', 'raw_orders') }}
 ),
 
-transformed AS (
+transformed_orders AS (
     SELECT 
-        -- Direct mapping for order_id
         CAST(order_id AS STRING) AS order_id,
-        
-        -- Direct mapping for customer_id
         CAST(customer_id AS STRING) AS customer_id,
-        
-        -- Derive ISO week from order_date
-        CAST(DATE_PART('week', order_date) AS STRING) AS order_week,
-        
-        -- Convert from INR to USD (assuming conversion rate of 0.012)
+        -- Convert order_date to ISO week format (YYYY-WW)
+        TO_VARCHAR(DATE_PART('year', order_date)) || '-' || 
+        LPAD(TO_VARCHAR(DATE_PART('week', order_date)), 2, '0') AS order_week,
+        -- Convert INR to USD (assuming conversion rate, this should be parameterized)
         CAST(total_amount * 0.012 AS FLOAT) AS total_amount_usd
-        
-    FROM source_data
+    FROM source_orders
+    WHERE order_id IS NOT NULL
 )
 
-SELECT * FROM transformed
+SELECT 
+    order_id,
+    customer_id,
+    order_week,
+    total_amount_usd
+FROM transformed_orders

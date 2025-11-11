@@ -1,0 +1,1 @@
+{{ test_not_null(column_name="discounted_price", model=get_where_subquery(ref('products'))) }}

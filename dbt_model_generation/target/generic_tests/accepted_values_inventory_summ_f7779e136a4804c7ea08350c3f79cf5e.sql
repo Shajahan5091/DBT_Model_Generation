@@ -1,0 +1,1 @@
+{{ test_accepted_values(column_name="stock_status", model=get_where_subquery(ref('inventory_summary')), values=["IN_STOCK","OUT_OF_STOCK"]) }}

@@ -1,0 +1,1 @@
+{{ test_not_null(column_name="rating", model=get_where_subquery(source('raw_reviews', 'raw_reviews'))) }}

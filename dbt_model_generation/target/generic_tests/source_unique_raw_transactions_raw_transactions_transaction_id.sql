@@ -1,0 +1,1 @@
+{{ test_unique(column_name="transaction_id", model=get_where_subquery(source('raw_transactions', 'raw_transactions'))) }}

@@ -1,0 +1,1 @@
+{{ test_not_null(column_name="sentiment_category", model=get_where_subquery(ref('reviews'))) }}

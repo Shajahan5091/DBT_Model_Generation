@@ -1,0 +1,1 @@
+{{ test_not_null(column_name="payment_mode", model=get_where_subquery(source('raw_data', 'payments'))) }}

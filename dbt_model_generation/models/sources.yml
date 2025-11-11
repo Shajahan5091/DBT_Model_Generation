@@ -2,12 +2,12 @@ version: 2
 
 sources:
   - name: raw
-    description: "Raw data tables from source systems"
     database: demo_db
     schema: raw
+    description: "Raw source data from various systems"
     tables:
       - name: raw_customers
-        description: "Customer information including VIP status"
+        description: "Customer information and profile data"
         columns:
           - name: cust_id
             description: "Unique customer identifier"
@@ -20,9 +20,11 @@ sources:
             description: "Date when customer signed up"
           - name: is_vip_flag
             description: "Flag indicating VIP customer status"
+          - name: full_name
+            description: "Customer full name"
 
       - name: raw_employees
-        description: "Employee information"
+        description: "Employee information and compensation data"
         columns:
           - name: emp_id
             description: "Unique employee identifier"
@@ -30,20 +32,20 @@ sources:
               - unique
               - not_null
           - name: salary
-            description: "Employee salary"
+            description: "Employee salary amount"
 
       - name: raw_inventory
         description: "Product inventory levels"
         columns:
           - name: product_id
-            description: "Product identifier"
+            description: "Unique product identifier"
             tests:
               - not_null
           - name: quantity
-            description: "Available quantity in inventory"
+            description: "Available product quantity"
 
       - name: raw_orders
-        description: "Customer orders"
+        description: "Customer order transactions"
         columns:
           - name: order_id
             description: "Unique order identifier"
@@ -60,7 +62,7 @@ sources:
             description: "Total order amount"
 
       - name: raw_payments
-        description: "Payment information"
+        description: "Payment transaction details"
         columns:
           - name: payment_id
             description: "Unique payment identifier"
@@ -68,10 +70,10 @@ sources:
               - unique
               - not_null
           - name: payment_mode
-            description: "Method of payment"
+            description: "Method of payment used"
 
       - name: raw_products
-        description: "Product catalog"
+        description: "Product catalog and pricing information"
         columns:
           - name: product_id
             description: "Unique product identifier"
@@ -82,7 +84,7 @@ sources:
             description: "Product price"
 
       - name: raw_reviews
-        description: "Product reviews"
+        description: "Customer product reviews and ratings"
         columns:
           - name: review_id
             description: "Unique review identifier"
@@ -90,10 +92,10 @@ sources:
               - unique
               - not_null
           - name: rating
-            description: "Review rating"
+            description: "Customer rating score"
 
       - name: raw_shipments
-        description: "Order shipment information"
+        description: "Order shipment and delivery information"
         columns:
           - name: shipment_id
             description: "Unique shipment identifier"
@@ -101,10 +103,10 @@ sources:
               - unique
               - not_null
           - name: delivery_date
-            description: "Date of delivery"
+            description: "Date when shipment was delivered"
 
       - name: raw_transactions
-        description: "Financial transactions"
+        description: "Financial transaction records"
         columns:
           - name: transaction_id
             description: "Unique transaction identifier"
@@ -115,7 +117,7 @@ sources:
             description: "Transaction amount"
 
       - name: raw_web_logs
-        description: "Website activity logs"
+        description: "Website user activity logs"
         columns:
           - name: session_id
             description: "User session identifier"
@@ -124,4 +126,4 @@ sources:
           - name: timestamp
             description: "Timestamp of web activity"
           - name: url
-            description: "URL visited"
+            description: "URL visited by user"

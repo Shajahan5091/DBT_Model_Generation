@@ -1,0 +1,1 @@
+{{ test_accepted_values(column_name="payment_category", model=get_where_subquery(ref('payments')), values=["Card","Wallet","Cash"]) }}

@@ -1,0 +1,1 @@
+{{ test_not_null(column_name="cust_id", model=get_where_subquery(source('raw_customers', 'raw_customers'))) }}

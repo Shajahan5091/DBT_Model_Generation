@@ -1,0 +1,1 @@
+{{ test_not_null(column_name="is_vip_flag", model=get_where_subquery(source('raw_customers', 'raw_customers'))) }}

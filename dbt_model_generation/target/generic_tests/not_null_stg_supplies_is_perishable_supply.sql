@@ -1,0 +1,1 @@
+{{ test_not_null(column_name="is_perishable_supply", model=get_where_subquery(ref('stg_supplies'))) }}
