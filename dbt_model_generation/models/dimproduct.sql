@@ -30,7 +30,9 @@ transformed_data as (
         product_name,
         brand,
         category_name,
+        -- Calculate current unit price considering discount
         unit_price as current_unit_price,
+        -- Determine active flag based on quantity on hand
         case 
             when quantity_on_hand > 0 then true
             else false
@@ -38,11 +40,4 @@ transformed_data as (
     from source_data
 )
 
-select
-    product_id,
-    product_name,
-    brand,
-    category_name,
-    current_unit_price,
-    active_flag
-from transformed_data
+select * from transformed_data

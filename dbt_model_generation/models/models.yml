@@ -2,7 +2,7 @@ version: 2
 
 models:
   - name: DimCustomer
-    description: Customer dimension table containing customer details including demographics and current status
+    description: Customer dimension table containing customer details and location information
     columns:
       - name: customer_id
         description: Unique identifier for each customer
@@ -13,16 +13,16 @@ models:
       - name: phone
         description: Customer's phone number
       - name: city
-        description: Customer's city of residence
+        description: Customer's city location
       - name: state
-        description: Customer's state of residence
+        description: Customer's state location
       - name: country
-        description: Customer's country of residence
+        description: Customer's country location
       - name: is_current
         description: Flag indicating if customer is active based on creation date within last 2 years
 
   - name: DimProduct
-    description: Product dimension table containing product information including pricing and availability
+    description: Product dimension table containing product details and pricing information
     columns:
       - name: product_id
         description: Unique identifier for each product
@@ -33,7 +33,7 @@ models:
       - name: category_name
         description: Category classification of the product
       - name: current_unit_price
-        description: Current unit price after applying applicable discounts
+        description: Current unit price after applying discounts
       - name: active_flag
         description: Flag indicating if product is active based on inventory availability
 
@@ -41,7 +41,7 @@ models:
     description: Daily snapshot of inventory levels across warehouses
     columns:
       - name: snapshot_date
-        description: Date when the inventory snapshot was taken
+        description: Date of the inventory snapshot
       - name: product_id
         description: Unique identifier for the product
       - name: warehouse_id
@@ -50,7 +50,7 @@ models:
         description: Current quantity available in the warehouse
 
   - name: FactPayment
-    description: Payment transaction records for orders
+    description: Payment transaction fact table containing payment details
     columns:
       - name: order_id
         description: Unique identifier for the order
@@ -59,13 +59,13 @@ models:
       - name: amount_paid
         description: Total amount paid for the order
       - name: payment_date
-        description: Date when the payment was processed
+        description: Date when payment was processed
 
   - name: FactReturns
-    description: Product return records with reasons and details
+    description: Product returns fact table containing return transaction details
     columns:
       - name: return_date
-        description: Date when the product was returned
+        description: Date when the return was processed
       - name: order_line_id
         description: Unique identifier for the order line item
       - name: product_id
@@ -74,7 +74,7 @@ models:
         description: Reason provided for the product return
 
   - name: FactSales
-    description: Sales transaction records with order details and financial calculations
+    description: Sales transaction fact table containing order and financial details
     columns:
       - name: order_date
         description: Date when the order was placed
@@ -96,7 +96,7 @@ models:
         description: Final amount after applying discounts
 
   - name: FactShipment
-    description: Shipment tracking records for order fulfillment
+    description: Shipment tracking fact table containing delivery information
     columns:
       - name: order_id
         description: Unique identifier for the order
