@@ -8,7 +8,7 @@ models:
     tests:
     - unique
   - name: customer_id
-    description: Foreign key reference to customer dimension table
+    description: Foreign key reference to customer dimension
   - name: address_line1
     description: Primary address line with trimmed whitespace
   - name: city
@@ -27,7 +27,7 @@ models:
   - name: category_name
     description: Category name in title case format
   - name: parent_category_id
-    description: Reference to parent category for hierarchical structure
+    description: Reference to parent category for hierarchy
   - name: category_path
     description: Full hierarchical path showing parent and current category
   - name: is_active
@@ -36,7 +36,7 @@ models:
     - accepted_values:
         values: [true, false]
 - name: dim_customer
-  description: Dimension table containing customer profile information and derived metrics
+  description: Dimension table containing customer information and derived attributes
   columns:
   - name: customer_id
     description: Unique identifier for each customer
@@ -56,7 +56,7 @@ models:
     - accepted_values:
         values: ['Gold', 'Silver', 'Bronze']
 - name: dim_product
-  description: Dimension table for product information with pricing categorization
+  description: Dimension table for product information with pricing categories
   columns:
   - name: product_id
     description: Unique identifier for each product
@@ -67,7 +67,7 @@ models:
   - name: price
     description: Product price with decimal precision
   - name: price_band
-    description: Price category bucket for analysis purposes
+    description: Price category bucket for product segmentation
     tests:
     - accepted_values:
         values: ['Low', 'Mid', 'High', 'Premium']
@@ -105,7 +105,7 @@ models:
   - name: snapshot_date
     description: Date of inventory snapshot
   - name: is_latest
-    description: Flag indicating the most recent inventory record per product-supplier combination
+    description: Flag indicating the most recent record per product-supplier combination
 - name: fact_order
   description: Fact table containing order header information and status tracking
   columns:
@@ -127,7 +127,7 @@ models:
   - name: total_amount
     description: Total monetary value of the order
 - name: fact_order_item
-  description: Fact table containing individual line items within orders with calculated amounts
+  description: Fact table containing detailed line items for each order with calculated amounts
   columns:
   - name: order_item_id
     description: Unique identifier for each order line item
@@ -142,9 +142,9 @@ models:
   - name: unit_price
     description: Price per unit of the product
   - name: extended_amount
-    description: Calculated total before discounts (quantity × unit_price)
+    description: Calculated total before discounts (quantity * unit_price)
   - name: discount_amount
-    description: Proportionally allocated discount amount for this line item
+    description: Allocated discount amount for this line item
   - name: net_amount
     description: Final amount after applying discounts
 - name: fact_payment
@@ -187,4 +187,4 @@ models:
   - name: carrier
     description: Shipping carrier name in uppercase format
   - name: tracking_number
-    description: Carrier-provided tracking number for shipment
+    description: Carrier-provided tracking identifier
