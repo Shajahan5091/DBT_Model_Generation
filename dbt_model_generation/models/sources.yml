@@ -11,7 +11,7 @@ sources:
     - name: address_id
       description: Unique identifier for each address record
     - name: customer_id
-      description: Foreign key linking to customers table
+      description: Foreign key reference to customers table
     - name: address_line1
       description: Primary address line containing street information
     - name: city
@@ -26,9 +26,9 @@ sources:
     - name: category_id
       description: Unique identifier for each category
     - name: category_name
-      description: Name of the product category
+      description: Display name of the category
     - name: parent_category_id
-      description: Foreign key to parent category for hierarchical structure
+      description: Reference to parent category for hierarchical structure
     - name: is_active
       description: Flag indicating if category is currently active, defaults to true if null
   - name: customers
@@ -48,9 +48,9 @@ sources:
     description: Product inventory levels by supplier and warehouse location
     columns:
     - name: product_id
-      description: Foreign key linking to products table
+      description: Foreign key reference to products table
     - name: supplier_id
-      description: Foreign key linking to suppliers table
+      description: Foreign key reference to suppliers table
     - name: stock_qty
       description: Current stock quantity available
     - name: warehouse_location
@@ -63,20 +63,20 @@ sources:
     - name: order_item_id
       description: Unique identifier for each order line item
     - name: order_id
-      description: Foreign key linking to orders table
+      description: Foreign key reference to orders table
     - name: product_id
-      description: Foreign key linking to products table
+      description: Foreign key reference to products table
     - name: quantity
       description: Number of units ordered for this item
     - name: unit_price
-      description: Price per unit for this item
+      description: Price per unit for the product
   - name: orders
     description: Customer order header information with status and totals
     columns:
     - name: order_id
       description: Unique identifier for each order
     - name: customer_id
-      description: Foreign key linking to customers table
+      description: Foreign key reference to customers table
     - name: order_date
       description: Date when the order was placed
     - name: status
@@ -89,7 +89,7 @@ sources:
     - name: payment_id
       description: Unique identifier for each payment transaction
     - name: order_id
-      description: Foreign key linking to orders table
+      description: Foreign key reference to orders table
     - name: payment_date
       description: Date when payment was processed
     - name: payment_method
@@ -102,29 +102,29 @@ sources:
     - name: product_id
       description: Unique identifier for each product
     - name: product_name
-      description: Name of the product
+      description: Display name of the product
     - name: price
-      description: Current price of the product, used for price bucketing
+      description: Current selling price of the product
   - name: shipments
     description: Shipping information for order fulfillment
     columns:
     - name: shipment_id
       description: Unique identifier for each shipment
     - name: order_id
-      description: Foreign key linking to orders table
+      description: Foreign key reference to orders table
     - name: shipped_date
       description: Date when the shipment was dispatched
     - name: carrier
-      description: Shipping carrier company
+      description: Shipping carrier company name
     - name: tracking_number
-      description: Tracking number for shipment monitoring
+      description: Carrier-provided tracking number for shipment
   - name: suppliers
     description: Supplier master data with contact information
     columns:
     - name: supplier_id
       description: Unique identifier for each supplier
     - name: supplier_name
-      description: Name of the supplier company
+      description: Company name of the supplier
     - name: contact_email
       description: Primary contact email for the supplier
     - name: country
