@@ -3,10 +3,10 @@ sources:
 - name: dwh_raw
   database: bsl_raw
   schema: dwh_raw
-  description: Raw data warehouse schema containing transactional and master data from various business systems
+  description: Raw data warehouse schema containing source tables for e-commerce operations
   tables:
   - name: addresses
-    description: Customer address information with geographical details
+    description: Customer address information with location details
     columns:
     - name: address_id
       description: Unique identifier for each address record
@@ -15,24 +15,24 @@ sources:
     - name: address_line1
       description: Primary address line containing street information
     - name: city
-      description: City name where the address is located
+      description: City name for the address
     - name: country
-      description: Country where the address is located
+      description: Country name for the address
     - name: inserted_at
       description: Timestamp when the address record was created
   - name: categories
     description: Product category hierarchy with parent-child relationships
     columns:
     - name: category_id
-      description: Unique identifier for each product category
+      description: Unique identifier for each category
     - name: category_name
-      description: Display name of the product category
+      description: Name of the product category
     - name: parent_category_id
       description: Reference to parent category for hierarchical structure
     - name: is_active
-      description: Flag indicating if the category is currently active
+      description: Flag indicating if category is currently active, defaults to true if null
   - name: customers
-    description: Customer master data containing personal information
+    description: Customer master data with personal information
     columns:
     - name: customer_id
       description: Unique identifier for each customer
@@ -43,7 +43,7 @@ sources:
     - name: email
       description: Customer's email address
     - name: inserted_at
-      description: Timestamp when the customer record was created
+      description: Timestamp when customer record was created, defaults to current_date if null
   - name: inventory
     description: Product inventory levels by supplier and warehouse location
     columns:
@@ -52,11 +52,11 @@ sources:
     - name: supplier_id
       description: Foreign key reference to suppliers table
     - name: stock_qty
-      description: Current quantity of product in stock
+      description: Current stock quantity available
     - name: warehouse_location
       description: Physical location where inventory is stored
     - name: last_updated
-      description: Timestamp of last inventory update
+      description: Timestamp of last inventory update, used to identify latest records
   - name: order_items
     description: Individual line items within customer orders
     columns:
@@ -67,14 +67,14 @@ sources:
     - name: product_id
       description: Foreign key reference to products table
     - name: quantity
-      description: Number of units ordered for this line item
+      description: Number of units ordered for this item
     - name: unit_price
       description: Price per unit for the product
   - name: orders
     description: Customer order header information with status and totals
     columns:
     - name: order_id
-      description: Unique identifier for each customer order
+      description: Unique identifier for each order
     - name: customer_id
       description: Foreign key reference to customers table
     - name: order_date
@@ -91,22 +91,22 @@ sources:
     - name: order_id
       description: Foreign key reference to orders table
     - name: payment_date
-      description: Date when the payment was processed
+      description: Date when payment was processed
     - name: payment_method
       description: Method used for payment processing
     - name: amount
-      description: Monetary amount of the payment
+      description: Payment amount, set to null if negative
   - name: products
-    description: Product master data with pricing information
+    description: Product catalog with pricing information
     columns:
     - name: product_id
       description: Unique identifier for each product
     - name: product_name
-      description: Display name of the product
+      description: Name of the product
     - name: price
-      description: Current selling price of the product
+      description: Current price of the product, used for price bucketing
   - name: shipments
-    description: Shipping information for fulfilled orders
+    description: Shipping information for order fulfillment
     columns:
     - name: shipment_id
       description: Unique identifier for each shipment
@@ -115,19 +115,19 @@ sources:
     - name: shipped_date
       description: Date when the order was shipped
     - name: carrier
-      description: Shipping company handling the delivery
+      description: Shipping carrier company
     - name: tracking_number
-      description: Carrier-provided tracking identifier
+      description: Tracking number for shipment monitoring
   - name: suppliers
-    description: Supplier master data with contact and status information
+    description: Supplier master data with contact information
     columns:
     - name: supplier_id
       description: Unique identifier for each supplier
     - name: supplier_name
-      description: Business name of the supplier
+      description: Name of the supplier company
     - name: contact_email
-      description: Primary email contact for the supplier
+      description: Primary contact email for the supplier
     - name: country
-      description: Country where the supplier is located
+      description: Country where supplier is located
     - name: active_flag
-      description: Flag indicating if the supplier is currently active
+      description: Flag indicating if supplier is currently active, defaults to false if null

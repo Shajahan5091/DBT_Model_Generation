@@ -13,7 +13,6 @@ Get the required details from the Mapping: {mapping_str}
 
 {{ config(
     materialized = '{Materialization}',
-    schema = '<target_schema>',
     alias = '<optional_custom_name>'
 ) }}
 
