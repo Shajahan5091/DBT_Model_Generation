@@ -28,4 +28,4 @@ transformed AS (
     FROM source_data
 )
 
-SELECT * FROM transformed;
+SELECT * FROM transformed

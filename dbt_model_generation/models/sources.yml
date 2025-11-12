@@ -19,9 +19,9 @@ sources:
     - name: country
       description: Country name for the address
     - name: inserted_at
-      description: Timestamp when the address record was created
+      description: Timestamp when the address record was inserted
   - name: categories
-    description: Product category hierarchy with parent-child relationships
+    description: Product category hierarchy with active status tracking
     columns:
     - name: category_id
       description: Unique identifier for each category
@@ -30,9 +30,9 @@ sources:
     - name: parent_category_id
       description: Reference to parent category for hierarchical structure
     - name: is_active
-      description: Flag indicating if category is currently active, defaults to true if null
+      description: Boolean flag indicating if category is currently active
   - name: customers
-    description: Customer master data with personal information
+    description: Customer master data with contact information
     columns:
     - name: customer_id
       description: Unique identifier for each customer
@@ -43,7 +43,7 @@ sources:
     - name: email
       description: Customer's email address
     - name: inserted_at
-      description: Timestamp when customer record was created, defaults to current_date if null
+      description: Timestamp when the customer record was created
   - name: inventory
     description: Product inventory levels by supplier and warehouse location
     columns:
@@ -56,7 +56,7 @@ sources:
     - name: warehouse_location
       description: Physical location where inventory is stored
     - name: last_updated
-      description: Timestamp of last inventory update, used to identify latest records
+      description: Timestamp of last inventory update
   - name: order_items
     description: Individual line items within customer orders
     columns:
@@ -69,7 +69,7 @@ sources:
     - name: quantity
       description: Number of units ordered for this item
     - name: unit_price
-      description: Price per unit for the product
+      description: Price per unit for the ordered item
   - name: orders
     description: Customer order header information with status and totals
     columns:
@@ -95,7 +95,7 @@ sources:
     - name: payment_method
       description: Method used for payment processing
     - name: amount
-      description: Payment amount, set to null if negative
+      description: Payment amount in base currency
   - name: products
     description: Product catalog with pricing information
     columns:
@@ -104,22 +104,22 @@ sources:
     - name: product_name
       description: Name of the product
     - name: price
-      description: Current price of the product, used for price bucketing
+      description: Current selling price of the product
   - name: shipments
-    description: Shipping information for order fulfillment
+    description: Shipping information for fulfilled orders
     columns:
     - name: shipment_id
       description: Unique identifier for each shipment
     - name: order_id
       description: Foreign key reference to orders table
     - name: shipped_date
-      description: Date when the order was shipped
+      description: Date when the shipment was dispatched
     - name: carrier
-      description: Shipping carrier company
+      description: Shipping carrier company name
     - name: tracking_number
-      description: Tracking number for shipment monitoring
+      description: Carrier-provided tracking number for shipment
   - name: suppliers
-    description: Supplier master data with contact information
+    description: Supplier master data with contact and status information
     columns:
     - name: supplier_id
       description: Unique identifier for each supplier
@@ -130,4 +130,4 @@ sources:
     - name: country
       description: Country where supplier is located
     - name: active_flag
-      description: Flag indicating if supplier is currently active, defaults to false if null
+      description: Boolean flag indicating if supplier is currently active
