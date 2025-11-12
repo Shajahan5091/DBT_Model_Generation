@@ -9,10 +9,10 @@ PARAMETER:
 AUTHOUR: 
 ------------------------------------------------------------------------
 
-Get the details from the Mapping: {mapping_str}
+Get the required details from the Mapping: {mapping_str}
 
 {{ config(
-    materialized = '<type>',
+    materialized = '{Materialization}',
     schema = '<target_schema>',
     alias = '<optional_custom_name>'
 ) }}

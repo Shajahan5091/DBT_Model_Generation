@@ -3,7 +3,7 @@ sources:
 - name: dwh_raw
   database: bsl_raw
   schema: dwh_raw
-  description: Raw data warehouse schema containing source tables for e-commerce operations
+  description: Raw data warehouse schema containing source system data for e-commerce operations
   tables:
   - name: addresses
     description: Customer address information with location details
@@ -24,15 +24,15 @@ sources:
     description: Product category hierarchy with parent-child relationships
     columns:
     - name: category_id
-      description: Unique identifier for each category
+      description: Unique identifier for each product category
     - name: category_name
-      description: Display name of the category
+      description: Display name of the product category
     - name: parent_category_id
       description: Reference to parent category for hierarchical structure
     - name: is_active
       description: Flag indicating if category is currently active, defaults to true if null
   - name: customers
-    description: Customer master data with personal information
+    description: Customer master data containing personal information
     columns:
     - name: customer_id
       description: Unique identifier for each customer
@@ -54,7 +54,7 @@ sources:
     - name: stock_qty
       description: Current stock quantity available
     - name: warehouse_location
-      description: Physical location where inventory is stored
+      description: Physical warehouse location identifier
     - name: last_updated
       description: Timestamp of last inventory update, used to identify latest records
   - name: order_items
@@ -69,12 +69,12 @@ sources:
     - name: quantity
       description: Number of units ordered for this item
     - name: unit_price
-      description: Price per unit for the product
+      description: Price per unit for this item
   - name: orders
     description: Customer order header information with status and totals
     columns:
     - name: order_id
-      description: Unique identifier for each order
+      description: Unique identifier for each customer order
     - name: customer_id
       description: Foreign key reference to customers table
     - name: order_date
@@ -106,7 +106,7 @@ sources:
     - name: price
       description: Current selling price of the product
   - name: shipments
-    description: Shipping information for order fulfillment
+    description: Shipping information for fulfilled orders
     columns:
     - name: shipment_id
       description: Unique identifier for each shipment
@@ -119,7 +119,7 @@ sources:
     - name: tracking_number
       description: Carrier-provided tracking number for shipment
   - name: suppliers
-    description: Supplier master data with contact information
+    description: Supplier master data with contact and status information
     columns:
     - name: supplier_id
       description: Unique identifier for each supplier
