@@ -1,0 +1,14 @@
+version: 2
+
+
+sources:
+  - name: {{ source_name }}
+    database: {{ database_name }}
+    schema: {{ schema_name }} 
+    description: {{ add some description about schema }}
+    tables:
+      - name: {{ table_name }}
+        description: {{ add some description about table }}
+        columns:
+          - name: {{ column_name }}
+            description: {{ add some description about column }}

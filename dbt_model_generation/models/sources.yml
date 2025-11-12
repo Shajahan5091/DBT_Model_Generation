@@ -26,13 +26,13 @@ sources:
     - name: category_id
       description: Unique identifier for each product category
     - name: category_name
-      description: Name of the product category
+      description: Display name of the product category
     - name: parent_category_id
       description: Reference to parent category for hierarchical structure
     - name: is_active
       description: Flag indicating if category is currently active, defaults to true if null
   - name: customers
-    description: Customer master data with personal information
+    description: Customer master data containing personal information
     columns:
     - name: customer_id
       description: Unique identifier for each customer
@@ -52,9 +52,9 @@ sources:
     - name: supplier_id
       description: Foreign key reference to suppliers table
     - name: stock_qty
-      description: Current stock quantity available
+      description: Current quantity of product in stock
     - name: warehouse_location
-      description: Physical warehouse location identifier
+      description: Physical location where inventory is stored
     - name: last_updated
       description: Timestamp of last inventory update, used to identify latest records
   - name: order_items
@@ -67,9 +67,9 @@ sources:
     - name: product_id
       description: Foreign key reference to products table
     - name: quantity
-      description: Quantity of product ordered
+      description: Number of units ordered for this item
     - name: unit_price
-      description: Price per unit of the product
+      description: Price per unit for the product at time of order
   - name: orders
     description: Customer order header information with status and totals
     columns:
@@ -82,7 +82,7 @@ sources:
     - name: status
       description: Current status of the order
     - name: total_amount
-      description: Total monetary amount for the order
+      description: Total monetary value of the order
   - name: payments
     description: Payment transactions associated with customer orders
     columns:
@@ -95,18 +95,18 @@ sources:
     - name: payment_method
       description: Method used for payment processing
     - name: amount
-      description: Payment amount, set to null if negative
+      description: Payment amount, set to null if negative values detected
   - name: products
     description: Product catalog with pricing information
     columns:
     - name: product_id
       description: Unique identifier for each product
     - name: product_name
-      description: Name of the product
+      description: Display name of the product
     - name: price
-      description: Product price used for price bucketing analysis
+      description: Current selling price of the product
   - name: shipments
-    description: Shipping information for order fulfillment
+    description: Shipping information for fulfilled orders
     columns:
     - name: shipment_id
       description: Unique identifier for each shipment
@@ -115,19 +115,19 @@ sources:
     - name: shipped_date
       description: Date when the order was shipped
     - name: carrier
-      description: Shipping carrier company
+      description: Shipping company handling the delivery
     - name: tracking_number
-      description: Tracking number for shipment monitoring
+      description: Carrier-provided tracking number for shipment
   - name: suppliers
-    description: Supplier master data with contact information
+    description: Supplier master data with contact and status information
     columns:
     - name: supplier_id
       description: Unique identifier for each supplier
     - name: supplier_name
-      description: Name of the supplier company
+      description: Business name of the supplier
     - name: contact_email
-      description: Primary contact email for the supplier
+      description: Primary email contact for the supplier
     - name: country
       description: Country where supplier is located
     - name: active_flag
-      description: Flag indicating if supplier is active, defaults to false if null
+      description: Flag indicating if supplier is currently active, defaults to false if null

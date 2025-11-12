@@ -1,0 +1,11 @@
+version: 2
+
+
+models:
+    - name: {{ model_name }}
+    description: {{ add some description about the model }}
+    columns:
+        - name: {{column1}}
+        description: {{ add some description about the column }}
+        tests:
+            {{tests}}

@@ -1,0 +1,30 @@
+Add a header block in the model as comment with details like the below template
+------------------------------------------------------------------------
+MODEL NAME: 
+TARGET TABLE: 
+SOURCE TABLES: 
+DESCRIPTION: 
+PREREQUISITES: 
+PARAMETER: 
+AUTHOUR: 
+------------------------------------------------------------------------
+
+{{ config(
+    materialized = '<type>', -- Get materialization type from the mapping details
+    schema = '<target_schema>',
+    alias = '<optional_custom_name>'
+) }}
+
+WITH source_data AS (
+    SELECT
+        <source_columns> 
+    FROM {{ source('<source_schema>', '<source_table>') }}
+),
+
+transformed AS (
+    SELECT
+        <column_mappings and transformations>  -- e.g., renamed columns, derived fields
+    FROM source_data
+)
+
+SELECT * FROM transformed;

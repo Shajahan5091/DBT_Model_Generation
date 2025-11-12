@@ -27,9 +27,9 @@ WITH source_data AS (
 
 parent_categories AS (
     SELECT
-        category_id,
+        category_id AS parent_id,
         TRIM(INITCAP(category_name)) AS parent_category_name
-    FROM {{ source('dwh_raw', 'categories') }}
+    FROM source_data
 ),
 
 transformed AS (
@@ -44,7 +44,7 @@ transformed AS (
         END AS category_path,
         COALESCE(s.is_active, TRUE) AS is_active
     FROM source_data s
-    LEFT JOIN parent_categories p ON s.parent_category_id = p.category_id
+    LEFT JOIN parent_categories p ON s.parent_category_id = p.parent_id
 )
 
 SELECT * FROM transformed

@@ -65,15 +65,15 @@ session = Session.builder.configs(connection_parameters).create()
 
 # -- Get the required documents & templates from snowflake table
 st.session_state.schema = session.sql(
-        f"select RAW_TEXT from SNOWFLAKE_LEARNING_DB.DOCS_TEST.TEMPLATES where table_name = 'schema.txt'"
+        f"select RAW_TEXT from SNOWFLAKE_LEARNING_DB.DOCS_TEST.TEMPLATES where file_name = 'schema.txt'"
     ).collect()
 
 st.session_state.sources = session.sql(
-        f"select RAW_TEXT from SNOWFLAKE_LEARNING_DB.DOCS_TEST.TEMPLATES where table_name = 'sources.txt'"
+        f"select RAW_TEXT from SNOWFLAKE_LEARNING_DB.DOCS_TEST.TEMPLATES where file_name = 'sources.txt'"
     ).collect()
 
 st.session_state.model = session.sql(
-        f"select RAW_TEXT from SNOWFLAKE_LEARNING_DB.DOCS_TEST.TEMPLATES where table_name = 'model.txt'"
+        f"select RAW_TEXT from SNOWFLAKE_LEARNING_DB.DOCS_TEST.TEMPLATES where file_name = 'model.txt'"
     ).collect()
 
 
