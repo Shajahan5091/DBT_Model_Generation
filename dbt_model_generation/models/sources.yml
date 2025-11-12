@@ -3,21 +3,21 @@ sources:
 - name: dwh_raw
   database: bsl_raw
   schema: dwh_raw
-  description: Raw data warehouse schema containing source system data for e-commerce operations
+  description: Raw data warehouse schema containing transactional and master data from various business systems
   tables:
   - name: addresses
-    description: Customer address information with location details
+    description: Customer address information with geographical details
     columns:
     - name: address_id
       description: Unique identifier for each address record
     - name: customer_id
-      description: Foreign key linking to customers table
+      description: Foreign key reference to customers table
     - name: address_line1
       description: Primary address line containing street information
     - name: city
-      description: City name for the address
+      description: City name where the address is located
     - name: country
-      description: Country name for the address
+      description: Country where the address is located
     - name: inserted_at
       description: Timestamp when the address record was created
   - name: categories
@@ -28,11 +28,11 @@ sources:
     - name: category_name
       description: Display name of the product category
     - name: parent_category_id
-      description: Foreign key to parent category for hierarchical structure
+      description: Reference to parent category for hierarchical structure
     - name: is_active
-      description: Flag indicating if category is currently active, defaults to true if null
+      description: Flag indicating if the category is currently active
   - name: customers
-    description: Customer master data with personal information
+    description: Customer master data containing personal information
     columns:
     - name: customer_id
       description: Unique identifier for each customer
@@ -43,40 +43,40 @@ sources:
     - name: email
       description: Customer's email address
     - name: inserted_at
-      description: Timestamp when customer record was created, defaults to current_date if null
+      description: Timestamp when the customer record was created
   - name: inventory
     description: Product inventory levels by supplier and warehouse location
     columns:
     - name: product_id
-      description: Foreign key linking to products table
+      description: Foreign key reference to products table
     - name: supplier_id
-      description: Foreign key linking to suppliers table
+      description: Foreign key reference to suppliers table
     - name: stock_qty
-      description: Current stock quantity available
+      description: Current quantity of product in stock
     - name: warehouse_location
       description: Physical location where inventory is stored
     - name: last_updated
-      description: Timestamp of last inventory update, used to identify latest records
+      description: Timestamp of last inventory update
   - name: order_items
     description: Individual line items within customer orders
     columns:
     - name: order_item_id
       description: Unique identifier for each order line item
     - name: order_id
-      description: Foreign key linking to orders table
+      description: Foreign key reference to orders table
     - name: product_id
-      description: Foreign key linking to products table
+      description: Foreign key reference to products table
     - name: quantity
-      description: Number of units ordered for this item
+      description: Number of units ordered for this line item
     - name: unit_price
-      description: Price per unit for this item
+      description: Price per unit for the product
   - name: orders
     description: Customer order header information with status and totals
     columns:
     - name: order_id
       description: Unique identifier for each customer order
     - name: customer_id
-      description: Foreign key linking to customers table
+      description: Foreign key reference to customers table
     - name: order_date
       description: Date when the order was placed
     - name: status
@@ -89,15 +89,15 @@ sources:
     - name: payment_id
       description: Unique identifier for each payment transaction
     - name: order_id
-      description: Foreign key linking to orders table
+      description: Foreign key reference to orders table
     - name: payment_date
-      description: Date when payment was processed
+      description: Date when the payment was processed
     - name: payment_method
       description: Method used for payment processing
     - name: amount
-      description: Payment amount, set to null if negative
+      description: Monetary amount of the payment
   - name: products
-    description: Product catalog with pricing information
+    description: Product master data with pricing information
     columns:
     - name: product_id
       description: Unique identifier for each product
@@ -111,15 +111,15 @@ sources:
     - name: shipment_id
       description: Unique identifier for each shipment
     - name: order_id
-      description: Foreign key linking to orders table
+      description: Foreign key reference to orders table
     - name: shipped_date
-      description: Date when the shipment was dispatched
+      description: Date when the order was shipped
     - name: carrier
-      description: Shipping carrier handling the delivery
+      description: Shipping company handling the delivery
     - name: tracking_number
-      description: Carrier-provided tracking number for shipment
+      description: Carrier-provided tracking identifier
   - name: suppliers
-    description: Supplier master data with contact information
+    description: Supplier master data with contact and status information
     columns:
     - name: supplier_id
       description: Unique identifier for each supplier
@@ -128,6 +128,6 @@ sources:
     - name: contact_email
       description: Primary email contact for the supplier
     - name: country
-      description: Country where supplier is located
+      description: Country where the supplier is located
     - name: active_flag
-      description: Flag indicating if supplier is currently active, defaults to false if null
+      description: Flag indicating if the supplier is currently active
