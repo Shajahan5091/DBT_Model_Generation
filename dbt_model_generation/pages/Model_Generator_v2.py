@@ -180,9 +180,6 @@ if st.button("Generate dbt Models"):
             Target Schema: {t_schema}
             Target Table: {t_table}
 
-            The generated sql file should look like this:
-            {st.session_state.get('model', '')}
-
             Output only SQL.
             """
 
