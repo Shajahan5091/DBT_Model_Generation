@@ -45,8 +45,8 @@ order_payments_summary AS (
 
 transformed AS (
     SELECT
-        sp.payment_id as payment_id,
-        sp.order_id as order_id,
+        sp.payment_id,
+        sp.order_id,
         sp.payment_date::date as payment_date,
         CASE 
             WHEN UPPER(sp.payment_method) IN ('CARD', 'UPI', 'COD', 'NETBANKING') 
@@ -55,7 +55,7 @@ transformed AS (
         END as payment_method,
         CASE 
             WHEN sp.amount < 0 THEN NULL
-            ELSE sp.amount
+            ELSE sp.amount::NUMBER(10,2)
         END as amount,
         CASE 
             WHEN so.total_amount IS NULL THEN FALSE

@@ -35,24 +35,28 @@ orders_source AS (
 
 customer_spending AS (
     SELECT
-        customer_id,
-        SUM(total_amount) AS total_spending_365_days
-    FROM orders_source
-    GROUP BY customer_id
+        o.customer_id,
+        SUM(o.total_amount) AS total_spending_365_days
+    FROM orders_source o
+    GROUP BY o.customer_id
 ),
 
 transformed AS (
     SELECT
-        c.customer_id AS customer_id,
+        c.customer_id,
         UPPER(TRIM(c.first_name)) AS first_name,
         UPPER(TRIM(c.last_name)) AS last_name,
         CASE 
-            WHEN REGEXP_LIKE(LOWER(TRIM(c.email)), '^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$')
-            THEN LOWER(TRIM(c.email))
+            WHEN c.email REGEXP '^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$' 
+            THEN LOWER(c.email)
             ELSE NULL
         END AS email,
-        COALESCE(DATE(c.inserted_at), CURRENT_DATE) AS customer_since_date,
-        CASE
+        CASE 
+            WHEN c.inserted_at IS NULL 
+            THEN CURRENT_DATE()
+            ELSE DATE(c.inserted_at)
+        END AS customer_since_date,
+        CASE 
             WHEN COALESCE(cs.total_spending_365_days, 0) >= 1000 THEN 'Gold'
             WHEN COALESCE(cs.total_spending_365_days, 0) >= 500 THEN 'Silver'
             ELSE 'Bronze'

@@ -155,7 +155,7 @@ if st.button("Generate dbt Models"):
             Must generate the models as CTEs.
             Do not add semicolon at the end.
             Use proper aliases for the required columns and use prefix properly.
-            Always use prefix for all the columns if aliase is used.
+            Always use prefix for all the columns if join is used.
 
             Add a header block in the model as comment with details like the below template
             ------------------------------------------------------------------------

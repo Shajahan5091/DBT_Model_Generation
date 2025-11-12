@@ -27,7 +27,7 @@ models:
   - name: category_name
     description: Category name in title case format
   - name: parent_category_id
-    description: Reference to parent category for hierarchy
+    description: Reference to parent category for hierarchical structure
   - name: category_path
     description: Full hierarchical path showing parent and current category
   - name: is_active
@@ -56,7 +56,7 @@ models:
     - accepted_values:
         values: ['Gold', 'Silver', 'Bronze']
 - name: dim_product
-  description: Dimension table for product information with pricing categories
+  description: Dimension table for products with pricing information and categorization
   columns:
   - name: product_id
     description: Unique identifier for each product
@@ -67,7 +67,7 @@ models:
   - name: price
     description: Product price with decimal precision
   - name: price_band
-    description: Price category bucket for product segmentation
+    description: Price category bucket for analysis
     tests:
     - accepted_values:
         values: ['Low', 'Mid', 'High', 'Premium']
@@ -90,7 +90,7 @@ models:
     - accepted_values:
         values: [true, false]
 - name: fact_inventory
-  description: Fact table tracking inventory levels by product and supplier with snapshot capability
+  description: Fact table tracking inventory levels by product and supplier with snapshot functionality
   columns:
   - name: product_id
     description: Foreign key reference to product dimension
@@ -105,7 +105,7 @@ models:
   - name: snapshot_date
     description: Date of inventory snapshot
   - name: is_latest
-    description: Flag indicating the most recent record per product-supplier combination
+    description: Flag indicating the most recent record per product and supplier
 - name: fact_order
   description: Fact table containing order header information and status tracking
   columns:
@@ -144,7 +144,7 @@ models:
   - name: extended_amount
     description: Calculated total before discounts (quantity * unit_price)
   - name: discount_amount
-    description: Allocated discount amount for this line item
+    description: Proportionally allocated discount amount for this line item
   - name: net_amount
     description: Final amount after applying discounts
 - name: fact_payment
@@ -170,7 +170,7 @@ models:
   - name: is_fully_applied
     description: Flag indicating if total payments cover the full order amount
 - name: fact_shipment
-  description: Fact table containing shipment tracking information and delivery metrics
+  description: Fact table containing shipment information and delivery tracking
   columns:
   - name: shipment_id
     description: Unique identifier for each shipment
@@ -187,4 +187,4 @@ models:
   - name: carrier
     description: Shipping carrier name in uppercase format
   - name: tracking_number
-    description: Carrier-provided tracking identifier
+    description: Carrier-provided tracking number for shipment

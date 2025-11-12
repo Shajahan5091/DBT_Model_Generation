@@ -30,7 +30,7 @@ sources:
     - name: parent_category_id
       description: Reference to parent category for hierarchical structure
     - name: is_active
-      description: Flag indicating if category is currently active
+      description: Flag indicating if category is currently active, defaults to true if null
   - name: customers
     description: Customer master data with personal information
     columns:
@@ -43,7 +43,7 @@ sources:
     - name: email
       description: Customer's email address
     - name: inserted_at
-      description: Timestamp when customer record was created
+      description: Timestamp when customer record was created, defaults to current_date if null
   - name: inventory
     description: Product inventory levels by supplier and warehouse location
     columns:
@@ -56,7 +56,7 @@ sources:
     - name: warehouse_location
       description: Physical location where inventory is stored
     - name: last_updated
-      description: Timestamp of last inventory update
+      description: Timestamp of last inventory update, used to identify latest records
   - name: order_items
     description: Individual line items within customer orders
     columns:
@@ -95,7 +95,7 @@ sources:
     - name: payment_method
       description: Method used for payment processing
     - name: amount
-      description: Payment amount processed
+      description: Payment amount, set to null if negative
   - name: products
     description: Product catalog with pricing information
     columns:
@@ -104,22 +104,22 @@ sources:
     - name: product_name
       description: Name of the product
     - name: price
-      description: Current selling price of the product
+      description: Product price used for price bucketing analysis
   - name: shipments
-    description: Shipment tracking information for fulfilled orders
+    description: Shipping information for fulfilled orders
     columns:
     - name: shipment_id
       description: Unique identifier for each shipment
     - name: order_id
       description: Foreign key reference to orders table
     - name: shipped_date
-      description: Date when the shipment was dispatched
+      description: Date when the order was shipped
     - name: carrier
-      description: Shipping carrier handling the shipment
+      description: Shipping carrier used for delivery
     - name: tracking_number
-      description: Carrier-provided tracking number
+      description: Tracking number for shipment monitoring
   - name: suppliers
-    description: Supplier master data with contact and status information
+    description: Supplier master data with contact information
     columns:
     - name: supplier_id
       description: Unique identifier for each supplier
@@ -130,4 +130,4 @@ sources:
     - name: country
       description: Country where supplier is located
     - name: active_flag
-      description: Flag indicating if supplier is currently active
+      description: Flag indicating if supplier is currently active, defaults to false if null
