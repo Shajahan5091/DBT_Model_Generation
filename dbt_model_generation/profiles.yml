@@ -2,7 +2,7 @@ dbt_model_generation:
   outputs:
     dev:
       account: HPAFNDX-IW71152
-      database: BSL_FINAL
+      database: BSL_MA
       password: Shajahan@snowflake_2002
       role: ACCOUNTADMIN
       schema: DWH_MA

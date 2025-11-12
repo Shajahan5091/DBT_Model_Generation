@@ -1,108 +1,190 @@
 version: 2
-
 models:
-  - name: DimCustomer
-    description: Customer dimension table containing customer details and location information
-    columns:
-      - name: customer_id
-        description: Unique identifier for each customer
-      - name: full_name
-        description: Customer's full name concatenated from first and last name
-      - name: email
-        description: Customer's email address
-      - name: phone
-        description: Customer's phone number
-      - name: city
-        description: Customer's city based on customer location lookup
-      - name: state
-        description: Customer's state based on customer location lookup
-      - name: country
-        description: Customer's country based on customer location lookup
-      - name: is_current
-        description: Flag indicating if customer is active based on creation date within last 2 years
-
-  - name: DimProduct
-    description: Product dimension table containing product details and pricing information
-    columns:
-      - name: product_id
-        description: Unique identifier for each product
-      - name: product_name
-        description: Name of the product
-      - name: brand
-        description: Brand name of the product
-      - name: category_name
-        description: Product category name looked up from category reference
-      - name: current_unit_price
-        description: Current unit price after applying discount percentage
-      - name: active_flag
-        description: Flag indicating if product is active based on quantity on hand
-
-  - name: FactInventorySnapshot
-    description: Daily snapshot of inventory levels across warehouses
-    columns:
-      - name: snapshot_date
-        description: Date of the inventory snapshot
-      - name: product_id
-        description: Unique identifier for the product
-      - name: warehouse_id
-        description: Unique identifier for the warehouse
-      - name: quantity_on_hand
-        description: Quantity of product available in the warehouse
-
-  - name: FactPayment
-    description: Payment transaction fact table containing payment details
-    columns:
-      - name: order_id
-        description: Unique identifier for the order
-      - name: payment_method
-        description: Method used for payment
-      - name: amount_paid
-        description: Total amount paid for the order
-      - name: payment_date
-        description: Date when payment was processed
-
-  - name: FactReturns
-    description: Product returns fact table containing return transaction details
-    columns:
-      - name: return_date
-        description: Date when the product was returned
-      - name: order_line_id
-        description: Unique identifier for the order line item
-      - name: product_id
-        description: Unique identifier for the returned product
-      - name: return_reason
-        description: Reason provided for the product return
-
-  - name: FactSales
-    description: Sales transaction fact table containing order and sales details
-    columns:
-      - name: order_date
-        description: Date when the order was placed
-      - name: customer_id
-        description: Unique identifier for the customer
-      - name: product_id
-        description: Unique identifier for the product
-      - name: order_id
-        description: Unique identifier for the order
-      - name: order_line_id
-        description: Unique identifier for the order line item
-      - name: quantity_sold
-        description: Quantity of product sold
-      - name: gross_amount
-        description: Gross sales amount calculated as quantity times unit price
-      - name: discount_amount
-        description: Discount amount applied to the sale
-      - name: net_amount
-        description: Net sales amount after applying discounts
-
-  - name: FactShipment
-    description: Shipment fact table containing delivery and shipping information
-    columns:
-      - name: order_id
-        description: Unique identifier for the order
-      - name: shipped_date
-        description: Date when the order was shipped
-      - name: delivery_date
-        description: Date when the order was delivered
-      - name: status
-        description: Current status of the shipment
+- name: dim_address
+  description: Dimension table containing customer address information with standardized formatting
+  columns:
+  - name: address_id
+    description: Unique identifier for each address record
+    tests:
+    - unique
+  - name: customer_id
+    description: Foreign key reference to customer dimension table
+  - name: address_line1
+    description: Primary address line with trimmed whitespace
+  - name: city
+    description: City name in uppercase format
+  - name: country
+    description: Country name for the address
+  - name: inserted_at
+    description: Date when the address record was first created
+- name: dim_category
+  description: Dimension table for product categories with hierarchical structure and path information
+  columns:
+  - name: category_id
+    description: Unique identifier for each product category
+    tests:
+    - unique
+  - name: category_name
+    description: Category name in title case format
+  - name: parent_category_id
+    description: Reference to parent category for hierarchical structure
+  - name: category_path
+    description: Full hierarchical path showing parent and current category
+  - name: is_active
+    description: Boolean flag indicating if the category is currently active
+    tests:
+    - accepted_values:
+        values: [true, false]
+- name: dim_customer
+  description: Dimension table containing customer information with derived spending tier classification
+  columns:
+  - name: customer_id
+    description: Unique identifier for each customer
+    tests:
+    - unique
+  - name: first_name
+    description: Customer first name in uppercase format
+  - name: last_name
+    description: Customer last name in uppercase format
+  - name: email
+    description: Customer email address in lowercase format
+  - name: customer_since_date
+    description: Date when the customer first registered
+  - name: customer_tier
+    description: Spending tier classification based on last 365 days purchase amount
+    tests:
+    - accepted_values:
+        values: ['Gold', 'Silver', 'Bronze']
+- name: dim_product
+  description: Dimension table for products with pricing information and price band classification
+  columns:
+  - name: product_id
+    description: Unique identifier for each product
+    tests:
+    - unique
+  - name: product_name
+    description: Product name in title case format
+  - name: price
+    description: Product price with decimal precision
+  - name: price_band
+    description: Price classification bucket based on product price ranges
+    tests:
+    - accepted_values:
+        values: ['Low', 'Mid', 'High', 'Premium']
+- name: dim_supplier
+  description: Dimension table containing supplier information with standardized contact details
+  columns:
+  - name: supplier_id
+    description: Unique identifier for each supplier
+    tests:
+    - unique
+  - name: supplier_name
+    description: Supplier name in title case format
+  - name: contact_email
+    description: Supplier contact email in lowercase format
+  - name: country
+    description: Supplier country in uppercase format
+  - name: is_active
+    description: Boolean flag indicating if the supplier is currently active
+    tests:
+    - accepted_values:
+        values: [true, false]
+- name: fact_inventory
+  description: Fact table tracking inventory levels by product and supplier with snapshot capabilities
+  columns:
+  - name: product_id
+    description: Foreign key reference to product dimension
+    tests:
+    - not_null
+  - name: supplier_id
+    description: Foreign key reference to supplier dimension
+  - name: stock_qty
+    description: Current stock quantity available
+  - name: warehouse_location
+    description: Warehouse location in uppercase format
+  - name: snapshot_date
+    description: Date of the inventory snapshot
+  - name: is_latest
+    description: Flag indicating the most recent inventory record per product and supplier
+- name: fact_order
+  description: Fact table containing order header information with standardized status values
+  columns:
+  - name: order_id
+    description: Unique identifier for each order
+    tests:
+    - unique
+  - name: customer_id
+    description: Foreign key reference to customer who placed the order
+  - name: order_date
+    description: Date when the order was placed
+    tests:
+    - not_null
+  - name: order_status
+    description: Current status of the order in standardized format
+    tests:
+    - accepted_values:
+        values: ['PENDING', 'CANCELLED', 'SHIPPED', 'DELIVERED']
+  - name: total_amount
+    description: Total monetary value of the order
+- name: fact_order_item
+  description: Fact table containing individual line items within orders with calculated amounts
+  columns:
+  - name: order_item_id
+    description: Unique identifier for each order line item
+    tests:
+    - unique
+  - name: order_id
+    description: Foreign key reference to the parent order
+  - name: product_id
+    description: Foreign key reference to the ordered product
+  - name: quantity
+    description: Number of units ordered for this line item
+  - name: unit_price
+    description: Price per unit for the product
+  - name: extended_amount
+    description: Calculated total amount before discounts (quantity * unit_price)
+  - name: discount_amount
+    description: Proportionally allocated discount amount for this line item
+  - name: net_amount
+    description: Final amount after applying discounts (extended_amount - discount_amount)
+- name: fact_payment
+  description: Fact table tracking payment transactions with method standardization and application status
+  columns:
+  - name: payment_id
+    description: Unique identifier for each payment transaction
+    tests:
+    - unique
+  - name: order_id
+    description: Foreign key reference to the order being paid
+  - name: payment_date
+    description: Date when the payment was processed
+    tests:
+    - not_null
+  - name: payment_method
+    description: Standardized payment method used for the transaction
+    tests:
+    - accepted_values:
+        values: ['CARD', 'UPI', 'COD', 'NETBANKING']
+  - name: amount
+    description: Payment amount processed
+  - name: is_fully_applied
+    description: Flag indicating if total payments cover the full order amount
+- name: fact_shipment
+  description: Fact table containing shipment information with calculated shipping performance metrics
+  columns:
+  - name: shipment_id
+    description: Unique identifier for each shipment
+    tests:
+    - unique
+  - name: order_id
+    description: Foreign key reference to the shipped order
+  - name: shipped_date
+    description: Date when the shipment was dispatched
+    tests:
+    - not_null
+  - name: days_to_ship
+    description: Calculated number of days between order placement and shipment
+  - name: carrier
+    description: Shipping carrier name in uppercase format
+  - name: tracking_number
+    description: Carrier-provided tracking number for the shipment
