@@ -8,7 +8,7 @@ models:
     tests:
     - unique
   - name: customer_id
-    description: Foreign key reference to customer dimension
+    description: Foreign key reference to customer dimension table
   - name: address_line1
     description: Primary address line with trimmed whitespace
   - name: city
@@ -29,7 +29,7 @@ models:
   - name: parent_category_id
     description: Reference to parent category for hierarchical structure
   - name: category_path
-    description: Full hierarchical path showing parent and current category
+    description: Full category path showing hierarchy up to 2 levels
   - name: is_active
     description: Boolean flag indicating if category is currently active
     tests:
@@ -90,7 +90,7 @@ models:
     - accepted_values:
         values: [true, false]
 - name: fact_inventory
-  description: Fact table tracking inventory levels by product and supplier with snapshot functionality
+  description: Fact table tracking inventory levels by product and supplier over time
   columns:
   - name: product_id
     description: Foreign key reference to product dimension
@@ -105,9 +105,9 @@ models:
   - name: snapshot_date
     description: Date of inventory snapshot
   - name: is_latest
-    description: Flag indicating the most recent record per product and supplier
+    description: Flag indicating the most recent inventory record per product-supplier combination
 - name: fact_order
-  description: Fact table containing order header information and status tracking
+  description: Fact table containing order header information and status
   columns:
   - name: order_id
     description: Unique identifier for each order
@@ -127,7 +127,7 @@ models:
   - name: total_amount
     description: Total monetary value of the order
 - name: fact_order_item
-  description: Fact table containing detailed line items for each order with calculated amounts
+  description: Fact table containing individual line items within orders
   columns:
   - name: order_item_id
     description: Unique identifier for each order line item
@@ -142,13 +142,13 @@ models:
   - name: unit_price
     description: Price per unit of the product
   - name: extended_amount
-    description: Calculated total before discounts (quantity * unit_price)
+    description: Calculated total before discounts (quantity × unit_price)
   - name: discount_amount
     description: Proportionally allocated discount amount for this line item
   - name: net_amount
     description: Final amount after applying discounts
 - name: fact_payment
-  description: Fact table tracking payment transactions and completion status
+  description: Fact table tracking payment transactions for orders
   columns:
   - name: payment_id
     description: Unique identifier for each payment transaction
@@ -170,7 +170,7 @@ models:
   - name: is_fully_applied
     description: Flag indicating if total payments cover the full order amount
 - name: fact_shipment
-  description: Fact table containing shipment information and delivery tracking
+  description: Fact table containing shipment and delivery information for orders
   columns:
   - name: shipment_id
     description: Unique identifier for each shipment
@@ -179,7 +179,7 @@ models:
   - name: order_id
     description: Foreign key reference to order fact table
   - name: shipped_date
-    description: Date when shipment was dispatched
+    description: Date when order was shipped
     tests:
     - not_null
   - name: days_to_ship
@@ -187,4 +187,4 @@ models:
   - name: carrier
     description: Shipping carrier name in uppercase format
   - name: tracking_number
-    description: Carrier-provided tracking number for shipment
+    description: Shipment tracking number for customer reference

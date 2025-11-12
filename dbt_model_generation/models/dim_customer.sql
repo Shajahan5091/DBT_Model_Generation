@@ -27,10 +27,10 @@ WITH customers_source AS (
 orders_source AS (
     SELECT
         customer_id,
+        order_id,
         total_amount,
         order_date
     FROM {{ source('dwh_raw', 'orders') }}
-    WHERE order_date >= CURRENT_DATE - 365
 ),
 
 customer_spending AS (
@@ -38,6 +38,7 @@ customer_spending AS (
         o.customer_id,
         SUM(o.total_amount) AS total_spending_365_days
     FROM orders_source o
+    WHERE o.order_date >= DATEADD(day, -365, CURRENT_DATE())
     GROUP BY o.customer_id
 ),
 
@@ -47,18 +48,14 @@ transformed AS (
         UPPER(TRIM(c.first_name)) AS first_name,
         UPPER(TRIM(c.last_name)) AS last_name,
         CASE 
-            WHEN c.email REGEXP '^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$' 
-            THEN LOWER(c.email)
+            WHEN REGEXP_LIKE(LOWER(TRIM(c.email)), '^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$')
+            THEN LOWER(TRIM(c.email))
             ELSE NULL
         END AS email,
+        COALESCE(DATE(c.inserted_at), CURRENT_DATE()) AS customer_since_date,
         CASE 
-            WHEN c.inserted_at IS NULL 
-            THEN CURRENT_DATE()
-            ELSE DATE(c.inserted_at)
-        END AS customer_since_date,
-        CASE 
-            WHEN COALESCE(cs.total_spending_365_days, 0) >= 1000 THEN 'Gold'
-            WHEN COALESCE(cs.total_spending_365_days, 0) >= 500 THEN 'Silver'
+            WHEN cs.total_spending_365_days >= 1000 THEN 'Gold'
+            WHEN cs.total_spending_365_days >= 500 AND cs.total_spending_365_days < 1000 THEN 'Silver'
             ELSE 'Bronze'
         END AS customer_tier
     FROM customers_source c

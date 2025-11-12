@@ -76,6 +76,13 @@ st.session_state.model = session.sql(
         f"select RAW_TEXT from SNOWFLAKE_LEARNING_DB.DOCS_TEST.TEMPLATES where file_name = 'model.txt'"
     ).collect()
 
+st.session_state.sf_best = session.sql(
+        f"select RAW_TEXT from SNOWFLAKE_LEARNING_DB.DOCS_TEST.STATIC_DOCS where file_name = 'Snowflake_Best_Practices_V1.1.docx'"
+    ).collect()
+
+st.session_state.dbt_best = session.sql(
+        f"select RAW_TEXT from SNOWFLAKE_LEARNING_DB.DOCS_TEST.STATIC_DOCS where file_name = 'dbt best practices_v01.docx'"
+    ).collect()
 
 models_folder_path = "D:\Automated_dbt_model_generation\dbt_model_generation\models" 
 
@@ -184,6 +191,10 @@ if st.button("Generate dbt Models"):
 
             The generated sql file should look like this:
             {st.session_state.get('model', '')}
+
+            Utilize the below best practices and naming conventions wherever required.
+            Snowflake best Practices: {st.session_state.get('sf_best', '')}
+            dbt best practices: {st.session_state.get('dbt_best', '')}
 
             Output only SQL.
             """
