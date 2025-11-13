@@ -5,7 +5,7 @@ from style_utils import apply_style, render_header
 apply_style()
 render_header()
 
-st.set_page_config(page_title="DBT File Viewer", layout="wide")
+st.set_page_config(page_title="dbt File Viewer", layout="wide")
 st.title("📂 File Explorer")
 
 # Base directory (change if needed)

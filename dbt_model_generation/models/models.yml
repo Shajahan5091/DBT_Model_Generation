@@ -8,7 +8,7 @@ models:
     tests:
     - unique
   - name: customer_id
-    description: Foreign key reference to customer dimension table
+    description: Foreign key reference to customer dimension
   - name: address_line1
     description: Primary address line with trimmed whitespace
   - name: city
@@ -16,7 +16,7 @@ models:
   - name: country
     description: Country name for the address
   - name: inserted_at
-    description: Date when the address record was created
+    description: Date when the address record was inserted
 - name: dim_category
   description: Dimension table for product categories with hierarchical structure
   columns:
@@ -36,7 +36,7 @@ models:
     - accepted_values:
         values: [true, false]
 - name: dim_customer
-  description: Dimension table containing customer information and derived attributes
+  description: Dimension table containing customer information with derived attributes
   columns:
   - name: customer_id
     description: Unique identifier for each customer
@@ -56,7 +56,7 @@ models:
     - accepted_values:
         values: ['Gold', 'Silver', 'Bronze']
 - name: dim_product
-  description: Dimension table for product information with pricing bands
+  description: Dimension table for products with pricing categorization
   columns:
   - name: product_id
     description: Unique identifier for each product
@@ -67,7 +67,7 @@ models:
   - name: price
     description: Product price with decimal precision
   - name: price_band
-    description: Price category bucket for analysis
+    description: Price category bucket for product segmentation
     tests:
     - accepted_values:
         values: ['Low', 'Mid', 'High', 'Premium']
@@ -120,14 +120,14 @@ models:
     tests:
     - not_null
   - name: order_status
-    description: Current status of the order in uppercase format
+    description: Current status of the order in standardized format
     tests:
     - accepted_values:
         values: ['PENDING', 'CANCELLED', 'SHIPPED', 'DELIVERED']
   - name: total_amount
     description: Total monetary value of the order
 - name: fact_order_item
-  description: Fact table containing individual line items for each order
+  description: Fact table containing individual order line items with calculated amounts
   columns:
   - name: order_item_id
     description: Unique identifier for each order line item
@@ -161,7 +161,7 @@ models:
     tests:
     - not_null
   - name: payment_method
-    description: Method used for payment in uppercase format
+    description: Method used for payment in standardized format
     tests:
     - accepted_values:
         values: ['CARD', 'UPI', 'COD', 'NETBANKING']
@@ -170,7 +170,7 @@ models:
   - name: is_fully_applied
     description: Flag indicating if total payments cover the full order amount
 - name: fact_shipment
-  description: Fact table containing shipment and delivery information
+  description: Fact table containing shipment information and delivery metrics
   columns:
   - name: shipment_id
     description: Unique identifier for each shipment
@@ -183,7 +183,7 @@ models:
     tests:
     - not_null
   - name: days_to_ship
-    description: Number of days between order date and shipment date
+    description: Number of days between order placement and shipment
   - name: carrier
     description: Shipping carrier name in uppercase format
   - name: tracking_number
