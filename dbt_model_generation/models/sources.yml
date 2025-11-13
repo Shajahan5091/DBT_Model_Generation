@@ -26,7 +26,7 @@ sources:
     - name: category_id
       description: Unique identifier for each category
     - name: category_name
-      description: Name of the product category
+      description: Display name of the category
     - name: parent_category_id
       description: Foreign key to parent category for hierarchical structure
     - name: is_active
@@ -102,31 +102,31 @@ sources:
     - name: product_id
       description: Unique identifier for each product
     - name: product_name
-      description: Name of the product
+      description: Display name of the product
     - name: price
-      description: Product price used for price bucketing analysis
+      description: Current selling price of the product
   - name: shipments
-    description: Shipping information for fulfilled orders
+    description: Shipping information for order fulfillment
     columns:
     - name: shipment_id
       description: Unique identifier for each shipment
     - name: order_id
       description: Foreign key linking to orders table
     - name: shipped_date
-      description: Date when the order was shipped
+      description: Date when the shipment was dispatched
     - name: carrier
-      description: Shipping carrier used for delivery
+      description: Shipping company handling the delivery
     - name: tracking_number
-      description: Tracking number for shipment monitoring
+      description: Carrier-provided tracking identifier
   - name: suppliers
     description: Supplier master data with contact information
     columns:
     - name: supplier_id
       description: Unique identifier for each supplier
     - name: supplier_name
-      description: Name of the supplier company
+      description: Business name of the supplier
     - name: contact_email
-      description: Primary contact email for the supplier
+      description: Primary email contact for the supplier
     - name: country
       description: Country where supplier is located
     - name: active_flag

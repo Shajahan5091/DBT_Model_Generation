@@ -164,7 +164,7 @@ if st.button("Generate dbt Models"):
             Do not add semicolon at the end.
             Use proper aliases for the required columns and use prefix properly.
             Always use prefix for all the columns if join is used.
-            For naming the aliases, Pls refer the below best practices for reference.
+            The naming of aliases should be proper name instead of just giving single letter names. Pls refer the below best practices for reference.
 
             Add a header block in the model as comment with details like the below template
             ------------------------------------------------------------------------

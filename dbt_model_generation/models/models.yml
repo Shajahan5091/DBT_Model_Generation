@@ -16,7 +16,7 @@ models:
   - name: country
     description: Country name for the address
   - name: inserted_at
-    description: Date when the address record was inserted
+    description: Date when the address record was created
 - name: dim_category
   description: Dimension table for product categories with hierarchical structure
   columns:
@@ -67,7 +67,7 @@ models:
   - name: price
     description: Product price with decimal precision
   - name: price_band
-    description: Price category bucket for product segmentation
+    description: Price category bucket for analysis
     tests:
     - accepted_values:
         values: ['Low', 'Mid', 'High', 'Premium']
@@ -170,7 +170,7 @@ models:
   - name: is_fully_applied
     description: Flag indicating if total payments cover the full order amount
 - name: fact_shipment
-  description: Fact table containing shipment information and delivery metrics
+  description: Fact table containing shipment and delivery information
   columns:
   - name: shipment_id
     description: Unique identifier for each shipment
@@ -187,4 +187,4 @@ models:
   - name: carrier
     description: Shipping carrier name in uppercase format
   - name: tracking_number
-    description: Shipment tracking number provided by carrier
+    description: Shipment tracking identifier
