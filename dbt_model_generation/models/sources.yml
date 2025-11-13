@@ -3,15 +3,15 @@ sources:
 - name: dwh_raw
   database: bsl_raw
   schema: dwh_raw
-  description: Raw data warehouse schema containing source tables for e-commerce operations
+  description: Raw data warehouse schema containing source tables for e-commerce operations including customers, orders, products, and related entities
   tables:
   - name: addresses
-    description: Customer address information with location details
+    description: Customer address information with geographic details
     columns:
     - name: address_id
       description: Unique identifier for each address record
     - name: customer_id
-      description: Foreign key linking to customers table
+      description: Foreign key reference to customers table
     - name: address_line1
       description: Primary address line containing street information
     - name: city
@@ -24,15 +24,15 @@ sources:
     description: Product category hierarchy with parent-child relationships
     columns:
     - name: category_id
-      description: Unique identifier for each category
+      description: Unique identifier for each product category
     - name: category_name
-      description: Display name of the category
+      description: Display name of the product category
     - name: parent_category_id
-      description: Foreign key to parent category for hierarchical structure
+      description: Reference to parent category for hierarchical structure
     - name: is_active
       description: Flag indicating if category is currently active, defaults to true if null
   - name: customers
-    description: Customer master data with personal information
+    description: Customer master data containing personal information
     columns:
     - name: customer_id
       description: Unique identifier for each customer
@@ -48,9 +48,9 @@ sources:
     description: Product inventory levels by supplier and warehouse location
     columns:
     - name: product_id
-      description: Foreign key linking to products table
+      description: Foreign key reference to products table
     - name: supplier_id
-      description: Foreign key linking to suppliers table
+      description: Foreign key reference to suppliers table
     - name: stock_qty
       description: Current stock quantity available
     - name: warehouse_location
@@ -63,9 +63,9 @@ sources:
     - name: order_item_id
       description: Unique identifier for each order line item
     - name: order_id
-      description: Foreign key linking to orders table
+      description: Foreign key reference to orders table
     - name: product_id
-      description: Foreign key linking to products table
+      description: Foreign key reference to products table
     - name: quantity
       description: Number of units ordered for this item
     - name: unit_price
@@ -74,9 +74,9 @@ sources:
     description: Customer order header information with status and totals
     columns:
     - name: order_id
-      description: Unique identifier for each order
+      description: Unique identifier for each customer order
     - name: customer_id
-      description: Foreign key linking to customers table
+      description: Foreign key reference to customers table
     - name: order_date
       description: Date when the order was placed
     - name: status
@@ -89,7 +89,7 @@ sources:
     - name: payment_id
       description: Unique identifier for each payment transaction
     - name: order_id
-      description: Foreign key linking to orders table
+      description: Foreign key reference to orders table
     - name: payment_date
       description: Date when payment was processed
     - name: payment_method
@@ -106,27 +106,27 @@ sources:
     - name: price
       description: Current selling price of the product
   - name: shipments
-    description: Shipping information for order fulfillment
+    description: Shipping information for fulfilled orders
     columns:
     - name: shipment_id
       description: Unique identifier for each shipment
     - name: order_id
-      description: Foreign key linking to orders table
+      description: Foreign key reference to orders table
     - name: shipped_date
       description: Date when the shipment was dispatched
     - name: carrier
-      description: Shipping company handling the delivery
+      description: Shipping carrier company
     - name: tracking_number
-      description: Carrier-provided tracking identifier
+      description: Carrier-provided tracking number for shipment
   - name: suppliers
     description: Supplier master data with contact information
     columns:
     - name: supplier_id
       description: Unique identifier for each supplier
     - name: supplier_name
-      description: Business name of the supplier
+      description: Company name of the supplier
     - name: contact_email
-      description: Primary email contact for the supplier
+      description: Primary contact email for the supplier
     - name: country
       description: Country where supplier is located
     - name: active_flag
