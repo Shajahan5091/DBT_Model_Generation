@@ -13,6 +13,9 @@ from datetime import datetime
 from style_utils import apply_style, render_header
 from github import Github
 import base64
+from github import GithubException
+import time
+
 
 apply_style()
 render_header()
@@ -21,8 +24,116 @@ st.set_page_config(page_title="dbt Model Generator", layout="wide")
 st.title("Snowflake dbt Model Generator")
 
 st.write("""
-Upload a **mapping file** (CSV/Excel)  
-to automatically generate dbt models and YAMLs.
+Generate dbt model files using AI, review them, and automatically push them 
+to your GitHub repository.  
+Provide your GitHub credentials below to connect securely using a Personal Access Token (PAT) 
+with `repo` permissions.
+""")
+
+# ---------------------------------------------
+# SESSION INITIALIZATION
+# ---------------------------------------------
+defaults = {
+    "github_authenticated": False,
+    "github_user": "",
+    "github_token": "",
+    "repo_name": "",
+    "branch_name": f"feature/auto-dbt-{datetime.now().strftime('%Y%m%d')}",
+}
+for k, v in defaults.items():
+    if k not in st.session_state:
+        st.session_state[k] = v
+
+# ---------------------------------------------
+# GITHUB AUTH SECTION
+# ---------------------------------------------
+st.subheader("🔐 GitHub Connection")
+
+with st.expander("🔐 Connect to GitHub", expanded=st.session_state.show_expander):
+    col1, col2 = st.columns(2)
+
+    with col1:
+        username = st.text_input(
+            "GitHub Username",
+            value=st.session_state.github_user,
+            key="github_username_input"
+        )
+
+        repo_name = st.text_input(
+            "Repository Name (e.g., username/repo_name)",
+            key="repo_name_input",
+            value=st.session_state.repo_name
+        )
+
+    with col2:
+        github_token = st.text_input(
+            "GitHub Personal Access Token (PAT)",
+            type="password",
+            key="github_token_input",
+            value=st.session_state.github_token
+        )
+
+        branch_name = st.text_input(
+            "Branch name (default auto-created)",
+            value=st.session_state.branch_name,
+            key="branch_name_input"
+        )
+
+    commit_message = st.text_input(
+        "Commit message",
+        value="Add auto-generated dbt models",
+        key="commit_msg_input"
+    )
+
+    connect_btn = st.button("🔗 Connect to GitHub")
+
+    if connect_btn:
+        if not username or not github_token or not repo_name:
+            st.error("Please enter username, token, and repository name.")
+        else:
+            if "/" not in repo_name:
+                repo_full_name = f"{username}/{repo_name}"
+            else:
+                repo_full_name = repo_name
+
+            with st.spinner("🔄 Connecting to GitHub..."):
+                time.sleep(1.5)  # simulate delay
+                try:
+                    g = Github(github_token)
+                    user = g.get_user()
+                    # If token works, user.login should succeed
+                    st.session_state.github_authenticated = True
+                    st.session_state.github_user = user.login
+                    st.session_state.github_token = github_token
+                    st.session_state.repo_name = repo_full_name
+                    st.session_state.branch_name = branch_name
+                    st.session_state.show_expander = False  # collapse after success
+                    st.success(f"✅ Connected successfully as **{user.login}**")
+
+                except GithubException as e:
+                    st.error(f"❌ GitHub authentication failed: {e}")
+                except Exception as ex:
+                    st.error(f"⚠️ Error connecting to GitHub: {ex}")
+
+# ---------------------------------------------
+# CONNECTION STATUS
+# ---------------------------------------------
+if st.session_state.github_authenticated:
+    st.markdown(
+        f"<p style='color:green;'>🔗 Connected as <b>{st.session_state.github_user}</b></p>",
+        unsafe_allow_html=True
+    )
+else:
+    st.info("🔸 Not connected to GitHub yet. Expand the section above to connect.")
+
+
+# ---------------------------------------------
+# GITHUB AUTH SECTION
+# ---------------------------------------------
+st.subheader("Model Generation")
+
+st.write("""
+Upload a **mapping file** (CSV/Excel) to automatically generate dbt models and YAMLs.
 """)
 
 repo_dir = "dbt_model_generation"
