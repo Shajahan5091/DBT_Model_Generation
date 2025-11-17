@@ -39,6 +39,7 @@ defaults = {
     "github_token": "",
     "repo_name": "",
     "branch_name": f"feature/auto-dbt-{datetime.now().strftime('%Y%m%d')}",
+    "show_expander": True,  # Controls expansion
 }
 for k, v in defaults.items():
     if k not in st.session_state:
