@@ -8,3 +8,7 @@ system_prompts.py
 BRD.md
 pages/dbt_docs_cache
 docs_folder
+pages/test_push.py
+Github_Authenticator.py
+Github_V1.py
+test_gen.py
