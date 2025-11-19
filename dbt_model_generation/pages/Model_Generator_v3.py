@@ -136,20 +136,23 @@ repo_dir = "dbt_model_generation"
 # File uploads
 mapping_file = st.file_uploader("Upload Mapping File", type = ["csv", "xlsx"])
 
-# TO BE PART OF LATER SCOPE
-#  semantic_file = st.file_uploader("Upload Snowflake Semantic File (JSON)", type=["json"])
+# Get the Semantic file from the USER
+semantic_file = st.file_uploader("Upload Snowflake Semantic File (JSON)", type=["json"])
 
 # Create environment for templates
 env = Environment(loader=FileSystemLoader("templates"))
 
-if mapping_file:  # and semantic_file:
+if mapping_file  and semantic_file:
     # Load mapping file
     if mapping_file.name.endswith(".csv"):
         df = pd.read_csv(mapping_file)
     else:
         df = pd.read_excel(mapping_file)
 
-    # semantic = json.load(semantic_file)
+    semantic_yaml = yaml.safe_load(semantic_file)
+    st.success("✅ Semantic file loaded successfully!")
+    with st.expander("🔍 Preview Semantic YAML", expanded=False):
+        st.json(semantic_yaml)
 
     st.subheader("📋 Mapping Preview")
     st.dataframe(df)
@@ -204,6 +207,8 @@ if st.button("Generate dbt Models"):
         st.error("⚠️ Please upload a Mapping File before generating dbt models.")
     else:
         st.write("🚀 Generating dbt models... please wait.")
+        semantic_text = yaml.dump(semantic_yaml)
+        st.write("🚀 REdaing Mapping doc and Semantic files... please wait.")
         print("\n🚀 Starting dbt model generation...")
 
         grouped = df.groupby(['Target_Database', 'Target_Schema', 'Target_Table'])
@@ -255,6 +260,16 @@ if st.button("Generate dbt Models"):
             model_prompt_text = f"""
             You are an expert AI assistant specializing in data modeling, dbt, and analytics engineering for Snowflake.
             Your task is to automatically generate dbt models based on provided metadata.
+
+            Validate the mapping document against the provided semantic model before generating dbt models.
+            In case of Column name or data type errors while comparing Mapping document and snowflake semantic data , 
+            auto correct it based on semantic file and make sure no error occurs.
+            When ever you do such auto correct add a comment nearby saying auto corrected using semantic file.
+
+             **Semantic Model (YAML):**
+            ```
+            {semantic_text}
+            ```
 
             Follow dbt & Snowflake best practices.
             Do not include markdown formatting.
@@ -435,6 +450,16 @@ if st.button("Generate dbt Models"):
         - Output must be valid YAML
         - keep the source names as {Source_Schema} in lowercase
         - Look at the mapping_rule and notes for additional source details and create those sources if not already created.
+
+        Validate the mapping document against the provided semantic model before generating sources.yml.
+        In case of Column name or data type errors while comparing Mapping document and snowflake semantic data , 
+        auto correct it based on semantic file and make sure no error occurs.
+        When ever you do such auto correct add a comment nearby saying auto corrected using semantic file.
+
+        **Semantic Model (YAML):**
+        ```
+        {semantic_text}
+        ```
 
         The generated yaml file should look like this:
         {st.session_state.get('sources', '')}

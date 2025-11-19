@@ -259,6 +259,15 @@ if st.button("Generate dbt Models"):
             - Don't add schema name and type.
             - Add only provided tests.
 
+        Validate the mapping document against the provided semantic model before generating model.yml.
+        In case of Column name or data type errors while comparing Mapping document and snowflake semantic data , 
+        auto correct it based on semantic file and make sure no error occurs.
+        When ever you do such auto correct add a comment nearby saying auto corrected using semantic file.
+
+        **Semantic Model (YAML):**
+        ```
+        {semantic_text}
+
         The generated yaml file should look like this:
         {st.session_state.get('schema', '')}
 
@@ -316,6 +325,15 @@ if st.button("Generate dbt Models"):
         - Output must be valid YAML
         - keep the source names as {Source_Schema} in lowercase
         - Look at the mapping_rule and notes for additional source details and create those sources if not already created.
+
+        Validate the mapping document against the provided semantic model before generating sources.yml.
+        In case of Column name or data type errors while comparing Mapping document and snowflake semantic data , 
+        auto correct it based on semantic file and make sure no error occurs.
+        When ever you do such auto correct add a comment nearby saying auto corrected using semantic file.
+
+        **Semantic Model (YAML):**
+        ```
+        {semantic_text}
 
         The generated yaml file should look like this:
         {st.session_state.get('sources', '')}
