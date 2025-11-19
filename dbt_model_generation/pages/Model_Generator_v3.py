@@ -20,7 +20,7 @@ import time
 apply_style()
 render_header()
 
-st.set_page_config(page_title="dbt Model Generator", layout="wide")
+st.set_page_config(page_title = "dbt Model Generator", layout = "wide")
 st.title("Snowflake dbt Model Generator")
 
 st.write("""
@@ -38,7 +38,7 @@ defaults = {
     "github_user": "",
     "github_token": "",
     "repo_name": "",
-    "branch_name": f"feature/auto-dbt-{datetime.now().strftime('%Y%m%d')}",
+    "branch_name": "",
     "show_expander": True,  # Controls expansion
 }
 for k, v in defaults.items():
@@ -50,34 +50,34 @@ for k, v in defaults.items():
 # ---------------------------------------------
 st.subheader("🔐 GitHub Connection")
 
-with st.expander("🔐 Connect to GitHub", expanded=st.session_state.show_expander):
+with st.expander("🔐 Connect to GitHub", expanded = st.session_state.show_expander):
     col1, col2 = st.columns(2)
 
     with col1:
         username = st.text_input(
             "GitHub Username",
-            value=st.session_state.github_user,
-            key="github_username_input"
+            value = st.session_state.github_user,
+            key = "github_username_input"
         )
 
         repo_name = st.text_input(
             "Repository Name (e.g., username/repo_name)",
-            key="repo_name_input",
-            value=st.session_state.repo_name
+            key = "repo_name_input",
+            value = st.session_state.repo_name
         )
 
     with col2:
         github_token = st.text_input(
             "GitHub Personal Access Token (PAT)",
-            type="password",
-            key="github_token_input",
-            value=st.session_state.github_token
+            type = "password",
+            key = "github_token_input",
+            value = st.session_state.github_token
         )
 
         branch_name = st.text_input(
             "Branch name (default auto-created)",
-            value=st.session_state.branch_name,
-            key="branch_name_input"
+            value = st.session_state.branch_name,
+            key = "branch_name_input"
         )
     connect_btn = st.button("🔗 Connect to GitHub")
 
@@ -134,7 +134,7 @@ Upload a **mapping file** (CSV/Excel) to automatically generate dbt models and Y
 repo_dir = "dbt_model_generation"
 
 # File uploads
-mapping_file = st.file_uploader("Upload Mapping File", type=["csv", "xlsx"])
+mapping_file = st.file_uploader("Upload Mapping File", type = ["csv", "xlsx"])
 
 # TO BE PART OF LATER SCOPE
 #  semantic_file = st.file_uploader("Upload Snowflake Semantic File (JSON)", type=["json"])
@@ -166,9 +166,9 @@ connection_parameters = {
 }
 
 options = CompleteOptions(
-    temperature=0.2,
-    max_tokens=4096,
-    guardrails=False
+    temperature = 0.2,
+    max_tokens = 4096,
+    guardrails = False
 )
 session = Session.builder.configs(connection_parameters).create() 
 
@@ -239,17 +239,17 @@ if st.button("Generate dbt Models"):
                 test_info = row.get('Test', "none")
                 notes = row.get('Notes', '')
                 Materialization = row.get('Materialization', '')
-                Incremental_Where_Condition = row.get('Incremental_Where_Condition', '')
+                # Incremental_Where_Condition = row.get('Incremental_Where_Condition', '')
 
                 mapping_details.append(
                     f"{Source_Database} {Source_Schema} {Source_Table} {Source_Column} ({source_datatype}) "
                     f"→ {t_database} {t_schema} {target_table} {target_column} ({target_datatype}) "
-                    f"| logic: {mapping_rule} | notes: {notes} | description: {description} | test: {test_info} | Materialization: {Materialization} | Incremental_Where_Condition: {Incremental_Where_Condition}"
+                    f"| logic: {mapping_rule} | notes: {notes} | description: {description} | test: {test_info} | Materialization: {Materialization}"
                 )
 
             # ✅ Combine mapping once per table
             mapping_str = "\n".join(mapping_details)
-            print('mapping details:\n',mapping_str)
+            print('mapping details:\n', mapping_str)
 
             # ✅ Call AI once per table (NOT inside row loop)
             model_prompt_text = f"""
@@ -267,6 +267,9 @@ if st.button("Generate dbt Models"):
             Use proper aliases for the required columns and use prefix properly.
             Always use prefix for all the columns if join is used.
             The naming of aliases should be proper name instead of just giving single letter names. Pls refer the below best practices for reference.
+
+            If the materialization is incremental then add another column "last_updated" in the model with current timestamp as default value.
+            Add the incremental condition - "{{% if is_incremental() %}} where last_updated > (select max(last_updated) from {{ this }}) {{% endif %}}".
 
             Add a header block in the model as comment with details like the below template
             ------------------------------------------------------------------------
@@ -304,7 +307,7 @@ if st.button("Generate dbt Models"):
             Output only SQL.
             """
 
-            result = Complete(model="claude-4-sonnet", prompt=model_prompt_text, session=session, options=options)
+            result = Complete(model = "claude-4-sonnet", prompt = model_prompt_text, session = session, options = options)
             result_text = result.get("response") if isinstance(result, dict) else str(result)
             sql_part = re.sub(r"(?i)^sure.*|^here.*|```.*", "", result_text).strip()
 
@@ -373,7 +376,7 @@ if st.button("Generate dbt Models"):
         Output YAML only — no markdown, no code fences, no prose.
         """
 
-        schema_result = Complete(model="claude-4-sonnet", prompt=schema_prompt, session=session, options=options,)
+        schema_result = Complete(model = "claude-4-sonnet", prompt = schema_prompt, session = session, options = options,)
         schema_text = schema_result.get("response") if isinstance(schema_result, dict) else str(schema_result)
         schema_text = re.sub(r"(?i)^sure.*|^here.*|```.*", "", schema_text).strip()
 
@@ -383,13 +386,13 @@ if st.button("Generate dbt Models"):
             file = repo.get_contents(model_yml_path)
             # File exists → update it
             repo.update_file(
-                model_yml_path, model_yml_message, schema_text, file.sha, branch= st.session_state.branch_name
+                model_yml_path, model_yml_message, schema_text, file.sha, branch = st.session_state.branch_name
             )
             print("File updated!")
         except:
             # File does not exist → create it
             repo.create_file(
-                model_yml_path, model_yml_message, schema_text, branch= st.session_state.branch_name
+                model_yml_path, model_yml_message, schema_text, branch = st.session_state.branch_name
             )
 
         print(f"✅ Final consolidated models.yml generated: {model_yml_path}")
@@ -442,7 +445,7 @@ if st.button("Generate dbt Models"):
         Output YAML only — no markdown or prose.
         """
 
-        sources_result = Complete(model="claude-4-sonnet", prompt=sources_prompt, session=session, options=options)
+        sources_result = Complete(model = "claude-4-sonnet", prompt = sources_prompt, session = session, options = options)
         sources_text = sources_result.get("response") if isinstance(sources_result, dict) else str(sources_result)
         sources_text = re.sub(r"(?i)^sure.*|^here.*|```.*", "", sources_text).strip()
 
@@ -452,13 +455,13 @@ if st.button("Generate dbt Models"):
             file = repo.get_contents(sources_yml_path)
             # File exists → update it
             repo.update_file(
-                sources_yml_path, sources_yml_message, sources_text, file.sha, branch= st.session_state.branch_name
+                sources_yml_path, sources_yml_message, sources_text, file.sha, branch = st.session_state.branch_name
             )
             print("File updated!")
         except:
             # File does not exist → create it
             repo.create_file(
-                sources_yml_path, sources_yml_message, sources_text, branch= st.session_state.branch_name
+                sources_yml_path, sources_yml_message, sources_text, branch = st.session_state.branch_name
             )
 
         print(f"✅ Final consolidated sources.yml generated: {sources_yml_path}")
@@ -470,35 +473,109 @@ if st.button("Generate dbt Models"):
         profiles_yml_path = "dbt_model_generation/profiles.yml"
         profiles_yml_message = f"Auto commit - {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}"
         profiles_content = """dbt_model_generation:
-        outputs:
-            dev:
-                account: YVCFONH-QR62969
-                database: BSL_MA
-                password: Shajahan@snowflake_2002
-                role: ACCOUNTADMIN
-                schema: DWH_MA
-                threads: 1
-                type: snowflake
-                user: SHAJAHAN
-                warehouse: COMPUTE_WH
-        target: dev
-        """
-        def create_yamls(connection_parameters):
-            print(connection_parameters)    
-            try:
-                file = repo.get_contents(profiles_yml_path)
-                # File exists → update it
-                repo.update_file(
-                    profiles_yml_path, profiles_yml_message, profiles_content, file.sha, branch= st.session_state.branch_name
-                )
-                print("File updated!")
-            except:
-                # File does not exist → create it
-                repo.create_file(
-                    profiles_yml_path, profiles_yml_message, profiles_content, branch= st.session_state.branch_name
-                )
+    outputs:
+      dev:
+        account: YVCFONH-QR62969
+        database: BSL_MA
+        password: Shajahan@snowflake_2002
+        role: ACCOUNTADMIN
+        schema: DWH_MA
+        threads: 1
+        type: snowflake
+        user: SHAJAHAN
+        warehouse: COMPUTE_WH
+    target: dev
+        """   
+        try:
+            file = repo.get_contents(profiles_yml_path)
+            # File exists → update it
+            repo.update_file(
+                profiles_yml_path, profiles_yml_message, profiles_content, file.sha, branch = st.session_state.branch_name
+            )
+            print("File updated!")
+        except:
+            # File does not exist → create it
+            repo.create_file(
+                profiles_yml_path, profiles_yml_message, profiles_content, branch = st.session_state.branch_name
+            )
 
-        # call the function to create the profiles.yml and dbt_project.yml
-        create_yamls(connection_parameters)
-            
+        print(f"✅ The profiles.yml generated: {sources_yml_path}")
+        st.write("✅ The profiles.yml generated")
+
+        project_yml_path = "dbt_model_generation/dbt_project.yml"
+        project_yml_message = f"Auto commit - {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}"
+        project_content = """# Name your project! Project names should contain only lowercase characters
+    # and underscores. A good package name should reflect your organization's
+    # name or the intended use of these models
+    name: 'dbt_model_generation'
+    version: '1.0.0'
+    config-version: 2
+    
+    # This setting configures which "profile" dbt uses for this project.
+    profile: 'dbt_model_generation'
+
+    quoting:
+    database: true
+    schema: true
+    identifier: false
+    
+    vars:
+      dbt_model_generation:
+        DWH_TABLE:
+          backfill_flag: "false"
+          backfill_start_date: "2022-01-01"
+          incremental_days: "366"
+          backfill_end_date: "2022-01-02"
+    
+    # These configurations specify where dbt should look for different types of files.
+    # The `model-paths` config, for example, states that models in this project can be
+    # found in the "models/" directory. You probably won't need to change these!
+    model-paths: ["models"]
+    analysis-paths: ["analyses"]
+    test-paths: ["tests"]
+    seed-paths: ["seeds"]
+    macro-paths: ["macros"]
+    snapshot-paths: ["snapshots"]
+    
+    target-path: "target"  # directory which will store compiled SQL files
+    clean-targets:         # directories to be removed by `dbt clean`
+    - "target"
+    - "dbt_packages"
+    
+    # on-run-start: create table if not exists int.DBTExecutionLog (DBTId varchar, DBTRunStartTime TIMESTAMP, DBTRunEndTime TIMESTAMP, DBTStatus varchar, TotalTimeTakenInSeconds int); INSERT INTO int.DBTExecutionLog VALUES ('{{invocation_id}}',current_timestamp(),NULL,'Started',NULL);create table if not exists int.dbtsteplog (invocationid varchar,tablename varchar, stepstart timestamp default current_timestamp(),stepend timestamp ,stepstatus varchar);
+    # on-run-end: UPDATE int.DBTExecutionLog SET DBTRunEndTime = current_timestamp(), DBTStatus = 'Successful' WHERE DBTId = '{{invocation_id}}';
+    
+    # Configuring models
+    # Full documentation: https://docs.getdbt.com/docs/configuring-models
+    
+    # In this example config, we tell dbt to build all models in the example/ directory
+    # as tables. These settings can be overridden in the individual model files
+    models:
+        dbt_model_generation:
+        # Config indicated by + and applies to all files under models/example/
+            +meta:
+            example:
+                +materialized: view
+        flags:
+        require_generic_test_arguments_property: true
+        """
+
+        try:
+            file = repo.get_contents(project_yml_path)
+            # File exists → update it
+            repo.update_file(
+                project_yml_path, project_yml_message, project_content, file.sha, branch = st.session_state.branch_name
+            )
+            print("File updated!")
+        except:
+            # File does not exist → create it
+            repo.create_file(
+                project_yml_path, project_yml_message, project_content, branch = st.session_state.branch_name
+            )
+
+        print(f"✅ The dbt_project.yml generated: {sources_yml_path}")
+        st.write("✅ The dbt_project.yml generated")
+
+
+        
 
