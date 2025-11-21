@@ -137,7 +137,7 @@ repo_dir = "dbt_model_generation"
 mapping_file = st.file_uploader("Upload Mapping File", type = ["csv", "xlsx"])
 
 # Get the Semantic file from the USER
-semantic_file = st.file_uploader("Upload Snowflake Semantic File (JSON)", type=["json"])
+semantic_file = st.file_uploader("Upload Snowflake Semantic File (YAML)", type=["yaml"])
 
 # Create environment for templates
 env = Environment(loader=FileSystemLoader("templates"))
@@ -208,7 +208,7 @@ if st.button("Generate dbt Models"):
     else:
         st.write("🚀 Generating dbt models... please wait.")
         semantic_text = yaml.dump(semantic_yaml)
-        st.write("🚀 REdaing Mapping doc and Semantic files... please wait.")
+        st.write("🚀 Reading Mapping doc and Semantic file... please wait.")
         print("\n🚀 Starting dbt model generation...")
 
         grouped = df.groupby(['Target_Database', 'Target_Schema', 'Target_Table'])
@@ -284,7 +284,9 @@ if st.button("Generate dbt Models"):
             The naming of aliases should be proper name instead of just giving single letter names. Pls refer the below best practices for reference.
 
             If the materialization is incremental then add another column "last_updated" in the model with current timestamp as default value.
-            Add the incremental condition - "{{% if is_incremental() %}} where last_updated > (select max(last_updated) from {{ this }}) {{% endif %}}".
+            Add the incremental condition as it is 'don't change anything- "{{% if var('models')['backfill_flag'] == 'true' %}}
+                where inserted_at  between 'var("models")["backfill_start_date"]' and 'var("models")["backfill_end_date"]' {{% else %}} {{% if is_incremental() %}} where inserted_at > (select max(inserted_at) from {{ this }}) {{% endif %}}".
+            Add this incremental condition in the first select itself since there were we are selecting from source.
 
             Add a header block in the model as comment with details like the below template
             ------------------------------------------------------------------------
@@ -530,59 +532,44 @@ if st.button("Generate dbt Models"):
         project_yml_path = "dbt_model_generation/dbt_project.yml"
         project_yml_message = f"Auto commit - {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}"
         project_content = """# Name your project! Project names should contain only lowercase characters
-    # and underscores. A good package name should reflect your organization's
-    # name or the intended use of these models
-    name: 'dbt_model_generation'
-    version: '1.0.0'
-    config-version: 2
-    
-    # This setting configures which "profile" dbt uses for this project.
-    profile: 'dbt_model_generation'
+# and underscores. A good package name should reflect your organization's
+# name or the intended use of these models
+name: 'dbt_model_generation'
+version: '1.0.0'
+config-version: 2
 
-    quoting:
-    database: true
-    schema: true
-    identifier: false
-    
-    vars:
-      dbt_model_generation:
-        DWH_TABLE:
-          backfill_flag: "false"
-          backfill_start_date: "2022-01-01"
-          incremental_days: "366"
-          backfill_end_date: "2022-01-02"
-    
-    # These configurations specify where dbt should look for different types of files.
-    # The `model-paths` config, for example, states that models in this project can be
-    # found in the "models/" directory. You probably won't need to change these!
-    model-paths: ["models"]
-    analysis-paths: ["analyses"]
-    test-paths: ["tests"]
-    seed-paths: ["seeds"]
-    macro-paths: ["macros"]
-    snapshot-paths: ["snapshots"]
-    
-    target-path: "target"  # directory which will store compiled SQL files
-    clean-targets:         # directories to be removed by `dbt clean`
-    - "target"
-    - "dbt_packages"
-    
-    # on-run-start: create table if not exists int.DBTExecutionLog (DBTId varchar, DBTRunStartTime TIMESTAMP, DBTRunEndTime TIMESTAMP, DBTStatus varchar, TotalTimeTakenInSeconds int); INSERT INTO int.DBTExecutionLog VALUES ('{{invocation_id}}',current_timestamp(),NULL,'Started',NULL);create table if not exists int.dbtsteplog (invocationid varchar,tablename varchar, stepstart timestamp default current_timestamp(),stepend timestamp ,stepstatus varchar);
-    # on-run-end: UPDATE int.DBTExecutionLog SET DBTRunEndTime = current_timestamp(), DBTStatus = 'Successful' WHERE DBTId = '{{invocation_id}}';
-    
-    # Configuring models
-    # Full documentation: https://docs.getdbt.com/docs/configuring-models
-    
-    # In this example config, we tell dbt to build all models in the example/ directory
-    # as tables. These settings can be overridden in the individual model files
-    models:
-        dbt_model_generation:
-        # Config indicated by + and applies to all files under models/example/
-            +meta:
-            example:
-                +materialized: view
-        flags:
-        require_generic_test_arguments_property: true
+# This setting configures which "profile" dbt uses for this project.
+profile: 'dbt_model_generation'
+
+vars:
+  models:
+    backfill_flag: "false"
+    backfill_start_date: "2022-01-01"
+    backfill_end_date: "2022-01-02"
+
+# These configurations specify where dbt should look for different types of files.
+# The `model-paths` config, for example, states that models in this project can be
+# found in the "models/" directory. You probably won't need to change these!
+model-paths: ["models"]
+
+target-path: "target"  # directory which will store compiled SQL files
+clean-targets:         # directories to be removed by `dbt clean`
+- "target"
+- "dbt_packages"
+
+# on-run-start: create table if not exists int.DBTExecutionLog (DBTId varchar, DBTRunStartTime TIMESTAMP, DBTRunEndTime TIMESTAMP, DBTStatus varchar, TotalTimeTakenInSeconds int); INSERT INTO int.DBTExecutionLog VALUES ('{{invocation_id}}',current_timestamp(),NULL,'Started',NULL);create table if not exists int.dbtsteplog (invocationid varchar,tablename varchar, stepstart timestamp default current_timestamp(),stepend timestamp ,stepstatus varchar);
+# on-run-end: UPDATE int.DBTExecutionLog SET DBTRunEndTime = current_timestamp(), DBTStatus = 'Successful' WHERE DBTId = '{{invocation_id}}';
+
+# Configuring models
+# Full documentation: https://docs.getdbt.com/docs/configuring-models
+
+# In this example config, we tell dbt to build all models in the example/ directory
+# as tables. These settings can be overridden in the individual model files
+models:
+    dbt_model_generation:
+    # Config indicated by + and applies to all files under models/example/
+      example:
+        +materialized: view
         """
 
         try:
